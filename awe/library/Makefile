@@ -65,6 +65,8 @@ $(OBJ)pushbutton.o: $(SRC)pushbutton.c $(INCLUDE)$(AWEDIR)pushbutton.h
 	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)pushbutton.c -o $(OBJ)pushbutton.o $(DEFS)
 $(OBJ)input_win32.o: $(SRC)input_win32.c
 	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)input_win32.c -o $(OBJ)input_win32.o $(DEFS)
+$(OBJ)input_linux.o: $(SRC)input_linux.c
+	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)input_linux.c -o $(OBJ)input_linux.o $(DEFS) -lpthread
 clean:
 	rm -f $(OBJ)*.o
 veryclean:

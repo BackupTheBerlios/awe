@@ -2,6 +2,7 @@
 
 LIBDIR=lib/unix/
 UNIXDIR_D=/usr/local
+OBJECTS += input_linux.o
 
 lib/unix/libawe.a: $(addprefix $(OBJ),$(OBJECTS))
 	ar cr $(LIBDIR)libawe.a $(OBJ)*.o
