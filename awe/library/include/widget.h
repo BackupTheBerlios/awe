@@ -45,9 +45,6 @@
 ///widget class name
 #define AWE_ID_WIDGET           "Widget"
 
-///AWE namespace name
-#define AWE_ID_AWE              "AWE"
-
 ///X property name
 #define AWE_ID_X                "X"
 
@@ -310,6 +307,81 @@ typedef struct AWE_WIDGET_VTABLE AWE_WIDGET_VTABLE;
 
 ///the one and only widget class; base class for all widgets
 extern AWE_CLASS awe_widget_class;
+
+
+/** the default implementation of get_interface
+    @param wgt object that is called
+    @param name name of the interface
+    @param pnamespace namespace of the interface
+    @return pointer to interface or null if the interface is not supported
+ */
+void *awe_widget_get_interface(AWE_OBJECT *wgt, const char *name, const char *pnamespace);
+
+
+/** the default implementation of the properties_changed method
+    @param wgt object that is called
+ */
+void awe_widget_properties_changed(AWE_OBJECT *wgt);
+
+
+/** the default implementation of the clone interface
+    @param wgt widget to clone
+    @return pointer to cloned widget
+ */
+AWE_OBJECT *awe_widget_clone(AWE_OBJECT *wgt);
+
+
+/** the default implementation of the paint method
+    @param wgt widget that is called
+    @param canvas canvas to draw onto
+    @param update_rect rectangle, relative to widget, that is being affected
+ */
+void awe_widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *update_rect);
+
+
+/** the default implementation of the get_focus method
+    @param wgt widget that is called
+    @return non-zero if widget gets the focus successfully
+ */
+int awe_widget_get_focus(AWE_WIDGET *wgt);
+
+
+/** the default implementation of the loose_focus method
+    @param wgt widget that is called
+    @return non-zero if widget looses the focus
+ */
+int awe_widget_loose_focus(AWE_WIDGET *wgt);
+
+
+/** the default implementation of the begin_display method; calls the
+    relevant method of the children
+    @param wgt widget that is called
+ */
+void awe_widget_begin_display(AWE_WIDGET *wgt);
+
+
+/** the default implementation of the end_display method; calls the
+    relevant method of the children
+    @param wgt widget that is called
+ */
+void awe_widget_end_display(AWE_WIDGET *wgt);
+
+
+/** the default implementation of the 'insert_widget' method
+    @param wgt parent widget 
+    @param child child widget
+    @param z_order z-order to place the child to
+    @return non-zero if the child was successfully inserted
+ */
+int awe_widget_insert_widget(AWE_WIDGET *wgt, AWE_WIDGET *child, int z_order);
+
+
+/** the default implementation of the 'remove_widget' method
+    @param wgt parent widget
+    @param child child widget
+    @return non-zero if the child was removed successfully
+ */
+int awe_widget_remove_widget(AWE_WIDGET *wgt, AWE_WIDGET *child);
 
 
 /** casts 'widget' to 'object'.

@@ -793,204 +793,6 @@ static void _widget_set_output_type(AWE_OBJECT *wgt, void *buffer)
 }
 
 
-//returns an interface
-void *_widget_get_interface(AWE_OBJECT *wgt, const char *name, const char *pnamespace)
-{
-    if (!strcmp(pnamespace, AWE_ID_AWE)) {
-        if (!strcmp(name, AWE_ID_WIDGET)) return &_widget_vtable;
-    }
-    return awe_object_class.vtable->get_interface(wgt, name, pnamespace);
-}
-
-
-//properties changed
-void _widget_properties_changed(AWE_OBJECT *wgt)
-{
-    if (_WGT->geometry_changed) {
-        _WGT->geometry_changed = 0;
-        if (_WGT->on_screen) {
-            _set_update_geometry(_WGT);
-            _DO(wgt, geometry_changed, (_WGT, _WGT->x, _WGT->y, _WGT->width, _WGT->height));
-        }
-    }
-
-    if (_WGT->visible_changed) {
-        _WGT->visible_changed = 0;
-        if (_WGT->on_screen) {
-            _set_update_drawable(_WGT);
-            _DO(wgt, visible_changed, (_WGT, _WGT->visible));
-        }
-    }
-
-    if (_WGT->enabled_changed) {
-        _WGT->enabled_changed = 0;
-        _set_enabled_tree(_WGT);
-        if (_WGT->on_screen) {
-            if (!_WGT->enabled && _WGT == _focus_widget) _focus_widget = 0;
-            _set_update_redraw(_WGT);
-        }
-    }
-
-    if (_WGT->opaque_changed) {
-        _WGT->opaque_changed = 0;
-        if (_WGT->on_screen) _set_update_redraw(_WGT);
-    }
-
-    if (_WGT->translucency_changed) {
-        _WGT->translucency_changed = 0;
-        if (_WGT->on_screen) _set_update_redraw(_WGT);
-    }
-
-    if (_WGT->output_type_changed) {
-        _WGT->output_type_changed = 0;
-        if (_WGT->on_screen) _set_update_redraw(_WGT);
-    }
-}
-
-
-//clone widget
-AWE_OBJECT *_widget_clone(AWE_OBJECT *wgt)
-{
-    return awe_create_object(&awe_widget_class, 
-                             AWE_ID_X           , _WGT->x           ,
-                             AWE_ID_Y           , _WGT->y           ,
-                             AWE_ID_WIDTH       , _WGT->width       ,
-                             AWE_ID_HEIGHT      , _WGT->height      ,
-                             AWE_ID_VISIBLE     , _WGT->visible     ,
-                             AWE_ID_ENABLED     , _WGT->enabled     ,
-                             AWE_ID_OPAQUE      , _WGT->opaque      ,
-                             AWE_ID_TRANSLUCENCY, _WGT->translucency,
-                             AWE_ID_OUTPUT_TYPE , _WGT->output_type ,
-                             0);
-}
-
-
-//paint widget
-void _widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *update_rect)
-{
-    int back_color = makecol(255, 255, 255);
-    int fore_color = wgt->enabled_tree ? makecol(0, 0, 0) : makecol(128, 128, 128);
-    int text_color = fore_color;
-    int text_x;
-
-    solid_mode();
-    if (wgt->opaque) awe_fill_rect_s(canvas, 0, 0, _WGT->width, _WGT->height, back_color);
-    awe_draw_rect_s(canvas, 0, 0, _WGT->width, _WGT->height, fore_color);
-    text_x = awe_draw_text(canvas, font, wgt->object.pclass->pnamespace, 2, 2, text_color, -1);
-    text_x = awe_draw_text(canvas, font, "::", text_x, 2, text_color, -1);
-    awe_draw_text(canvas, font, wgt->object.pclass->name, text_x, 2, text_color, -1);
-    if (_focus_widget == wgt) awe_draw_rect_s(canvas, 1, 1, _WGT->width - 2, _WGT->height - 2, fore_color);
-}
-
-
-//get focus
-int _widget_get_focus(AWE_WIDGET *wgt)
-{
-    int r;
-
-    if (!wgt->on_screen || !wgt->enabled_tree) return 0;
-    if (wgt == _focus_widget) return 1;
-    if (_focus_widget) {
-        _DO_R(_focus_widget, loose_focus, (_focus_widget), r, 1);
-        if (!r) return 0;
-    }
-    _focus_widget = wgt;
-    _set_update_redraw(wgt);
-    return 1;
-}
-
-
-//loose focus
-int _widget_loose_focus(AWE_WIDGET *wgt)
-{
-    if (wgt != _focus_widget) return 0;
-    _focus_widget = 0;
-    _set_update_redraw(wgt);
-    return 1;
-}
-
-
-//begin display
-void _widget_begin_display(AWE_WIDGET *wgt)
-{
-    AWE_WIDGET *child;
-
-    for(child = _FIRST(wgt); child; child = _NEXT(child)) {
-        _DO(child, begin_display, (child));
-    }
-}
-
-
-//end display
-void _widget_end_display(AWE_WIDGET *wgt)
-{
-    AWE_WIDGET *child;
-
-    for(child = _FIRST(wgt); child; child = _NEXT(child)) {
-        _DO(child, end_display, (child));
-    }
-}
-
-
-//insert child
-int _widget_insert_widget(AWE_WIDGET *wgt, AWE_WIDGET *child, int z_order)
-{
-    //check if widget can be inserted
-    if (child == wgt || 
-        child->parent || 
-        child->on_screen || 
-        child == _root_widget ||
-        awe_is_ancestor_widget(child, wgt))
-        return 0;
-
-    //insert widget
-    _insert_widget(wgt, child, z_order);
-    child->parent = wgt;
-    wgt->children_count++;
-
-    //set the enabled tree flag
-    _set_enabled_tree(wgt);
-
-    //update screen
-    if (wgt->on_screen) {
-        _set_on_screen(child);
-        _set_update_geometry(child);
-        _DO(child, begin_display, (child));
-    }
-
-    return 1;
-}
-
-
-//remove child
-int _widget_remove_widget(AWE_WIDGET *wgt, AWE_WIDGET *child)
-{
-    //check if widget can be removed
-    if (child->parent != wgt) return 0;
-
-    //remove
-    awe_list_remove(&wgt->children, &child->node.node);
-    child->parent = 0;
-    wgt->children_count--;
-
-    //set the enabled tree flag
-    _set_enabled_tree(wgt);
-
-    //update screen
-    if (wgt->on_screen) {
-        if (child->drawable) {
-            if (_is_trans(wgt)) _set_redraw_background(wgt, &child->clip);
-            _set_redraw(wgt, &child->clip);
-            _set_redraw_foreground(wgt, &child->clip);
-        }
-        _clean_up_widget(child);
-        _DO(child, end_display, (child));
-    }
-
-    return 1;
-}
-
-
 //output type enumeration
 static AWE_CLASS_ENUMERATION _output_type_enum[] = {
     {"AWE_WIDGET_OUTPUT_DIRECT"       , AWE_WIDGET_OUTPUT_DIRECT       },
@@ -1018,11 +820,11 @@ static AWE_CLASS_PROPERTY _widget_properties[] = {
 //widget vtable
 static AWE_WIDGET_VTABLE _widget_vtable = {
     {
-        _widget_get_interface,
-        _widget_properties_changed,
-        _widget_clone
+        awe_widget_get_interface,
+        awe_widget_properties_changed,
+        awe_widget_clone
     },
-    _widget_paint,
+    awe_widget_paint,
     0,
     0,
     0,
@@ -1032,12 +834,12 @@ static AWE_WIDGET_VTABLE _widget_vtable = {
     0,
     0,
     0,
-    _widget_get_focus,
-    _widget_loose_focus,
-    _widget_begin_display,
-    _widget_end_display,
-    _widget_insert_widget,
-    _widget_remove_widget,
+    awe_widget_get_focus,
+    awe_widget_loose_focus,
+    awe_widget_begin_display,
+    awe_widget_end_display,
+    awe_widget_insert_widget,
+    awe_widget_remove_widget,
     0,
     0,
     0,
@@ -1120,6 +922,204 @@ AWE_CLASS awe_widget_class = {
     _widget_constructor,
     _widget_destructor
 };
+
+
+//returns an interface
+void *awe_widget_get_interface(AWE_OBJECT *wgt, const char *name, const char *pnamespace)
+{
+    if (!strcmp(pnamespace, AWE_ID_AWE)) {
+        if (!strcmp(name, AWE_ID_WIDGET)) return wgt->pclass->vtable;
+    }
+    return awe_object_class.vtable->get_interface(wgt, name, pnamespace);
+}
+
+
+//properties changed
+void awe_widget_properties_changed(AWE_OBJECT *wgt)
+{
+    if (_WGT->geometry_changed) {
+        _WGT->geometry_changed = 0;
+        if (_WGT->on_screen) {
+            _set_update_geometry(_WGT);
+            _DO(wgt, geometry_changed, (_WGT, _WGT->x, _WGT->y, _WGT->width, _WGT->height));
+        }
+    }
+
+    if (_WGT->visible_changed) {
+        _WGT->visible_changed = 0;
+        if (_WGT->on_screen) {
+            _set_update_drawable(_WGT);
+            _DO(wgt, visible_changed, (_WGT, _WGT->visible));
+        }
+    }
+
+    if (_WGT->enabled_changed) {
+        _WGT->enabled_changed = 0;
+        _set_enabled_tree(_WGT);
+        if (_WGT->on_screen) {
+            if (!_WGT->enabled && _WGT == _focus_widget) _focus_widget = 0;
+            _set_update_redraw(_WGT);
+        }
+    }
+
+    if (_WGT->opaque_changed) {
+        _WGT->opaque_changed = 0;
+        if (_WGT->on_screen) _set_update_redraw(_WGT);
+    }
+
+    if (_WGT->translucency_changed) {
+        _WGT->translucency_changed = 0;
+        if (_WGT->on_screen) _set_update_redraw(_WGT);
+    }
+
+    if (_WGT->output_type_changed) {
+        _WGT->output_type_changed = 0;
+        if (_WGT->on_screen) _set_update_redraw(_WGT);
+    }
+}
+
+
+//clone widget
+AWE_OBJECT *awe_widget_clone(AWE_OBJECT *wgt)
+{
+    return awe_create_object(&awe_widget_class, 
+        AWE_ID_X           , _WGT->x           ,
+        AWE_ID_Y           , _WGT->y           ,
+        AWE_ID_WIDTH       , _WGT->width       ,
+        AWE_ID_HEIGHT      , _WGT->height      ,
+        AWE_ID_VISIBLE     , _WGT->visible     ,
+        AWE_ID_ENABLED     , _WGT->enabled     ,
+        AWE_ID_OPAQUE      , _WGT->opaque      ,
+        AWE_ID_TRANSLUCENCY, _WGT->translucency,
+        AWE_ID_OUTPUT_TYPE , _WGT->output_type ,
+        0);
+}
+
+
+//paint widget
+void awe_widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *update_rect)
+{
+    int back_color = makecol(255, 255, 255);
+    int fore_color = wgt->enabled_tree ? makecol(0, 0, 0) : makecol(128, 128, 128);
+    int text_color = fore_color;
+    int text_x;
+
+    solid_mode();
+    if (wgt->opaque) awe_fill_rect_s(canvas, 0, 0, _WGT->width, _WGT->height, back_color);
+    awe_draw_rect_s(canvas, 0, 0, _WGT->width, _WGT->height, fore_color);
+    text_x = awe_draw_text(canvas, font, wgt->object.pclass->pnamespace, 2, 2, text_color, -1);
+    text_x = awe_draw_text(canvas, font, "::", text_x, 2, text_color, -1);
+    awe_draw_text(canvas, font, wgt->object.pclass->name, text_x, 2, text_color, -1);
+    if (_focus_widget == wgt) awe_draw_rect_s(canvas, 1, 1, _WGT->width - 2, _WGT->height - 2, fore_color);
+}
+
+
+//get focus
+int awe_widget_get_focus(AWE_WIDGET *wgt)
+{
+    int r;
+
+    if (!wgt->on_screen || !wgt->enabled_tree) return 0;
+    if (wgt == _focus_widget) return 1;
+    if (_focus_widget) {
+        _DO_R(_focus_widget, loose_focus, (_focus_widget), r, 1);
+        if (!r) return 0;
+    }
+    _focus_widget = wgt;
+    _set_update_redraw(wgt);
+    return 1;
+}
+
+
+//loose focus
+int awe_widget_loose_focus(AWE_WIDGET *wgt)
+{
+    if (wgt != _focus_widget) return 0;
+    _focus_widget = 0;
+    _set_update_redraw(wgt);
+    return 1;
+}
+
+
+//begin display
+void awe_widget_begin_display(AWE_WIDGET *wgt)
+{
+    AWE_WIDGET *child;
+
+    for(child = _FIRST(wgt); child; child = _NEXT(child)) {
+        _DO(child, begin_display, (child));
+    }
+}
+
+
+//end display
+void awe_widget_end_display(AWE_WIDGET *wgt)
+{
+    AWE_WIDGET *child;
+
+    for(child = _FIRST(wgt); child; child = _NEXT(child)) {
+        _DO(child, end_display, (child));
+    }
+}
+
+
+//insert child
+int awe_widget_insert_widget(AWE_WIDGET *wgt, AWE_WIDGET *child, int z_order)
+{
+    //check if widget can be inserted
+    if (child == wgt || 
+        child->parent || 
+        child->on_screen || 
+        child == _root_widget ||
+        awe_is_ancestor_widget(child, wgt))
+        return 0;
+
+    //insert widget
+    _insert_widget(wgt, child, z_order);
+    child->parent = wgt;
+    wgt->children_count++;
+
+    //set the enabled tree flag
+    _set_enabled_tree(wgt);
+
+    //update screen
+    if (wgt->on_screen) {
+        _set_on_screen(child);
+        _set_update_geometry(child);
+        _DO(child, begin_display, (child));
+    }
+
+    return 1;
+}
+
+
+//remove child
+int awe_widget_remove_widget(AWE_WIDGET *wgt, AWE_WIDGET *child)
+{
+    //check if widget can be removed
+    if (child->parent != wgt) return 0;
+
+    //remove
+    awe_list_remove(&wgt->children, &child->node.node);
+    child->parent = 0;
+    wgt->children_count--;
+
+    //set the enabled tree flag
+    _set_enabled_tree(wgt);
+
+    //update screen
+    if (wgt->on_screen) {
+        if (child->drawable) {
+            if (_is_trans(wgt)) _set_redraw_background(wgt, &child->clip);
+            _set_redraw(wgt, &child->clip);
+            _set_redraw_foreground(wgt, &child->clip);
+        }
+        _clean_up_widget(child);
+        _DO(child, end_display, (child));
+    }
+
+    return 1;
+}
 
 
 //casts 'widget' to 'object'

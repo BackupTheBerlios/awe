@@ -38,6 +38,10 @@ struct AWE_CLASS;
 /*@{*/
 
 
+///AWE namespace name
+#define AWE_ID_AWE              "AWE"
+
+
 /** class registry event type; passed when a registry hook procedure is called.
  */
 enum AWE_CLASS_REGISTRY_EVENT_TYPE {
@@ -52,8 +56,8 @@ typedef enum AWE_CLASS_REGISTRY_EVENT_TYPE AWE_CLASS_REGISTRY_EVENT_TYPE;
 
 /** macro to call a method of an object; the method is called if it exists
     @param OBJ object to get the interface of
-    @param NAME name of the class
-    @param NAMESPACE namespace of the class
+    @param NAME name of the interface
+    @param NAMESPACE namespace of the interface
     @param INTERFACE interface struct name
     @param METHOD method member name 
     @param PARAMS parameters
@@ -66,8 +70,8 @@ typedef enum AWE_CLASS_REGISTRY_EVENT_TYPE AWE_CLASS_REGISTRY_EVENT_TYPE;
 
 /** macro to call a method of an object that has a result other than void; the method is called if it exists
     @param OBJ object to get the interface of
-    @param NAME name of the class
-    @param NAMESPACE namespace of the class
+    @param NAME name of the interface
+    @param NAMESPACE namespace of the interface
     @param INTERFACE interface struct name
     @param METHOD method member name 
     @param PARAMS parameters
@@ -295,6 +299,22 @@ typedef int (*AWE_CLASS_REGISTRY_ENUM_PROC)(AWE_CLASS *pclass, void *data);
     this variable if the class has no other super classes.
  */
 extern AWE_CLASS awe_object_class;
+
+
+/** the default implementation of the get_interface method
+    @param obj object to be called
+    @param name name of the interface
+    @param pnamespace namespace of the interface
+    @return pointer to interface or null if the interface is not supported
+ */
+void *awe_object_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace);
+
+
+/** the default implementation of the clone method
+    @param obj object to clone
+    @return the cloned object
+ */
+AWE_OBJECT *awe_object_clone(AWE_OBJECT *obj);
 
 
 //finds a signal from name

@@ -164,33 +164,12 @@ static _PROC_NODE *_find_registry_proc(AWE_CLASS_REGISTRY_PROC proc)
 }
 
 
-static void *_awe_object_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace);
-static AWE_OBJECT *_awe_object_clone(AWE_OBJECT *obj);
-
-
 //object vtable
 static AWE_OBJECT_VTABLE _awe_object_vtable = {
-    _awe_object_get_interface,
+    awe_object_get_interface,
     NULL,
-    _awe_object_clone
+    awe_object_clone
 };
-
-
-//returns interface
-static void *_awe_object_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace)
-{
-    if (!strcmp(pnamespace, "AWE")) {
-        if (!strcmp(name, "Object")) return &_awe_object_vtable;
-    }
-    return 0;
-}
-
-
-//clones an object
-static AWE_OBJECT *_awe_object_clone(AWE_OBJECT *obj)
-{
-    return awe_create_object(&awe_object_class, NULL);
-}
 
 
 //calls constructors
@@ -234,6 +213,23 @@ AWE_CLASS awe_object_class = {
     NULL,                    //constructor
     NULL                     //destructor
 };
+
+
+//returns interface
+void *awe_object_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace)
+{
+    if (!strcmp(pnamespace, "AWE")) {
+        if (!strcmp(name, "Object")) return &_awe_object_vtable;
+    }
+    return 0;
+}
+
+
+//clones an object
+AWE_OBJECT *awe_object_clone(AWE_OBJECT *obj)
+{
+    return awe_create_object(&awe_object_class, NULL);
+}
 
 
 //finds a class from name and namespace
@@ -506,7 +502,7 @@ int awe_get_object_properties(AWE_OBJECT *obj, ...)
     int result;
 
     va_start(params, obj);
-    result = awe_get_object_properties(obj, params);
+    result = awe_get_object_properties_va(obj, params);
     va_end(params);
     return result;
 }

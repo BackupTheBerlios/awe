@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="awe" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="drag_and_drop" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=awe - Win32 Debug
+CFG=drag_and_drop - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "awe.mak".
+!MESSAGE NMAKE /f "drag_and_drop.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "awe.mak" CFG="awe - Win32 Debug"
+!MESSAGE NMAKE /f "drag_and_drop.mak" CFG="drag_and_drop - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "awe - Win32 Release" (based on "Win32 (x86) Application")
-!MESSAGE "awe - Win32 Debug" (based on "Win32 (x86) Application")
+!MESSAGE "drag_and_drop - Win32 Release" (based on "Win32 (x86) Application")
+!MESSAGE "drag_and_drop - Win32 Debug" (based on "Win32 (x86) Application")
 !MESSAGE 
 
 # Begin Project
@@ -29,7 +29,7 @@ CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "awe - Win32 Release"
+!IF  "$(CFG)" == "drag_and_drop - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -54,7 +54,7 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 
-!ELSEIF  "$(CFG)" == "awe - Win32 Debug"
+!ELSEIF  "$(CFG)" == "drag_and_drop - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -68,7 +68,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../../include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUGMODE" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../../../../include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUGMODE" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x408 /d "_DEBUG"
@@ -84,58 +84,62 @@ LINK32=link.exe
 
 # Begin Target
 
-# Name "awe - Win32 Release"
-# Name "awe - Win32 Debug"
+# Name "drag_and_drop - Win32 Release"
+# Name "drag_and_drop - Win32 Debug"
 # Begin Group "include"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\include\com.h
+SOURCE=..\..\..\..\include\com.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\draganddrop.h
+SOURCE=..\..\..\..\include\dataobjects.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\event.h
+SOURCE=..\..\..\..\include\draganddrop.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\font.h
+SOURCE=..\..\..\..\include\event.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\gdi.h
+SOURCE=..\..\..\..\include\font.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\input.h
+SOURCE=..\..\..\..\include\gdi.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\linkedlist.h
+SOURCE=..\..\..\..\include\input.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\mouse.h
+SOURCE=..\..\..\..\include\linkedlist.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\rect.h
+SOURCE=..\..\..\..\include\mouse.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\skin.h
+SOURCE=..\..\..\..\include\rect.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\symbintree.h
+SOURCE=..\..\..\..\include\skin.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\include\widget.h
+SOURCE=..\..\..\..\include\symbintree.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\include\widget.h
 # End Source File
 # End Group
 # Begin Group "src"
@@ -143,51 +147,55 @@ SOURCE=..\..\include\widget.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\src\com.c
+SOURCE=..\..\..\..\src\com.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\draganddrop.c
+SOURCE=..\..\..\..\src\dataobjects.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\event.c
+SOURCE=..\..\..\..\src\draganddrop.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\font.c
+SOURCE=..\..\..\..\src\event.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\gdi.c
+SOURCE=..\..\..\..\src\font.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\input.c
+SOURCE=..\..\..\..\src\gdi.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\input_win32.c
+SOURCE=..\..\..\..\src\input.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\linkedlist.c
+SOURCE=..\..\..\..\src\input_win32.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\mouse.c
+SOURCE=..\..\..\..\src\linkedlist.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\skin.c
+SOURCE=..\..\..\..\src\mouse.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\symbintree.c
+SOURCE=..\..\..\..\src\skin.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\widget.c
+SOURCE=..\..\..\..\src\symbintree.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\widget.c
 # End Source File
 # End Group
 # Begin Source File
