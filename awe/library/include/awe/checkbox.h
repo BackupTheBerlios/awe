@@ -26,6 +26,14 @@
 #define AWE_ID_CHECKBOX                 "Checkbox"
 
 
+///background color
+#define AWE_ID_BACKGROUND               "Background"
+
+
+///text direction
+#define AWE_ID_TEXT_DIRECTION           "TextDirection"
+
+
 ///checkbox checked event
 #define AWE_ID_CHECKBOX_CHECKED         "CheckboxChecked"
 
@@ -36,6 +44,17 @@
 
 ///checkbox held down event
 #define AWE_ID_CHECKBOX_HELD_DOWN       "CheckboxHeldDown"
+
+
+///text direction
+enum AWE_TEXT_DIRECTION {
+    ///text drawn on the left
+    AWE_TEXT_DIRECTION_LEFT,
+
+    ///text drawn on the right
+    AWE_TEXT_DIRECTION_RIGHT,
+};
+typedef enum AWE_TEXT_DIRECTION AWE_TEXT_DIRECTION;
 
 
 ///checkbox
@@ -53,6 +72,10 @@ extern AWE_PUSH_BUTTON_VTABLE awe_checkbox_vtable;
 
 ///checkbox class
 extern AWE_CLASS awe_checkbox_class;
+
+
+///clones a checkbox
+extern AWE_OBJECT *awe_checkbox_clone(AWE_OBJECT *wgt);
 
 
 void awe_checkbox_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip);

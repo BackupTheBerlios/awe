@@ -26,6 +26,10 @@
 #define AWE_ID_TOGGLE_BUTTON            "ToggleButton"
 
 
+///toggled state
+#define AWE_ID_TOGGLED			"Toggled"
+
+
 ///toggle button released event name
 #define AWE_ID_TOGGLE_BUTTON_RELEASED   "ToggleButtonReleased"
 
@@ -52,6 +56,10 @@ extern AWE_PUSH_BUTTON_VTABLE awe_toggle_button_vtable;
 
 ///toggle button class
 extern AWE_CLASS awe_toggle_button_class;
+
+
+///clones a toggle button
+extern AWE_OBJECT *awe_toggle_button_clone(AWE_OBJECT *wgt);
 
 
 ///toggle button down event

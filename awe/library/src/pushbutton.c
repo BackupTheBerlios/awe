@@ -17,6 +17,9 @@ static RGB _edge_color_bottom_right = { 128, 128, 128, 0 };
 static int _margin[4]               = { 8  , 8  , 8  , 8 };
 
 
+#define PUSH_BUTTON_DEFAULT_BORDER  3
+
+
 //used in loading skins /* Not implemented */
 /*static char *_push_button_texture[AWE_PUSH_BUTTON_NUM_TEXTURES] = {
     "Enabled",
@@ -44,6 +47,7 @@ static void _push_button_constructor(AWE_OBJECT *obj)
     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
     tmp->text = ustrdup(empty_string);
     tmp->font = font;
+    tmp->border = PUSH_BUTTON_DEFAULT_BORDER;
     memcpy(&tmp->margin, &_margin, sizeof(_margin));
     for(i = 0; i < AWE_PUSH_BUTTON_NUM_TEXTURES; i++){
         for(j = 0; j < AWE_PUSH_BUTTON_NUM_FACES; j++){
@@ -81,16 +85,14 @@ static void _push_button_constructor(AWE_OBJECT *obj)
 //destructor
 static void _push_button_destructor(AWE_OBJECT *obj)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    free(tmp->text);
+    free(((AWE_PUSH_BUTTON *)obj)->text);
 }
 
 
 //gets the text
 static void _push_button_get_text(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(const char **)data = tmp->text;
+    *(const char **)data = ((AWE_PUSH_BUTTON *)obj)->text;
 }
 
 
@@ -98,894 +100,804 @@ static void _push_button_get_text(AWE_OBJECT *obj, void *data)
 static void _push_button_set_text(AWE_OBJECT *obj, void *data)
 {
     const char *new_text = *(const char **)data;
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    free(tmp->text);
-    tmp->text = ustrdup(new_text ? new_text : empty_string);
-    awe_set_widget_dirty(&tmp->widget);
+    free(((AWE_PUSH_BUTTON *)obj)->text);
+    ((AWE_PUSH_BUTTON *)obj)->text = ustrdup(new_text ? new_text : empty_string);
+    awe_set_widget_dirty((AWE_WIDGET*)obj);
 }
 
 
 //gets the font
 static void _push_button_get_font(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(FONT **)data = tmp->font;
+    *(FONT **)data = ((AWE_PUSH_BUTTON *)obj)->font;
 }
 
 
 //sets the font
 static void _push_button_set_font(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->font = *(FONT **)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->font = *(FONT **)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bitmap
 static void _push_button_get_bitmap(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(BITMAP **)data = tmp->bitmap;
+    *(BITMAP **)data = ((AWE_PUSH_BUTTON *)obj)->bitmap;
 }
 
 
 //sets the bitmap
 static void _push_button_set_bitmap(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->bitmap = *(BITMAP **)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->bitmap = *(BITMAP **)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bitmap direction
 static void _push_button_get_bitmap_dir(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(int *)data = tmp->bitmap_dir;
+    *(int *)data = ((AWE_PUSH_BUTTON *)obj)->bitmap_dir;
 }
 
 
 //sets the bitmap direction
 static void _push_button_set_bitmap_dir(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->bitmap_dir = *(int *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->bitmap_dir = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top margin
 static void _push_button_get_margin_top(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(int *)data = tmp->margin.top;
+    *(int *)data = ((AWE_PUSH_BUTTON *)obj)->margin.top;
 }
 
 
 //sets the top margin
 static void _push_button_set_margin_top(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->margin.top = *(int *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->margin.top = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the left margin
 static void _push_button_get_margin_left(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(int *)data = tmp->margin.left;
+    *(int *)data = ((AWE_PUSH_BUTTON *)obj)->margin.left;
 }
 
 
 //sets the left margin
 static void _push_button_set_margin_left(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->margin.left = *(int *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->margin.left = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the right margin
 static void _push_button_get_margin_right(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(int *)data = tmp->margin.right;
+    *(int *)data = ((AWE_PUSH_BUTTON *)obj)->margin.right;
 }
 
 
 //sets the right margin
 static void _push_button_set_margin_right(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->margin.right = *(int *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->margin.right = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom margin
 static void _push_button_get_margin_bottom(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(int *)data = tmp->margin.bottom;
+    *(int *)data = ((AWE_PUSH_BUTTON *)obj)->margin.bottom;
 }
 
 
 //sets the bottom margin
 static void _push_button_set_margin_bottom(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->margin.bottom = *(int *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->margin.bottom = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
+}
+
+
+//gets the border width
+static void _push_button_get_border(AWE_OBJECT *obj, void *data)
+{
+    *(short *)data = ((AWE_PUSH_BUTTON *)obj)->border;
+}
+
+
+//sets the border width
+static void _push_button_set_border(AWE_OBJECT *obj, void *data)
+{
+    ((AWE_PUSH_BUTTON *)obj)->border = *(short *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left enabled face color
 static void _push_button_get_face_color_top_left_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
 }
 
 
 //sets the top left enabled face color
 static void _push_button_set_face_color_top_left_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top right enabled face color
 static void _push_button_get_face_color_top_right_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
 }
 
 
 //sets the top right enabled face color
 static void _push_button_set_face_color_top_right_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom left enabled face color
 static void _push_button_get_face_color_bottom_left_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
 }
 
 
 //sets the bottom left enabled face color
 static void _push_button_set_face_color_bottom_left_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right enabled face color
 static void _push_button_get_face_color_bottom_right_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right enabled face color
 static void _push_button_set_face_color_bottom_right_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left disabled face color
 static void _push_button_get_face_color_top_left_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
 }
 
 
 //sets the top left disabled face color
 static void _push_button_set_face_color_top_left_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top right disabled face color
 static void _push_button_get_face_color_top_right_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT];
 }
 
 
 //sets the top right disabled face color
 static void _push_button_set_face_color_top_right_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom left disabled face color
 static void _push_button_get_face_color_bottom_left_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
 }
 
 
 //sets the bottom left disabled face color
 static void _push_button_set_face_color_bottom_left_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right disabled face color
 static void _push_button_get_face_color_bottom_right_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right disabled face color
 static void _push_button_set_face_color_bottom_right_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left pressed face color
 static void _push_button_get_face_color_top_left_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
 }
 
 
 //sets the top left pressed face color
 static void _push_button_set_face_color_top_left_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top right pressed face color
 static void _push_button_get_face_color_top_right_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT];
 }
 
 
 //sets the top right pressed face color
 static void _push_button_set_face_color_top_right_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom left pressed face color
 static void _push_button_get_face_color_bottom_left_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
 }
 
 
 //sets the bottom left pressed face color
 static void _push_button_set_face_color_bottom_left_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right pressed face color
 static void _push_button_get_face_color_bottom_right_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right pressed face color
 static void _push_button_set_face_color_bottom_right_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left highlighted face color
 static void _push_button_get_face_color_top_left_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
 }
 
 
 //sets the top left highlighted face color
 static void _push_button_set_face_color_top_left_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top right highlighted face color
 static void _push_button_get_face_color_top_right_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT];
 }
 
 
 //sets the top right highlighted face color
 static void _push_button_set_face_color_top_right_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom left highlighted face color
 static void _push_button_get_face_color_bottom_left_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
 }
 
 
 //sets the bottom left highlighted face color
 static void _push_button_set_face_color_bottom_left_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right highlighted face color
 static void _push_button_get_face_color_bottom_right_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right highlighted face color
 static void _push_button_set_face_color_bottom_right_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left focused face color
 static void _push_button_get_face_color_top_left_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT];
 }
 
 
 //sets the top left focused face color
 static void _push_button_set_face_color_top_left_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top right focused face color
 static void _push_button_get_face_color_top_right_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT];
 }
 
 
 //sets the top right focused face color
 static void _push_button_set_face_color_top_right_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom left focused face color
 static void _push_button_get_face_color_bottom_left_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT];
 }
 
 
 //sets the bottom left focused face color
 static void _push_button_set_face_color_bottom_left_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right focused face color
 static void _push_button_get_face_color_bottom_right_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right focused face color
 static void _push_button_set_face_color_bottom_right_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left edge color
 static void _push_button_get_edge_color_top_left_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
 }
 
 
 //sets the top left edge color
 static void _push_button_set_edge_color_top_left_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right edge color
 static void _push_button_get_edge_color_bottom_right_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right edge color
 static void _push_button_set_edge_color_bottom_right_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left edge color
 static void _push_button_get_edge_color_top_left_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
 }
 
 
 //sets the top left edge color
 static void _push_button_set_edge_color_top_left_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right edge color
 static void _push_button_get_edge_color_bottom_right_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right edge color
 static void _push_button_set_edge_color_bottom_right_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left edge color
 static void _push_button_get_edge_color_top_left_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
 }
 
 
 //sets the top left edge color
 static void _push_button_set_edge_color_top_left_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right edge color
 static void _push_button_get_edge_color_bottom_right_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right edge color
 static void _push_button_set_edge_color_bottom_right_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left edge color
 static void _push_button_get_edge_color_top_left_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
 }
 
 
 //sets the top left edge color
 static void _push_button_set_edge_color_top_left_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right edge color
 static void _push_button_get_edge_color_bottom_right_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right edge color
 static void _push_button_set_edge_color_bottom_right_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the top left edge color
 static void _push_button_get_edge_color_top_left_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT];
 }
 
 
 //sets the top left edge color
 static void _push_button_set_edge_color_top_left_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the bottom right edge color
 static void _push_button_get_edge_color_bottom_right_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT];
 }
 
 
 //sets the bottom right edge color
 static void _push_button_set_edge_color_bottom_right_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT] = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the enabled font color
 static void _push_button_get_font_color_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_col;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_col;
 }
 
 
 //sets the enabled font color
 static void _push_button_set_font_color_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_col = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_col = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the disabled font color
 static void _push_button_get_font_color_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_col;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_col;
 }
 
 
 //sets the disabled font color
 static void _push_button_set_font_color_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_col = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_col = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the pressed font color
 static void _push_button_get_font_color_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_col;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_col;
 }
 
 
 //sets the pressed font color
 static void _push_button_set_font_color_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_col = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_col = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the highlighted font color
 static void _push_button_get_font_color_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_col;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_col;
 }
 
 
 //sets the highlighted font color
 static void _push_button_set_font_color_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_col = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_col = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the focused font color
 static void _push_button_get_font_color_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_col;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_col;
 }
 
 
 //sets the focused font color
 static void _push_button_set_font_color_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_col = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_col = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the enabled font color
 static void _push_button_get_font_shadow_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_sdw;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_sdw;
 }
 
 
 //sets the enabled font color
 static void _push_button_set_font_shadow_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_sdw = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_sdw = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the disabled font color
 static void _push_button_get_font_shadow_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_sdw;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_sdw;
 }
 
 
 //sets the disabled font color
 static void _push_button_set_font_shadow_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_sdw = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_sdw = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the pressed font color
 static void _push_button_get_font_shadow_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_sdw;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_sdw;
 }
 
 
 //sets the pressed font color
 static void _push_button_set_font_shadow_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_sdw = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_sdw = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the highlighted font color
 static void _push_button_get_font_shadow_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_sdw;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_sdw;
 }
 
 
 //sets the highlighted font color
 static void _push_button_set_font_shadow_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_sdw = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_sdw = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the focused font color
 static void _push_button_get_font_shadow_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(RGB *)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_sdw;
+    *(RGB *)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_sdw;
 }
 
 
 //sets the focused font color
 static void _push_button_set_font_shadow_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_sdw = *(RGB *)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_sdw = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the enabled texture
 static void _push_button_get_texture_enabled(AWE_OBJECT *obj, void *data)
 {
-     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-     *(AWE_TEXTURE **)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].texture;
+     *(AWE_TEXTURE **)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].texture;
 }
 
 
 //sets the enabled texture
 static void _push_button_set_texture_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].texture = *(AWE_TEXTURE **)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].texture = *(AWE_TEXTURE **)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the disabled texture
 static void _push_button_get_texture_disabled(AWE_OBJECT *obj, void *data)
 {
-     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-     *(AWE_TEXTURE **)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].texture;
+     *(AWE_TEXTURE **)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].texture;
 }
 
 
 //sets the disabled texture
 static void _push_button_set_texture_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].texture = *(AWE_TEXTURE **)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].texture = *(AWE_TEXTURE **)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the pressed texture
 static void _push_button_get_texture_pressed(AWE_OBJECT *obj, void *data)
 {
-     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-     *(AWE_TEXTURE **)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].texture;
+     *(AWE_TEXTURE **)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].texture;
 }
 
 
 //sets the pressed texture
 static void _push_button_set_texture_pressed(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].texture = *(AWE_TEXTURE **)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].texture = *(AWE_TEXTURE **)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the highlighted texture
 static void _push_button_get_texture_highlighted(AWE_OBJECT *obj, void *data)
 {
-     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-     *(AWE_TEXTURE **)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].texture;
+     *(AWE_TEXTURE **)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].texture;
 }
 
 
 //sets the highlighted texture
 static void _push_button_set_texture_highlighted(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].texture = *(AWE_TEXTURE **)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].texture = *(AWE_TEXTURE **)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the focused texture
 static void _push_button_get_texture_focused(AWE_OBJECT *obj, void *data)
 {
-     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-     *(AWE_TEXTURE **)data = tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].texture;
+     *(AWE_TEXTURE **)data = ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].texture;
 }
 
 
 //sets the focused texture
 static void _push_button_set_texture_focused(AWE_OBJECT *obj, void *data)
 {
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].texture = *(AWE_TEXTURE **)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_PUSH_BUTTON *)obj)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].texture = *(AWE_TEXTURE **)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
@@ -999,6 +911,7 @@ static AWE_CLASS_PROPERTY _push_button_properties[] = {
     { AWE_ID_MARGIN_LEFT, "int", sizeof(int), _push_button_get_margin_left, _push_button_set_margin_left, 0 },
     { AWE_ID_MARGIN_RIGHT, "int", sizeof(int), _push_button_get_margin_right, _push_button_set_margin_right, 0 },
     { AWE_ID_MARGIN_BOTTOM, "int", sizeof(int), _push_button_get_margin_bottom, _push_button_set_margin_bottom, 0 },
+    { AWE_ID_BORDER, "short", sizeof(short), _push_button_get_border, _push_button_set_border, 0 },
     { AWE_ID_FACE_COLOR_TOP_LEFT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_top_left_enabled, _push_button_set_face_color_top_left_enabled, 0 },
     { AWE_ID_FACE_COLOR_TOP_RIGHT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_top_right_enabled, _push_button_set_face_color_top_right_enabled, 0 },
     { AWE_ID_FACE_COLOR_BOTTOM_LEFT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_bottom_left_enabled, _push_button_set_face_color_bottom_left_enabled, 0 },
@@ -1130,27 +1043,19 @@ void *awe_push_button_get_interface(AWE_OBJECT *obj, const char *name, const cha
 }
 
 
-//clone widget
+//clone push_button
 AWE_OBJECT *awe_push_button_clone(AWE_OBJECT *wgt)
 {
-    return awe_create_object(&awe_push_button_class, 
-        AWE_ID_X                                  , ((AWE_WIDGET *)wgt)->x                                                                                            ,
-        AWE_ID_Y                                  , ((AWE_WIDGET *)wgt)->y                                                                                            ,
-        AWE_ID_WIDTH                              , ((AWE_WIDGET *)wgt)->width                                                                                        ,
-        AWE_ID_HEIGHT                             , ((AWE_WIDGET *)wgt)->height                                                                                       ,
-        AWE_ID_VISIBLE                            , ((AWE_WIDGET *)wgt)->visible                                                                                      ,
-        AWE_ID_ENABLED                            , ((AWE_WIDGET *)wgt)->enabled                                                                                      ,
-        AWE_ID_OPAQUE                             , ((AWE_WIDGET *)wgt)->opaque                                                                                       , 
-        AWE_ID_TRANSLUCENCY                       , ((AWE_WIDGET *)wgt)->translucency                                                                                 ,
-        AWE_ID_OUTPUT_TYPE                        , ((AWE_WIDGET *)wgt)->output_type                                                                                  ,
+    return awe_create_object(&awe_push_button_class,
         AWE_ID_TEXT                               , ((AWE_PUSH_BUTTON *)wgt)->text                                                                                    ,
         AWE_ID_FONT                               , ((AWE_PUSH_BUTTON *)wgt)->font                                                                                    ,
-        AWE_ID_BITMAP                             , ((AWE_PUSH_BUTTON *)wgt)->bitmap                                                                                    ,
-        AWE_ID_BITMAP_DIR                         , ((AWE_PUSH_BUTTON *)wgt)->bitmap_dir                                                                                ,
+        AWE_ID_BITMAP                             , ((AWE_PUSH_BUTTON *)wgt)->bitmap                                                                                  ,
+        AWE_ID_BITMAP_DIR                         , ((AWE_PUSH_BUTTON *)wgt)->bitmap_dir                                                                              ,
         AWE_ID_MARGIN_TOP                         , ((AWE_PUSH_BUTTON *)wgt)->margin.top                                                                              ,
         AWE_ID_MARGIN_LEFT                        , ((AWE_PUSH_BUTTON *)wgt)->margin.left                                                                             ,
         AWE_ID_MARGIN_RIGHT                       , ((AWE_PUSH_BUTTON *)wgt)->margin.right                                                                            ,
-        AWE_ID_MARGIN_BOTTOM                      , ((AWE_PUSH_BUTTON *)wgt)->margin.bottom                                                                           ,                                                                         
+        AWE_ID_MARGIN_BOTTOM                      , ((AWE_PUSH_BUTTON *)wgt)->margin.bottom                                                                           ,
+        AWE_ID_BORDER                             , ((AWE_PUSH_BUTTON *)wgt)->border                                                                                  ,
         AWE_ID_FONT_COLOR_ENABLED                 , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_col                                       ,
         AWE_ID_FONT_COLOR_DISABLED                , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_col                                      ,
         AWE_ID_FONT_COLOR_PRESSED                 , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_col                                       ,
@@ -1226,7 +1131,7 @@ void awe_push_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *
          awe_draw_texture_hor_s(canvas, btn->texture[state].texture, 0, 0, wgt->width, wgt->height);
     }
     else{
-        awe_fill_gradient_s(canvas, 3, 3, wgt->width - 6, wgt->height - 6, 
+        awe_fill_gradient_s(canvas, btn->border, btn->border, wgt->width - (btn->border * 2), wgt->height - (btn->border * 2), 
             AWE_MAKE_COLOR(btn->texture[state].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT]),
             AWE_MAKE_COLOR(btn->texture[state].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT]),
             AWE_MAKE_COLOR(btn->texture[state].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT]),
@@ -1235,7 +1140,7 @@ void awe_push_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *
         awe_draw_3d_rect_s(canvas, 0, 0, wgt->width, wgt->height, 
             AWE_MAKE_COLOR(btn->texture[state].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]),
             AWE_MAKE_COLOR(btn->texture[state].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]), 
-            3);
+            btn->border);
     }
 
     if(state == AWE_PUSH_BUTTON_TEXTURE_PRESSED){
@@ -1249,16 +1154,15 @@ void awe_push_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *
     awe_draw_gui_text(canvas, btn->font, btn->text, tx, ty, AWE_MAKE_COLOR(btn->texture[state].font_col), -1);
 
     if (awe_get_focus_widget() == wgt && state != AWE_PUSH_BUTTON_TEXTURE_DISABLED)
-        awe_draw_rect_pattern_s(canvas, 4, 4, wgt->width - 9, wgt->height - 9, AWE_MAKE_COLOR(btn->texture[state].font_col), AWE_PATTERN_DOT_DOT);
+        awe_draw_rect_pattern_s(canvas, btn->border + 1, btn->border + 1, wgt->width - (btn->border * 2) - 2, wgt->height - (btn->border * 2) - 2, AWE_MAKE_COLOR(btn->texture[state].font_col), AWE_PATTERN_DOT_DOT);
 }
 
 
 void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
-    btn->pressed = 1;
+    ((AWE_PUSH_BUTTON *)wgt)->pressed = 1;
     awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_PRESSED);
     awe_add_widget_timer(wgt, 0, 100);
     awe_set_widget_dirty(wgt);
@@ -1267,10 +1171,9 @@ void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 
 void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
     awe_leave_event_mode();
-    btn->pressed = 0;
-    btn->lostmouse = 0;
+    ((AWE_PUSH_BUTTON *)wgt)->pressed = 0;
+    ((AWE_PUSH_BUTTON *)wgt)->lostmouse = 0;
     if(awe_widget_has_mouse(wgt)){
         awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_ACTIVATED);
     }
@@ -1284,19 +1187,17 @@ void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 
 void awe_push_button_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
-    if(btn->lostmouse)
-       btn->pressed = 1;
+    if(((AWE_PUSH_BUTTON *)wgt)->lostmouse)
+       ((AWE_PUSH_BUTTON *)wgt)->pressed = 1;
     awe_set_widget_dirty(wgt);
 }
 
 
 void awe_push_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
-    if(btn->pressed){
-        btn->lostmouse = 1;
-        btn->pressed = 0;
+    if(((AWE_PUSH_BUTTON *)wgt)->pressed){
+        ((AWE_PUSH_BUTTON *)wgt)->lostmouse = 1;
+        ((AWE_PUSH_BUTTON *)wgt)->pressed = 0;
     }
     awe_set_widget_dirty(wgt);
 }
@@ -1304,8 +1205,7 @@ void awe_push_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event)
 
 int awe_push_button_key_press(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
-    const char *t = ustrchr(btn->text, '&');
+    const char *t = ustrchr(((AWE_PUSH_BUTTON *)wgt)->text, '&');
 
     if (!t) return 0;
     t += ucwidth('&');

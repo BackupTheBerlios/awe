@@ -232,6 +232,10 @@
 #define AWE_ID_MARGIN_BOTTOM                        "MarginBottom"
 
 
+///border property name
+#define AWE_ID_BORDER                               "Border"
+
+
 ///activated event name
 #define AWE_ID_PUSH_BUTTON_ACTIVATED                "PushButtonActivated"
 
@@ -303,14 +307,15 @@ typedef struct AWE_PUSH_BUTTON_STATE AWE_PUSH_BUTTON_STATE;
 ///push button
 struct AWE_PUSH_BUTTON {
     AWE_WIDGET widget;
-    int pressed:1;
-    int lostmouse:1;
-    char *text;
-    FONT *font;
-    BITMAP *bitmap;
-    int bitmap_dir:1;
     AWE_RECT margin;
     AWE_PUSH_BUTTON_STATE texture[AWE_PUSH_BUTTON_NUM_TEXTURES];
+    FONT *font;
+    BITMAP *bitmap;
+    char *text;
+    short border;
+    int pressed:1;
+    int lostmouse:1;
+    int bitmap_dir:1;
 };
 typedef struct AWE_PUSH_BUTTON AWE_PUSH_BUTTON;
 

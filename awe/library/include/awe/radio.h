@@ -68,6 +68,10 @@ extern AWE_RADIO_VTABLE awe_radio_vtable;
 extern AWE_CLASS awe_radio_class;
 
 
+///clone a radio button
+extern AWE_OBJECT *awe_radio_clone(AWE_OBJECT *wgt);
+
+
 void *awe_radio_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace);
 
 

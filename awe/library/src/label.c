@@ -28,16 +28,14 @@ static void _label_constructor(AWE_OBJECT *obj)
 //destructor
 static void _label_destructor(AWE_OBJECT *obj)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    free(tmp->text);
+    free(((AWE_LABEL *)obj)->text);
 }
 
 
 //gets the text
 static void _label_get_text(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    *(const char **)data = tmp->text;
+    *(const char **)data = ((AWE_LABEL *)obj)->text;
 }
 
 
@@ -45,95 +43,84 @@ static void _label_get_text(AWE_OBJECT *obj, void *data)
 static void _label_set_text(AWE_OBJECT *obj, void *data)
 {
     const char *new_text = *(const char **)data;
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    free(tmp->text);
-    tmp->text = ustrdup(new_text ? new_text : empty_string);
-    awe_set_widget_dirty(&tmp->widget);
+    free(((AWE_LABEL *)obj)->text);
+    ((AWE_LABEL *)obj)->text = ustrdup(new_text ? new_text : empty_string);
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the font
 static void _label_get_font(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    *(FONT **)data = tmp->font;
+    *(FONT **)data = ((AWE_LABEL *)obj)->font;
 }
 
 
 //sets the font
 static void _label_set_font(AWE_OBJECT *obj, void *data)
 { 
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    tmp->font = *(FONT **)data;
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_LABEL *)obj)->font = *(FONT **)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the enabled font color
 static void _label_get_font_color_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    *(RGB *)data = tmp->color[AWE_LABEL_ENABLED].font_col;
+    *(RGB *)data = ((AWE_LABEL *)obj)->color[AWE_LABEL_ENABLED].font_col;
 }
 
 
 //sets the enabled font color
 static void _label_set_font_color_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    memcpy(&tmp->color[AWE_LABEL_ENABLED].font_col, (RGB *)data, sizeof(RGB));
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_LABEL *)obj)->color[AWE_LABEL_ENABLED].font_col = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the disabled font color
 static void _label_get_font_color_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    *(RGB *)data = tmp->color[AWE_LABEL_DISABLED].font_col;
+    *(RGB *)data = ((AWE_LABEL *)obj)->color[AWE_LABEL_DISABLED].font_col;
 }
 
 
 //sets the disabled font color
 static void _label_set_font_color_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    memcpy(&tmp->color[AWE_LABEL_DISABLED].font_col, (RGB *)data, sizeof(RGB));
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_LABEL *)obj)->color[AWE_LABEL_DISABLED].font_col = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the enabled font shadow
 static void _label_get_font_shadow_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    *(RGB *)data = tmp->color[AWE_LABEL_ENABLED].font_sdw;
+    *(RGB *)data = ((AWE_LABEL *)obj)->color[AWE_LABEL_ENABLED].font_sdw;
 }
 
 
 //sets the enabled font shadow
 static void _label_set_font_shadow_enabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    memcpy(&tmp->color[AWE_LABEL_ENABLED].font_sdw, (RGB *)data, sizeof(RGB));
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_LABEL *)obj)->color[AWE_LABEL_ENABLED].font_sdw = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
 //gets the disabled font shadow
 static void _label_get_font_shadow_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    *(RGB *)data = tmp->color[AWE_LABEL_DISABLED].font_sdw;
+    *(RGB *)data = ((AWE_LABEL *)obj)->color[AWE_LABEL_DISABLED].font_sdw;
 }
 
 
 //sets the disabled font shadow
 static void _label_set_font_shadow_disabled(AWE_OBJECT *obj, void *data)
 {
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    memcpy(&tmp->color[AWE_LABEL_DISABLED].font_sdw, (RGB *)data, sizeof(RGB));
-    awe_set_widget_dirty(&tmp->widget);
+    ((AWE_LABEL *)obj)->color[AWE_LABEL_DISABLED].font_sdw = *(RGB *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
@@ -223,19 +210,10 @@ void *awe_label_get_interface(AWE_OBJECT *obj, const char *name, const char *pna
 }
 
 
-//clone widget
+//clone label
 AWE_OBJECT *awe_label_clone(AWE_OBJECT *wgt)
 {
-    return awe_create_object(&awe_label_class, 
-        AWE_ID_X                    , ((AWE_WIDGET *)wgt)->x                                ,
-        AWE_ID_Y                    , ((AWE_WIDGET *)wgt)->y                                ,
-        AWE_ID_WIDTH                , ((AWE_WIDGET *)wgt)->width                            ,
-        AWE_ID_HEIGHT               , ((AWE_WIDGET *)wgt)->height                           ,
-        AWE_ID_VISIBLE              , ((AWE_WIDGET *)wgt)->visible                          ,
-        AWE_ID_ENABLED              , ((AWE_WIDGET *)wgt)->enabled                          ,
-        AWE_ID_OPAQUE               , ((AWE_WIDGET *)wgt)->opaque                           ,
-        AWE_ID_TRANSLUCENCY         , ((AWE_WIDGET *)wgt)->translucency                     ,
-        AWE_ID_OUTPUT_TYPE          , ((AWE_WIDGET *)wgt)->output_type                      ,
+    return awe_create_object(&awe_label_class,
         AWE_ID_TEXT                 , ((AWE_LABEL *)wgt)->text                              ,
         AWE_ID_FONT                 , ((AWE_LABEL *)wgt)->font                              ,
         AWE_ID_FONT_COLOR_ENABLED   , ((AWE_LABEL *)wgt)->color[AWE_LABEL_ENABLED].font_col ,
