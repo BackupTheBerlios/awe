@@ -77,11 +77,56 @@ static INLINE void _stretch(BITMAP *dst, BITMAP *src, int x, int y, int w, int h
  *****************************************************************************/
 
 
+//prepares a canvas for drawing
+void awe_set_canvas(AWE_CANVAS *canvas, BITMAP *bmp, AWE_RECT *area)
+{
+    canvas->bitmap = bmp;
+    canvas->area = *area;
+    canvas->clip = *area;
+    canvas->x_org = 0;
+    canvas->y_org = 0;
+    set_clip(bmp, area->left, area->top, area->right, area->bottom);
+}
+
+
+//returns the point of origin of the canvas
+void awe_get_canvas_origin(AWE_CANVAS *canvas, int *x, int *y)
+{
+    *x = canvas->x_org;
+    *y = canvas->y_org;
+}
+
+
 //sets the canva's point of origin (actually, the offset)
 void awe_set_canvas_origin(AWE_CANVAS *canvas, int x, int y)
 {
-    canvas->x_ofs = x;
-    canvas->y_ofs = y;
+    canvas->x_org = x;
+    canvas->y_org = y;
+}
+
+
+//returns the canvas' current clip
+void awe_get_canvas_clip(AWE_CANVAS *canvas, AWE_RECT *r)
+{
+    *r = canvas->clip;
+    AWE_RECT_SHIFT(*r, -AWE_CANVAS_BASE_X(canvas), -AWE_CANVAS_BASE_Y(canvas));
+}
+
+
+//sets the clipping of the canvas
+int awe_set_canvas_clip(AWE_CANVAS *canvas, AWE_RECT *clip)
+{
+    AWE_RECT r = *clip;
+
+    AWE_RECT_SHIFT(r, AWE_CANVAS_BASE_X(canvas), AWE_CANVAS_BASE_Y(canvas));
+    if (!AWE_RECT_OVERLAP(r, canvas->area)) return 0;
+    AWE_RECT_INTERSECTION(canvas->clip, canvas->area, r);
+    set_clip(canvas->bitmap,
+             canvas->clip.left, 
+             canvas->clip.top, 
+             canvas->clip.right, 
+             canvas->clip.bottom);
+    return 1;
 }
 
 

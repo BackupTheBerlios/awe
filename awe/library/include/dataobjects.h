@@ -33,7 +33,7 @@ struct AWE_TEXT {
 typedef struct AWE_TEXT AWE_TEXT;
 
 
-//a text object class
+///the text object class
 extern AWE_CLASS awe_text_class;
 
 

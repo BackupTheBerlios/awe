@@ -2,7 +2,7 @@
 #define AWE_GDI_H
 
 
-#include "allegro.h"
+#include "rect.h"
 
 
 #ifdef __cplusplus
@@ -59,7 +59,7 @@ typedef enum AWE_FRAME_TYPE AWE_FRAME_TYPE;
     @return horizontal coordinate that is the current canvas offset, relative
             to the destination bitmaps' top-left corner
  */
-#define AWE_CANVAS_BASE_X(C)      ((C)->x_org + (C)->x_ofs)
+#define AWE_CANVAS_BASE_X(C)      ((C)->area.left + (C)->x_org)
 
 
 /** macro for calculating the vertical screen-relative offset of a canvas
@@ -67,26 +67,17 @@ typedef enum AWE_FRAME_TYPE AWE_FRAME_TYPE;
     @return vertical coordinate that is the current canvas offset, relative
             to the destination bitmaps' top-left corner
  */
-#define AWE_CANVAS_BASE_Y(C)      ((C)->y_org + (C)->y_ofs)
+#define AWE_CANVAS_BASE_Y(C)      ((C)->area.top + (C)->y_org)
 
 
 /** canvas object used for drawing.
  */
 struct AWE_CANVAS {
-    ///target bitmap
     BITMAP *bitmap;
-
-    ///horizontal point of origin
     int x_org;
-
-    ///vertical point of origin
     int y_org;
-
-    ///horizontal offset from point of origin
-    int x_ofs;
-
-    ///vertical offset from point of origin
-    int y_ofs;
+    AWE_RECT area;
+    AWE_RECT clip;
 };
 typedef struct AWE_CANVAS AWE_CANVAS;
 
@@ -100,13 +91,44 @@ struct AWE_TEXTURE {
 typedef struct AWE_TEXTURE AWE_TEXTURE;
 
 
-/** sets the canva's 'point of origin' (actually, the canvas offset from point
-    of origin)
+/** prepares a canvas for drawing; the point of origin is set to 0, 0
+    @param canvas canvas to set up
+    @param bmp destination bitmap
+    @param area the area of the bitmap that the canvas will draw on
+ */
+void awe_set_canvas(AWE_CANVAS *canvas, BITMAP *bmp, AWE_RECT *area);
+
+
+/** returns the point of origin of the canvas
+    @param canvas canvas to get the point of origin from
+    @param x variable to receive the horizontal point of origin
+    @param y variable to receive the vertical point of origin
+ */
+void awe_get_canvas_origin(AWE_CANVAS *canvas, int *x, int *y);
+
+
+/** sets the canva's point of origin
     @param canvas canvas object to modify
     @param x new horizontal point of origin
     @param y new vertical point of origin
  */
 void awe_set_canvas_origin(AWE_CANVAS *canvas, int x, int y);
+
+
+/** returns the canvas' current clip
+    @param canvas canvas to get the clip of
+    @param r rectangle to receive the canvas clip
+ */
+void awe_get_canvas_clip(AWE_CANVAS *canvas, AWE_RECT *r);
+
+
+/** sets the clipping of the canvas
+    @param canvas the canvas to set the clip of
+    @param clip the clip rectangle relative to the point of origin
+    @return zero if the operation failed because the supplied rectangle was
+            outside of the bitmap's drawing area
+ */
+int awe_set_canvas_clip(AWE_CANVAS *canvas, AWE_RECT *clip);
 
 
 /** draws a pixel

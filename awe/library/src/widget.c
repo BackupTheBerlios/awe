@@ -368,10 +368,6 @@ static int _paint_widget(AWE_WIDGET *wgt, AWE_RECT *clip, AWE_RECT *t)
     r.right  = t->right  - wgt->pos.left;
     r.bottom = t->bottom - wgt->pos.top ;
 
-    //prepare canvas offset
-    canvas.x_ofs = 0;
-    canvas.y_ofs = 0;
-
     //if translucent, try memory bitmap
     if (wgt->translucency < 255) wgt->output_type = AWE_WIDGET_OUTPUT_MEMORY_BITMAP;
 
@@ -404,12 +400,12 @@ static int _paint_widget(AWE_WIDGET *wgt, AWE_RECT *clip, AWE_RECT *t)
     //draw unbufferred widget
     if (!wgt->buffer) {
         //prepare canvas
-        canvas.bitmap = _gui_screen;
-        canvas.x_org = wgt->pos.left;
-        canvas.y_org = wgt->pos.top;
+        awe_set_canvas(&canvas, _gui_screen, &wgt->pos);
+
+        //clip canvas
+        set_clip(_gui_screen, t->left, t->top, t->right, t->bottom);
 
         //paint
-        set_clip(_gui_screen, t->left, t->top, t->right, t->bottom);
         _DO(wgt, paint, (wgt, &canvas, &r));
     }
 
@@ -419,10 +415,10 @@ static int _paint_widget(AWE_WIDGET *wgt, AWE_RECT *clip, AWE_RECT *t)
 
         //paint, if needed
         if (wgt->repaint) {
-            canvas.bitmap = wgt->buffer;
-            canvas.x_org = 0;
-            canvas.y_org = 0;
-            set_clip(wgt->buffer, r.left, r.top, r.right, r.bottom);
+            //prepare canvas
+            AWE_RECT r = {0, 0, wgt->buffer->w - 1, wgt->buffer->h - 1};
+            awe_set_canvas(&canvas, wgt->buffer, &r);
+
             if (!wgt->opaque) clear_to_color(wgt->buffer, bitmap_mask_color(wgt->buffer));
             _DO(wgt, paint, (wgt, &canvas, &r));
         }
