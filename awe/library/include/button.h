@@ -12,10 +12,22 @@
 #endif
 
 
+#define AWE_ID_BUTTON	"Button"
+
+
+enum AWE_BUTTON_STATE {
+    AWE_BUTTON_NORMAL = 0,
+    AWE_BUTTON_PRESSED = 1,
+    AWE_BUTTON_GOTMOUSE = 2,
+    AWE_BUTTON_DISABLED = 4
+};
+typedef enum AWE_BUTTON_STATE AWE_BUTTON_STATE;
+
+
 //button
 struct AWE_BUTTON {
     AWE_WIDGET widget;
-    int state;
+    AWE_BUTTON_STATE state;
     char *text;
 };
 typedef struct AWE_BUTTON AWE_BUTTON;
@@ -50,6 +62,9 @@ void awe_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
 void awe_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event);
 void awe_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event);
 int awe_button_key_press(AWE_WIDGET *wgt, const AWE_EVENT *event);
+int awe_button_loose_focus(AWE_WIDGET *wgt);
+void awe_button_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event);
+void awe_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 #ifdef __cplusplus
