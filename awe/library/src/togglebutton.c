@@ -6,18 +6,11 @@
  *****************************************************************************/
 
 
-//event arguments
-static AWE_CLASS_EVENT_ARGUMENT _toggle_button_arg0[] = {
-    { "ToggleButtonArg0", "void *" },
-    { 0 }
-};
-
-
 //push button events
 static AWE_CLASS_EVENT _toggle_button_events[] = {
-    { AWE_ID_TOGGLE_BUTTON_RELEASED,  _toggle_button_arg0 },
-    { AWE_ID_TOGGLE_BUTTON_HELD_DOWN, _toggle_button_arg0 },
-    { AWE_ID_TOGGLE_BUTTON_PRESSED,   _toggle_button_arg0 },
+    { AWE_ID_TOGGLE_BUTTON_RELEASED,  0 },
+    { AWE_ID_TOGGLE_BUTTON_HELD_DOWN, 0 },
+    { AWE_ID_TOGGLE_BUTTON_PRESSED,   0 },
     { 0 }
 };
 
@@ -94,7 +87,7 @@ void awe_toggle_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
     awe_enter_event_mode(awe_grab_event_proc, wgt);
     btn->pressed ^= 1;
     if (btn->pressed)
-        awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_PRESSED, btn->data);
+        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_PRESSED);
     awe_add_widget_timer(wgt, 0, 100);
     awe_set_widget_dirty(wgt);
 }
@@ -105,7 +98,7 @@ void awe_toggle_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
     AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
     awe_leave_event_mode();
     if (!btn->pressed)
-        awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_RELEASED, btn->data);
+        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_RELEASED);
     awe_remove_widget_timer(wgt, 0);
     awe_set_widget_dirty(wgt);
 }
