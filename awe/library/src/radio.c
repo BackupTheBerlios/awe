@@ -6,6 +6,9 @@
  *****************************************************************************/
 
 
+#define AWE_ID_RADIO_CHECK             "RadioCheck"
+
+
 //checkbox events
 static AWE_CLASS_EVENT _radio_events[] = {
     { AWE_ID_RADIO_CHECKED,   0 },
@@ -15,18 +18,51 @@ static AWE_CLASS_EVENT _radio_events[] = {
 };
 
 
+//gets the radio button group
+static void _radio_get_group(AWE_OBJECT *obj, void *data)
+{
+    AWE_RADIO *tmp = (AWE_RADIO *)obj;
+    *(int *)data = tmp->group;
+}
+
+
+//sets the radio button group
+static void _radio_set_group(AWE_OBJECT *obj, void *data)
+{
+    AWE_RADIO *tmp = (AWE_RADIO *)obj;
+    tmp->group = *(int *)data;
+}
+
+
+//awe radio properties
+static AWE_CLASS_PROPERTY _radio_properties[] = {
+    { AWE_ID_GROUP, "int", sizeof(int), _radio_get_group, _radio_set_group, 0 },
+    { 0 }
+};
+
+
+static void _radio_check(AWE_WIDGET *wgt)
+{
+    AWE_RADIO *tmp = (AWE_RADIO*)wgt;
+    if(tmp->btn.btn.toggle){
+        tmp->btn.btn.toggle = 0;
+        awe_set_widget_dirty(wgt);
+    }
+};
+
+
 /*****************************************************************************
     PUBLIC
  *****************************************************************************/
 
 
 //radio vtable
-AWE_PUSH_BUTTON_VTABLE awe_radio_vtable = {
+AWE_RADIO_VTABLE awe_radio_vtable = {
     //widget
     {
         //object
         {
-            awe_push_button_get_interface,
+            awe_radio_get_interface,
             awe_widget_properties_changed,
             awe_push_button_clone
         },
@@ -63,6 +99,9 @@ AWE_PUSH_BUTTON_VTABLE awe_radio_vtable = {
         awe_checkbox_set_geometry,
         0
     }
+    ,
+    //radio callback
+    _radio_check
 };
 
 
@@ -72,12 +111,32 @@ AWE_CLASS awe_radio_class = {
     AWE_ID_AWE,
     &awe_checkbox_class,
     sizeof(AWE_RADIO),
-    0,
+    _radio_properties,
     _radio_events,
     &awe_radio_vtable.widget.object,
     0,
     0,
 };
+
+
+void *awe_radio_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace)
+{
+    if (!strcmp(pnamespace, AWE_ID_AWE)) {
+        if (!strcmp(name, AWE_ID_PUSH_BUTTON)) {
+            return (AWE_RADIO_VTABLE *)obj->pclass->vtable;
+        }
+        if (!strcmp(name, AWE_ID_CONTROL)) {
+            return &((AWE_RADIO_VTABLE *)obj->pclass->vtable)->control;
+        }
+        if (!strcmp(name, AWE_ID_GEOMETRY_MANAGER)) {
+            return &((AWE_RADIO_VTABLE *)obj->pclass->vtable)->geometry_manager;
+        }
+        if (!strcmp(name, AWE_ID_RADIO_CHECK)) {
+            return ((AWE_RADIO_VTABLE *)obj->pclass->vtable)->radio_check;
+        }
+    }
+    return awe_widget_get_interface(obj, name, pnamespace);
+}
 
 
 //radio paint
@@ -87,7 +146,7 @@ void awe_radio_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
     int state = 0;
     int tx = wgt->height + 5;
     int ty = (wgt->height - text_height(btn->btn.btn.font)) >> 1;
-    
+
     solid_mode();
     
     if(!awe_is_enabled_widget_tree(wgt))
@@ -124,10 +183,10 @@ void awe_radio_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
 
 void awe_radio_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_CHECKBOX *btn = (AWE_CHECKBOX *)wgt;
+    AWE_RADIO *btn = (AWE_RADIO *)wgt;
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
-    btn->btn.btn.pressed = 1;
+    btn->btn.btn.btn.pressed = 1;
     awe_add_widget_timer(wgt, 0, 100);
     awe_set_widget_dirty(wgt);
 }
@@ -135,13 +194,25 @@ void awe_radio_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 
 void awe_radio_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_CHECKBOX *btn = (AWE_CHECKBOX *)wgt;
+    AWE_RADIO *btn = (AWE_RADIO *)wgt;
+    void (*radio_check)(AWE_WIDGET *wgt);
     awe_leave_event_mode();
-    btn->btn.btn.lostmouse = 0;
-    btn->btn.btn.pressed = 0;
+    btn->btn.btn.btn.lostmouse = 0;
+    btn->btn.btn.btn.pressed = 0;
     if(awe_widget_has_mouse(wgt)){
-        btn->btn.toggle ^= 1;
-        if(btn->btn.toggle){
+        AWE_WIDGET *tmp = awe_get_first_child_widget(awe_get_root_widget(wgt));
+        while(tmp){
+            int group = -1;
+            awe_get_widget_properties(tmp, AWE_ID_GROUP, &group, NULL);
+            if(group == btn->group && tmp != wgt){
+                radio_check = awe_radio_get_interface((AWE_OBJECT *)tmp, AWE_ID_RADIO_CHECK, AWE_ID_AWE);
+                if(radio_check)
+                    radio_check(tmp);
+            }
+            tmp = awe_get_next_sibling_widget(tmp);
+        }
+        btn->btn.btn.toggle = 1;
+        if(btn->btn.btn.toggle){
             awe_do_widget_event0(wgt, AWE_ID_RADIO_CHECKED);
         }
         else{

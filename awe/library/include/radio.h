@@ -26,6 +26,10 @@
 #define AWE_ID_RADIO                    "Radio"
 
 
+///radio group property
+#define AWE_ID_GROUP			"Group"
+
+
 ///radio checked event
 #define AWE_ID_RADIO_CHECKED            "RadioChecked"
 
@@ -47,11 +51,24 @@ typedef struct AWE_RADIO AWE_RADIO;
 
 
 ///radio vtable
-extern AWE_PUSH_BUTTON_VTABLE awe_radio_vtable;
+struct AWE_RADIO_VTABLE {
+    AWE_WIDGET_VTABLE widget;
+    AWE_CONTROL_VTABLE control;
+    AWE_GEOMETRY_MANAGER_VTABLE geometry_manager;
+    void (*radio_check)(AWE_WIDGET *wgt);
+};
+typedef struct AWE_RADIO_VTABLE AWE_RADIO_VTABLE;
+
+
+///radio vtable
+extern AWE_RADIO_VTABLE awe_radio_vtable;
 
 
 ///radio class
 extern AWE_CLASS awe_radio_class;
+
+
+void *awe_radio_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace);
 
 
 void awe_radio_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip);

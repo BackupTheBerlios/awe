@@ -73,7 +73,7 @@ static void _label_set_font(AWE_OBJECT *obj, void *data)
 static void _label_get_font_color_enabled(AWE_OBJECT *obj, void *data)
 {
     AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    memcpy((RGB *)data, &tmp->color[AWE_LABEL_ENABLED].font_col, sizeof(RGB));
+    *(RGB *)data = tmp->color[AWE_LABEL_ENABLED].font_col;
 }
 
 
@@ -90,7 +90,7 @@ static void _label_set_font_color_enabled(AWE_OBJECT *obj, void *data)
 static void _label_get_font_color_disabled(AWE_OBJECT *obj, void *data)
 {
     AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    memcpy((RGB *)data, &tmp->color[AWE_LABEL_DISABLED].font_col, sizeof(RGB));
+    *(RGB *)data = tmp->color[AWE_LABEL_DISABLED].font_col;
 }
 
 
@@ -107,7 +107,7 @@ static void _label_set_font_color_disabled(AWE_OBJECT *obj, void *data)
 static void _label_get_font_shadow_enabled(AWE_OBJECT *obj, void *data)
 {
     AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    memcpy((RGB *)data, &tmp->color[AWE_LABEL_ENABLED].font_sdw, sizeof(RGB));
+    *(RGB *)data = tmp->color[AWE_LABEL_ENABLED].font_sdw;
 }
 
 
@@ -124,7 +124,7 @@ static void _label_set_font_shadow_enabled(AWE_OBJECT *obj, void *data)
 static void _label_get_font_shadow_disabled(AWE_OBJECT *obj, void *data)
 {
     AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    memcpy((RGB *)data, &tmp->color[AWE_LABEL_DISABLED].font_sdw, sizeof(RGB));
+    *(RGB *)data = tmp->color[AWE_LABEL_DISABLED].font_sdw;
 }
 
 
