@@ -81,6 +81,13 @@ typedef enum AWE_FRAME_TYPE AWE_FRAME_TYPE;
 #define AWE_CANVAS_BASE_Y(C)      ((C)->area.top + (C)->y_org)
 
 
+/** macro that converts an RGB struct to a pixel value
+    @param S RGB struct
+    @return pixel value for current video mode
+ */
+#define AWE_MAKE_COLOR(S)    makecol((S).r, (S).g, (S).b)
+
+
 /** canvas object used for drawing.
  */
 struct AWE_CANVAS {
