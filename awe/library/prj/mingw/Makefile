@@ -41,7 +41,7 @@ $(LIBDIR)$(LIB): $(addprefix $(OBJ),$(OBJECTS))
 	@echo Make Completed Successfully
 	@echo Run Make Install
 install:
-	mkdir $(MINGDIR_D)\include\awe
+	-mkdir $(MINGDIR_D)\include\awe
 	copy ..\..\include\awe.h $(MINGDIR_D)\include
 	copy ..\..\include\awe\*.* $(MINGDIR_D)\include\awe
 	copy .\libawe.a $(MINGDIR_D)\lib

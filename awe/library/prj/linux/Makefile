@@ -34,7 +34,7 @@ OBJECTS += input_linux.o
 	@echo Make Completed Successfully
 	@echo Run Make Install
 install:
-	mkdir $(UNIXDIR_D)/include/awe
+	-mkdir $(UNIXDIR_D)/include/awe
 	cp ../../include/awe.h $(UNIXDIR_D)/include
 	cp ../../include/awe/*.* $(UNIXDIR_D)/include/awe
 	cp ./libawe.a $(UNIXDIR_D)/lib
