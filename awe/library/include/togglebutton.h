@@ -38,6 +38,14 @@
 #define AWE_ID_TOGGLE_BUTTON_PRESSED    "ToggleButtonPressed"
 
 
+///toggle button
+struct AWE_TOGGLE_BUTTON {
+    AWE_PUSH_BUTTON btn;
+    int toggle:1;
+};
+typedef struct AWE_TOGGLE_BUTTON AWE_TOGGLE_BUTTON;
+
+
 ///toggle button vtable
 extern AWE_PUSH_BUTTON_VTABLE awe_toggle_button_vtable;
 
@@ -52,6 +60,18 @@ void awe_toggle_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 ///toggle button up event
 void awe_toggle_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event);
+
+
+///toggle button mouse enter event
+void awe_toggle_button_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event);
+
+
+///toggle button mouse leave event
+void awe_toggle_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event);
+
+
+///toggle button timer event
+void awe_toggle_button_timer(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /*@}*/

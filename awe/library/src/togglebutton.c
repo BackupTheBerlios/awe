@@ -33,13 +33,13 @@ AWE_PUSH_BUTTON_VTABLE awe_toggle_button_vtable = {
         awe_push_button_paint,
         awe_toggle_button_down,
         awe_toggle_button_up,
-        awe_push_button_mouse_enter,
+        awe_toggle_button_mouse_enter,
         awe_widget_mouse_move,
-        awe_push_button_mouse_leave,
+        awe_toggle_button_mouse_leave,
         awe_widget_mouse_wheel,
         awe_widget_key_down,
         awe_widget_key_up,
-        awe_push_button_timer,
+        awe_toggle_button_timer,
         awe_widget_get_focus,
         awe_widget_lose_focus,
         awe_widget_begin_display,
@@ -71,7 +71,7 @@ AWE_CLASS awe_toggle_button_class = {
     AWE_ID_TOGGLE_BUTTON,
     AWE_ID_AWE,
     &awe_push_button_class,
-    sizeof(AWE_PUSH_BUTTON),
+    sizeof(AWE_TOGGLE_BUTTON),
     0,
     _toggle_button_events,
     &awe_toggle_button_vtable.widget.object,
@@ -82,12 +82,11 @@ AWE_CLASS awe_toggle_button_class = {
 
 void awe_toggle_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
+    AWE_TOGGLE_BUTTON *btn = (AWE_TOGGLE_BUTTON *)wgt;
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
-    btn->pressed ^= 1;
-    if (btn->pressed)
-        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_PRESSED);
+    btn->btn.pressed = 1;
+    awe_do_widget_event0(wgt, AWE_ID_TOGGLE_BUTTON_PRESSED);
     awe_add_widget_timer(wgt, 0, 100);
     awe_set_widget_dirty(wgt);
 }
@@ -95,10 +94,41 @@ void awe_toggle_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 
 void awe_toggle_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
+    AWE_TOGGLE_BUTTON *btn = (AWE_TOGGLE_BUTTON *)wgt;
     awe_leave_event_mode();
-    if (!btn->pressed)
-        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_RELEASED);
+    btn->btn.lostmouse = 0;
+    if(awe_widget_has_mouse(wgt))
+        btn->toggle ^= 1;
+    btn->btn.pressed = btn->toggle;
+    awe_do_widget_event0(wgt, AWE_ID_TOGGLE_BUTTON_RELEASED);
     awe_remove_widget_timer(wgt, 0);
     awe_set_widget_dirty(wgt);
 }
+
+
+void awe_toggle_button_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event)
+{
+    AWE_TOGGLE_BUTTON *btn = (AWE_TOGGLE_BUTTON *)wgt;
+    if(btn->btn.lostmouse)
+        btn->btn.pressed = 1;
+    awe_set_widget_dirty(wgt);
+}
+
+
+void awe_toggle_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event)
+{
+    AWE_TOGGLE_BUTTON *btn = (AWE_TOGGLE_BUTTON *)wgt;
+    if(btn->btn.pressed){
+        btn->btn.lostmouse = 1;
+        if(!btn->toggle)
+            btn->btn.pressed = 0;
+    }
+    awe_set_widget_dirty(wgt);
+}
+
+
+void awe_toggle_button_timer(AWE_WIDGET *wgt, const AWE_EVENT *event)
+{
+    awe_do_widget_event0(wgt, AWE_ID_TOGGLE_BUTTON_HELD_DOWN);
+}
+

@@ -304,6 +304,7 @@ typedef struct AWE_PUSH_BUTTON_STATE AWE_PUSH_BUTTON_STATE;
 struct AWE_PUSH_BUTTON {
     AWE_WIDGET widget;
     int pressed:1;
+    int lostmouse:1;
     char *text;
     FONT *font;
     BITMAP *bitmap;
