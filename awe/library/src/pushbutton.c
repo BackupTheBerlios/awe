@@ -5,7 +5,6 @@
     INTERNALS
  *****************************************************************************/
 
-
 char *_push_button_texture[AWE_PUSH_BUTTON_NUM_TEXTURES] = {
     "Enabled",
     "Pressed",
@@ -76,6 +75,15 @@ AWE_CLASS_PROPERTY _push_button_properties[] = {
 };
 
 
+AWE_CLASS_EVENT _push_button_events[] = {
+    { AWE_PUSH_BUTTON_EVENT_ACTIVATED, 0 },
+    { AWE_PUSH_BUTTON_EVENT_RELEASED,  0 },
+    { AWE_PUSH_BUTTON_EVENT_HELD_DOWN, 0 },
+    { AWE_PUSH_BUTTON_EVENT_PRESSED,   0 },
+    { 0 }
+};
+
+
 /*****************************************************************************
     PUBLIC
  *****************************************************************************/
@@ -102,7 +110,7 @@ AWE_PUSH_BUTTON_VTABLE awe_push_button_vtable = {
         awe_widget_key_up,
         0,
         awe_widget_get_focus,
-        awe_push_button_lose_focus,
+        0,
         awe_widget_begin_display,
         awe_widget_end_display,
         awe_widget_insert_widget,
@@ -134,7 +142,7 @@ AWE_CLASS awe_push_button_class = {
     &awe_widget_class,
     sizeof(AWE_PUSH_BUTTON),
     _push_button_properties,
-    0,
+    _push_button_events,
     &awe_push_button_vtable.widget.object,
     _push_button_constructor,
     _push_button_destructor
@@ -184,7 +192,7 @@ void awe_push_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *
     int tx = (wgt->width - gui_strlen(btn->text)) >> 1;
     int ty = (wgt->height - text_height(font)) >> 1;
     solid_mode();
-    if(btn->state & AWE_PUSH_BUTTON_GOTMOUSE)
+    if(awe_widget_has_mouse(wgt))
         awe_fill_rect_s(canvas, 3, 3, wgt->width - 6, wgt->height - 6, makecol(228, 224, 216));
     else
         awe_fill_rect_s(canvas, 3, 3, wgt->width - 6, wgt->height - 6, makecol(212, 208, 200));
@@ -208,6 +216,7 @@ void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
     btn->state |= AWE_PUSH_BUTTON_PRESSED;
+    awe_do_widget_event0((AWE_OBJECT *)wgt, AWE_PUSH_BUTTON_EVENT_PRESSED);
     awe_set_widget_dirty(wgt);
 }
 
@@ -216,33 +225,25 @@ void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
     awe_leave_event_mode();
-    btn->state &= ~AWE_PUSH_BUTTON_PRESSED; 
+    btn->state &= ~AWE_PUSH_BUTTON_PRESSED;
+    if(awe_widget_has_mouse(wgt)){
+        awe_do_widget_event0(wgt, AWE_PUSH_BUTTON_EVENT_ACTIVATED);
+    }
+    else{
+        awe_do_widget_event0(wgt, AWE_PUSH_BUTTON_EVENT_RELEASED);
+    }
     awe_set_widget_dirty(wgt);
-}
-
-
-int awe_push_button_lose_focus(AWE_WIDGET *wgt)
-{
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
-    awe_leave_event_mode();
-    btn->state &= ~AWE_PUSH_BUTTON_PRESSED; 
-    awe_set_widget_dirty(wgt);
-    return 1;
 }
 
 
 void awe_push_button_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
-    btn->state |= AWE_PUSH_BUTTON_GOTMOUSE;
     awe_set_widget_dirty(wgt);
 }
 
 
 void awe_push_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
-    btn->state &= ~AWE_PUSH_BUTTON_GOTMOUSE;
     awe_set_widget_dirty(wgt);
 }
 
