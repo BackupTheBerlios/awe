@@ -23,7 +23,7 @@ ifeq "$(LOADPNG)" "1"
 DEFS+=-DLOADPNG
 endif
 
-LIBDIR=lib/unix/
+LIBDIR=../../lib/unix/
 UNIXDIR_D=/usr/local
 OBJECTS += input_linux.o
 
