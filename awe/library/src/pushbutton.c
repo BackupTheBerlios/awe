@@ -27,19 +27,12 @@ static int _margin[4]               = { 8  , 8  , 8  , 8 };
 };*/
 
 
-//event arguments
-static AWE_CLASS_EVENT_ARGUMENT _push_button_arg0[] = {
-    { "PushButtonArg0", "void *" },
-    { 0 }
-};
-
-
 //push button events
 static AWE_CLASS_EVENT _push_button_events[] = {
-    { AWE_ID_PUSH_BUTTON_ACTIVATED, _push_button_arg0 },
-    { AWE_ID_PUSH_BUTTON_RELEASED,  _push_button_arg0 },
-    { AWE_ID_PUSH_BUTTON_HELD_DOWN, _push_button_arg0 },
-    { AWE_ID_PUSH_BUTTON_PRESSED,   _push_button_arg0 },
+    { AWE_ID_PUSH_BUTTON_ACTIVATED, 0 },
+    { AWE_ID_PUSH_BUTTON_RELEASED,  0 },
+    { AWE_ID_PUSH_BUTTON_HELD_DOWN, 0 },
+    { AWE_ID_PUSH_BUTTON_PRESSED,   0 },
     { 0 }
 };
 
@@ -80,36 +73,36 @@ static void _push_button_set_font(AWE_OBJECT *obj, void *data)
 }
 
 
-//gets the icon
-static void _push_button_get_icon(AWE_OBJECT *obj, void *data)
+//gets the bitmap
+static void _push_button_get_bitmap(AWE_OBJECT *obj, void *data)
 {
     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(BITMAP **)data = tmp->icon;
+    *(BITMAP **)data = tmp->bitmap;
 }
 
 
-//sets the icon
-static void _push_button_set_icon(AWE_OBJECT *obj, void *data)
+//sets the bitmap
+static void _push_button_set_bitmap(AWE_OBJECT *obj, void *data)
 {
     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->icon = *(BITMAP **)data;
+    tmp->bitmap = *(BITMAP **)data;
     awe_set_widget_dirty(&tmp->widget);
 }
 
 
-//gets the icon direction
-static void _push_button_get_icon_dir(AWE_OBJECT *obj, void *data)
+//gets the bitmap direction
+static void _push_button_get_bitmap_dir(AWE_OBJECT *obj, void *data)
 {
     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(int *)data = tmp->icon_dir;
+    *(int *)data = tmp->bitmap_dir;
 }
 
 
-//sets the icon direction
-static void _push_button_set_icon_dir(AWE_OBJECT *obj, void *data)
+//sets the bitmap direction
+static void _push_button_set_bitmap_dir(AWE_OBJECT *obj, void *data)
 {
     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->icon_dir = *(int *)data;
+    tmp->bitmap_dir = *(int *)data;
     awe_set_widget_dirty(&tmp->widget);
 }
 
@@ -862,22 +855,6 @@ static void _push_button_set_font_shadow_focused(AWE_OBJECT *obj, void *data)
 }
 
 
-//gets the data
-static void _push_button_get_data(AWE_OBJECT *obj, void *data)
-{
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    *(void **)data = tmp->data;
-}
-
-
-//sets the data
-static void _push_button_set_data(AWE_OBJECT *obj, void *data)
-{
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->data = *(void **)data;
-}
-
-
 /*****************************************************************************
     PUBLIC
  *****************************************************************************/
@@ -919,8 +896,7 @@ void awe_push_button_constructor(AWE_OBJECT *obj)
         else{
             memcpy(&tmp->texture[i].font_col, &_font_color_normal, sizeof(RGB));
             memcpy(&tmp->texture[i].font_sdw, &_shadow_color_normal, sizeof(RGB));
-        }
-        tmp->texture[i].texture = NULL;       
+        }      
     }
 }
 
@@ -937,13 +913,12 @@ void awe_push_button_destructor(AWE_OBJECT *obj)
 AWE_CLASS_PROPERTY awe_push_button_properties[] = {
     { AWE_ID_TEXT, "const char *", sizeof(const char *), _push_button_get_text, _push_button_set_text, 0 },
     { AWE_ID_FONT, "FONT *", sizeof(FONT *), _push_button_get_font, _push_button_set_font, 0 },
-    { AWE_ID_ICON, "BITMAP *", sizeof(BITMAP *), _push_button_get_icon, _push_button_set_icon, 0 },
-    { AWE_ID_ICON_DIR, "int", sizeof(int), _push_button_get_icon_dir, _push_button_set_icon_dir, 0 },
+    { AWE_ID_BITMAP, "BITMAP *", sizeof(BITMAP *), _push_button_get_bitmap, _push_button_set_bitmap, 0 },
+    { AWE_ID_BITMAP_DIR, "int", sizeof(int), _push_button_get_bitmap_dir, _push_button_set_bitmap_dir, 0 },
     { AWE_ID_MARGIN_TOP, "int", sizeof(int), _push_button_get_margin_top, _push_button_set_margin_top, 0 },
     { AWE_ID_MARGIN_LEFT, "int", sizeof(int), _push_button_get_margin_left, _push_button_set_margin_left, 0 },
     { AWE_ID_MARGIN_RIGHT, "int", sizeof(int), _push_button_get_margin_right, _push_button_set_margin_right, 0 },
     { AWE_ID_MARGIN_BOTTOM, "int", sizeof(int), _push_button_get_margin_bottom, _push_button_set_margin_bottom, 0 },
-    { AWE_ID_DATA, "void *", sizeof(void *), _push_button_get_data, _push_button_set_data, 0 },
     { AWE_ID_FACE_COLOR_TOP_LEFT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_top_left_enabled, _push_button_set_face_color_top_left_enabled, 0 },
     { AWE_ID_FACE_COLOR_TOP_RIGHT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_top_right_enabled, _push_button_set_face_color_top_right_enabled, 0 },
     { AWE_ID_FACE_COLOR_BOTTOM_LEFT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_bottom_left_enabled, _push_button_set_face_color_bottom_left_enabled, 0 },
@@ -1083,13 +1058,12 @@ AWE_OBJECT *awe_push_button_clone(AWE_OBJECT *wgt)
         AWE_ID_OUTPUT_TYPE                        , ((AWE_WIDGET *)wgt)->output_type                                                                                  ,
         AWE_ID_TEXT                               , ((AWE_PUSH_BUTTON *)wgt)->text                                                                                    ,
         AWE_ID_FONT                               , ((AWE_PUSH_BUTTON *)wgt)->font                                                                                    ,
-        AWE_ID_ICON                               , ((AWE_PUSH_BUTTON *)wgt)->icon                                                                                    ,
-        AWE_ID_ICON_DIR                           , ((AWE_PUSH_BUTTON *)wgt)->icon_dir                                                                                ,
+        AWE_ID_BITMAP                             , ((AWE_PUSH_BUTTON *)wgt)->bitmap                                                                                    ,
+        AWE_ID_BITMAP_DIR                         , ((AWE_PUSH_BUTTON *)wgt)->bitmap_dir                                                                                ,
         AWE_ID_MARGIN_TOP                         , ((AWE_PUSH_BUTTON *)wgt)->margin.top                                                                              ,
         AWE_ID_MARGIN_LEFT                        , ((AWE_PUSH_BUTTON *)wgt)->margin.left                                                                             ,
         AWE_ID_MARGIN_RIGHT                       , ((AWE_PUSH_BUTTON *)wgt)->margin.right                                                                            ,
-        AWE_ID_MARGIN_BOTTOM                      , ((AWE_PUSH_BUTTON *)wgt)->margin.bottom                                                                           ,
-        AWE_ID_DATA                               , ((AWE_PUSH_BUTTON *)wgt)->data                                                                                    ,                                                                           
+        AWE_ID_MARGIN_BOTTOM                      , ((AWE_PUSH_BUTTON *)wgt)->margin.bottom                                                                           ,                                                                         
         AWE_ID_FONT_COLOR_ENABLED                 , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_col                                       ,
         AWE_ID_FONT_COLOR_DISABLED                , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_col                                      ,
         AWE_ID_FONT_COLOR_PRESSED                 , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_col                                       ,
@@ -1135,11 +1109,6 @@ AWE_OBJECT *awe_push_button_clone(AWE_OBJECT *wgt)
         AWE_ID_TEXTURE_PRESSED                    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].texture                                        ,
         AWE_ID_TEXTURE_HIGHLIGHTED                , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].texture                                    ,
         AWE_ID_TEXTURE_FOCUSED                    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].texture                                        ,
-        AWE_ID_ANIM_ENABLED                       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].anim                                           ,
-        AWE_ID_ANIM_DISABLED                      , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].anim                                          ,
-        AWE_ID_ANIM_PRESSED                       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].anim                                           ,
-        AWE_ID_ANIM_HIGHLIGHTED                   , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].anim                                       ,
-        AWE_ID_ANIM_FOCUSED                       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].anim                                           ,
         0);
 }
 
@@ -1197,7 +1166,7 @@ void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
     btn->pressed ^= 1;
-    awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_PRESSED, btn->data);
+    awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_PRESSED);
     awe_add_widget_timer(wgt, 0, 100);
     awe_set_widget_dirty(wgt);
 }
@@ -1209,10 +1178,10 @@ void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
     awe_leave_event_mode();
     btn->pressed ^= 1;
     if(awe_widget_has_mouse(wgt)){
-        awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_ACTIVATED, btn->data);
+        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_ACTIVATED);
     }
     else{
-        awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_RELEASED, btn->data);
+        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_RELEASED);
     }
     awe_remove_widget_timer(wgt, 0);
     awe_set_widget_dirty(wgt);
@@ -1246,7 +1215,7 @@ int awe_push_button_key_press(AWE_WIDGET *wgt, const AWE_EVENT *event)
 
 void awe_push_button_timer(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_HELD_DOWN, ((AWE_PUSH_BUTTON *)wgt)->data);
+    awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_HELD_DOWN);
 }
 
 
