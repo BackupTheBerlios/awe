@@ -66,8 +66,24 @@
 #define AWE_ID_FACE_COLOR_BOTTOM_RIGHT_FOCUSED		"FaceColorBottomRightFocused"
 
 
-#define AWE_ID_EDGE_COLOR_TOPLEFT     			"EdgeColorTopLeft"
-#define AWE_ID_EDGE_COLOR_BOTTOMRIGHT 			"EdgeColorBottomRight"
+#define AWE_ID_EDGE_COLOR_TOP_LEFT_ENABLED     		"EdgeColorTopLeftEnabled"
+#define AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_ENABLED 		"EdgeColorBottomRightEnabled"
+
+
+#define AWE_ID_EDGE_COLOR_TOP_LEFT_DISABLED     	"EdgeColorTopLeftDisabled"
+#define AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_DISABLED 	"EdgeColorBottomRightDisabled"
+
+
+#define AWE_ID_EDGE_COLOR_TOP_LEFT_PRESSED    		"EdgeColorTopLeftPressed"
+#define AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_PRESSED 		"EdgeColorBottomRightPressed"
+
+
+#define AWE_ID_EDGE_COLOR_TOP_LEFT_HIGHLIGHTED     	"EdgeColorTopLeftHighlighted"
+#define AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_HIGHLIGHTED 	"EdgeColorBottomRightHighlighted"
+
+
+#define AWE_ID_EDGE_COLOR_TOP_LEFT_FOCUSED     		"EdgeColorTopLeftFocused"
+#define AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_FOCUSED 		"EdgeColorBottomRightFocused"
 
 
 #define AWE_ID_TEXTURE_ENABLED				"TextureEnabled"
@@ -132,6 +148,18 @@ enum AWE_PUSH_BUTTON_ICON_DIR {
 typedef enum AWE_PUSH_BUTTON_ICON_DIR AWE_PUSH_BUTTON_ICON_DIR;
 
 
+// push button texture
+struct AWE_PUSH_BUTTON_FX {
+    RGB face_col[AWE_PUSH_BUTTON_NUM_FACES];
+    RGB edge_col[AWE_PUSH_BUTTON_NUM_EDGES];
+    RGB font_col;
+    RGB font_sdw;
+    AWE_TEXTURE **texture;
+    AWE_SKIN_ANIM *anim;
+};
+typedef struct AWE_PUSH_BUTTON_FX AWE_PUSH_BUTTON_FX;
+
+
 //push button
 struct AWE_PUSH_BUTTON {
     AWE_WIDGET widget;
@@ -141,12 +169,7 @@ struct AWE_PUSH_BUTTON {
     BITMAP *icon;
     int icon_dir:1;
     AWE_RECT margin;
-    RGB face_col[AWE_PUSH_BUTTON_NUM_TEXTURES][AWE_PUSH_BUTTON_NUM_FACES];
-    RGB edge_col[AWE_PUSH_BUTTON_NUM_EDGES];
-    RGB font_col[AWE_PUSH_BUTTON_NUM_TEXTURES];
-    RGB font_sdw[AWE_PUSH_BUTTON_NUM_TEXTURES];
-    AWE_TEXTURE **texture[AWE_PUSH_BUTTON_NUM_TEXTURES];
-    AWE_SKIN_ANIM *anim[AWE_PUSH_BUTTON_NUM_TEXTURES];
+    AWE_PUSH_BUTTON_FX texture[AWE_PUSH_BUTTON_NUM_TEXTURES];
 };
 typedef struct AWE_PUSH_BUTTON AWE_PUSH_BUTTON;
 
