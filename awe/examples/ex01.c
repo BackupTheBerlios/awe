@@ -138,7 +138,7 @@ int main()
         AWE_ID_WIDTH, 160,
         AWE_ID_TEXT, "Radio1",
         AWE_ID_GROUP, 1,
-        AWE_ID_TOGGLE, TRUE,
+        AWE_ID_TOGGLED, TRUE,
         0);
             
     radio2 = awe_create_widget(&awe_radio_class, root,
