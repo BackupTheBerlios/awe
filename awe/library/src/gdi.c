@@ -87,12 +87,6 @@ static INLINE void _stretch(BITMAP *dst, BITMAP *src, int x, int y, int w, int h
  *****************************************************************************/
 
 
-//converts an rgb structure into an integer color value
-int rgb_to_color(RGB *rgb){
-   return makecol(rgb->r, rgb->g, rgb->b);
-}
-
-
 //prepares a canvas for drawing
 void awe_set_canvas(AWE_CANVAS *canvas, BITMAP *bmp, AWE_RECT *area)
 {
