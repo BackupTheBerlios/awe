@@ -2,9 +2,9 @@
 
 CC=gcc
 LIB=libawe.a
-INCLUDE=../../include/
+INCLUDE=../../include/awe/
 AWEDIR=./
-OBJ=../../obj/
+OBJ=./obj/
 SRC=../../src/
 OBJECTS=linkedlist.o symbintree.o font.o mouse.o skin.o gdi.o com.o input.o event.o widget.o dataobjects.o draganddrop.o geomman.o control.o pushbutton.o togglebutton.o label.o
 
@@ -25,7 +25,7 @@ endif
 
 .PHONY: install uninstall
 
-LIBDIR=lib/mingw/
+LIBDIR=./
 OBJECTS+=input_win32.o
     
 ifdef MINGDIR
@@ -36,15 +36,15 @@ badmingw:
 endif
 
 $(LIBDIR)$(LIB): $(addprefix $(OBJ),$(OBJECTS))
-	ar cr lib\mingw\libawe.a $(OBJ)*.o
-	ranlib lib\mingw\libawe.a
+	ar cr .\libawe.a $(OBJ)*.o
+	ranlib .\libawe.a
 	@echo Make Completed Successfully
 	@echo Run Make Install
 install:
 	mkdir $(MINGDIR_D)\include\awe
-	copy include\awe.h $(MINGDIR_D)\include
-	copy include\awe\*.* $(MINGDIR_D)\include\awe
-	copy lib\mingw\libawe.a $(MINGDIR_D)\lib
+	copy ..\..\include\awe.h $(MINGDIR_D)\include
+	copy ..\..\include\awe\*.* $(MINGDIR_D)\include\awe
+	copy .\libawe.a $(MINGDIR_D)\lib
 uninstall:
 	rm -f $(MINGDIR_D)\include\awe.h
 	rm -r $(MINGDIR_D)\include\awe\*.*
