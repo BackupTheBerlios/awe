@@ -91,10 +91,6 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\include\button.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\include\com.h
 # End Source File
 # Begin Source File
@@ -139,6 +135,10 @@ SOURCE=..\..\include\mouse.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\pushbutton.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\rect.h
 # End Source File
 # Begin Source File
@@ -157,10 +157,6 @@ SOURCE=..\..\include\widget.h
 # Begin Group "src"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\src\button.c
-# End Source File
 # Begin Source File
 
 SOURCE=..\..\src\com.c
@@ -208,6 +204,10 @@ SOURCE=..\..\src\linkedlist.c
 # Begin Source File
 
 SOURCE=..\..\src\mouse.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\pushbutton.c
 # End Source File
 # Begin Source File
 

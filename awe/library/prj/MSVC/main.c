@@ -1,10 +1,34 @@
 #include "widget.h"
-#include "button.h"
+#include "pushbutton.h"
+
+
+void button1_activated(AWE_OBJECT *obj)
+{
+    TRACE("Button 1 activated\n");
+}
+
+
+void button2_activated(AWE_OBJECT *obj)
+{
+    TRACE("Button 2 activated\n");
+}
+
+
+void button1_pressed(AWE_OBJECT *obj)
+{
+    TRACE("Button 1 pressed\n");
+}
+
+
+void button2_pressed(AWE_OBJECT *obj)
+{
+    TRACE("Button 2 pressed\n");
+}
 
 
 int main()
 {
-    AWE_WIDGET *root, *button;
+    AWE_WIDGET *root, *button1, *button2;
 
     allegro_init();
     install_keyboard();
@@ -24,13 +48,37 @@ int main()
         AWE_ID_HEIGHT, SCREEN_H,
         0);
 
-    button = awe_create_widget(&awe_button_class, root,
-        AWE_ID_TEXT, "SomeButton",
+    button1 = awe_create_widget(&awe_push_button_class, root,
+        AWE_ID_TEXT, "Button 1",
         AWE_ID_X, 100,
         AWE_ID_Y, 50,
         AWE_ID_WIDTH, 250,
         AWE_ID_HEIGHT, 100,
         0);
+    awe_add_widget_event(button1,
+                         AWE_ID_PUSH_BUTTON_ACTIVATED, 
+                         0,
+                         button1_activated);
+    awe_add_widget_event(button1,
+                         AWE_ID_PUSH_BUTTON_PRESSED, 
+                         0,
+                         button1_pressed);
+
+    button2 = awe_create_widget(&awe_push_button_class, root,
+        AWE_ID_TEXT, "Button 2",
+        AWE_ID_X, 200,
+        AWE_ID_Y, 300,
+        AWE_ID_WIDTH, 250,
+        AWE_ID_HEIGHT, 100,
+        0);
+    awe_add_widget_event(button2,
+                         AWE_ID_PUSH_BUTTON_ACTIVATED, 
+                         0,
+                         button2_activated);
+    awe_add_widget_event(button2,
+                         AWE_ID_PUSH_BUTTON_PRESSED, 
+                         0,
+                         button2_pressed);
 
     awe_set_root_widget(root);
     awe_update_gui();
@@ -39,7 +87,6 @@ int main()
         if (keypressed () && (readkey() >> 8) == KEY_ESC) break;
         awe_do_events();
         awe_update_gui();
-        textprintf(screen, font, 0, SCREEN_H - 8, 0xFFFFFF, "%i", button->has_mouse);
     }
 
     //readkey();
