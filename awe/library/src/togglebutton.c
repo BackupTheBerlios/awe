@@ -70,13 +70,13 @@ AWE_PUSH_BUTTON_VTABLE awe_toggle_button_vtable = {
 AWE_CLASS awe_toggle_button_class = {
     AWE_ID_TOGGLE_BUTTON,
     AWE_ID_AWE,
-    &awe_widget_class,
+    &awe_push_button_class,
     sizeof(AWE_PUSH_BUTTON),
-    awe_push_button_properties,
+    0,
     _toggle_button_events,
     &awe_toggle_button_vtable.widget.object,
-    awe_push_button_constructor,
-    awe_push_button_destructor
+    0,
+    0,
 };
 
 

@@ -37,6 +37,55 @@ static AWE_CLASS_EVENT _push_button_events[] = {
 };
 
 
+//constructor
+static void _push_button_constructor(AWE_OBJECT *obj)
+{
+    int i, j;
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    tmp->text = ustrdup(empty_string);
+    tmp->font = font;
+    memcpy(&tmp->margin, &_margin, sizeof(_margin));
+    for(i = 0; i < AWE_PUSH_BUTTON_NUM_TEXTURES; i++){
+        for(j = 0; j < AWE_PUSH_BUTTON_NUM_FACES; j++){
+            if(i == AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED)
+                memcpy(&tmp->texture[i].face_col[j], &_face_color_highlighted, sizeof(RGB));
+            else
+                memcpy(&tmp->texture[i].face_col[j], &_face_color_normal, sizeof(RGB));
+        }
+        for(j = 0; j < AWE_PUSH_BUTTON_NUM_EDGES; j++){
+            if(i == AWE_PUSH_BUTTON_TEXTURE_PRESSED){
+                if(j == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
+                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_bottom_right, sizeof(RGB));
+                else
+                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_top_left, sizeof(RGB));
+            }
+	    else{
+                if(j == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
+                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_top_left, sizeof(RGB));
+                else
+                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_bottom_right, sizeof(RGB));
+            }
+        }
+        if(i == AWE_PUSH_BUTTON_TEXTURE_DISABLED){
+            memcpy(&tmp->texture[i].font_col, &_font_color_disabled, sizeof(RGB));
+            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_disabled, sizeof(RGB));
+        }
+        else{
+            memcpy(&tmp->texture[i].font_col, &_font_color_normal, sizeof(RGB));
+            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_normal, sizeof(RGB));
+        }      
+    }
+}
+
+
+//destructor
+static void _push_button_destructor(AWE_OBJECT *obj)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    free(tmp->text);
+}
+
+
 //gets the text
 static void _push_button_get_text(AWE_OBJECT *obj, void *data)
 {
@@ -855,62 +904,8 @@ static void _push_button_set_font_shadow_focused(AWE_OBJECT *obj, void *data)
 }
 
 
-/*****************************************************************************
-    PUBLIC
- *****************************************************************************/
-
-
-//constructor
-void awe_push_button_constructor(AWE_OBJECT *obj)
-{
-    int i, j;
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->text = ustrdup(empty_string);
-    tmp->font = font;
-    memcpy(&tmp->margin, &_margin, sizeof(_margin));
-    for(i = 0; i < AWE_PUSH_BUTTON_NUM_TEXTURES; i++){
-        for(j = 0; j < AWE_PUSH_BUTTON_NUM_FACES; j++){
-            if(i == AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED)
-                memcpy(&tmp->texture[i].face_col[j], &_face_color_highlighted, sizeof(RGB));
-            else
-                memcpy(&tmp->texture[i].face_col[j], &_face_color_normal, sizeof(RGB));
-        }
-        for(j = 0; j < AWE_PUSH_BUTTON_NUM_EDGES; j++){
-            if(i == AWE_PUSH_BUTTON_TEXTURE_PRESSED){
-                if(j == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
-                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_bottom_right, sizeof(RGB));
-                else
-                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_top_left, sizeof(RGB));
-            }
-	    else{
-                if(j == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
-                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_top_left, sizeof(RGB));
-                else
-                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_bottom_right, sizeof(RGB));
-            }
-        }
-        if(i == AWE_PUSH_BUTTON_TEXTURE_DISABLED){
-            memcpy(&tmp->texture[i].font_col, &_font_color_disabled, sizeof(RGB));
-            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_disabled, sizeof(RGB));
-        }
-        else{
-            memcpy(&tmp->texture[i].font_col, &_font_color_normal, sizeof(RGB));
-            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_normal, sizeof(RGB));
-        }      
-    }
-}
-
-
-//destructor
-void awe_push_button_destructor(AWE_OBJECT *obj)
-{
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    free(tmp->text);
-}
-
-
 //awe push_button properties
-AWE_CLASS_PROPERTY awe_push_button_properties[] = {
+static AWE_CLASS_PROPERTY _push_button_properties[] = {
     { AWE_ID_TEXT, "const char *", sizeof(const char *), _push_button_get_text, _push_button_set_text, 0 },
     { AWE_ID_FONT, "FONT *", sizeof(FONT *), _push_button_get_font, _push_button_set_font, 0 },
     { AWE_ID_BITMAP, "BITMAP *", sizeof(BITMAP *), _push_button_get_bitmap, _push_button_set_bitmap, 0 },
@@ -966,6 +961,11 @@ AWE_CLASS_PROPERTY awe_push_button_properties[] = {
 };
 
 
+/*****************************************************************************
+    PUBLIC
+ *****************************************************************************/
+
+
 //push_button vtable
 AWE_PUSH_BUTTON_VTABLE awe_push_button_vtable = {
     //widget
@@ -1018,11 +1018,11 @@ AWE_CLASS awe_push_button_class = {
     AWE_ID_AWE,
     &awe_widget_class,
     sizeof(AWE_PUSH_BUTTON),
-    awe_push_button_properties,
+    _push_button_properties,
     _push_button_events,
     &awe_push_button_vtable.widget.object,
-    awe_push_button_constructor,
-    awe_push_button_destructor
+    _push_button_constructor,
+    _push_button_destructor
 };
 
 

@@ -12,6 +12,27 @@ static RGB _shadow_color_enabled  = { 255, 0  , 255, 0 };  //Magenta will not sh
 static RGB _shadow_color_disabled = { 255, 255, 255, 0 };
 
 
+//constructor
+static void _label_constructor(AWE_OBJECT *obj)
+{
+    AWE_LABEL *tmp = (AWE_LABEL *)obj;
+    tmp->text = ustrdup(empty_string);
+    tmp->font = font;
+    memcpy(&tmp->color[AWE_LABEL_ENABLED].font_col, &_font_color_enabled, sizeof(RGB));
+    memcpy(&tmp->color[AWE_LABEL_DISABLED].font_col, &_font_color_disabled, sizeof(RGB));
+    memcpy(&tmp->color[AWE_LABEL_ENABLED].font_sdw, &_shadow_color_enabled, sizeof(RGB));
+    memcpy(&tmp->color[AWE_LABEL_DISABLED].font_sdw, &_shadow_color_disabled, sizeof(RGB));
+}
+
+
+//destructor
+static void _label_destructor(AWE_OBJECT *obj)
+{
+    AWE_LABEL *tmp = (AWE_LABEL *)obj;
+    free(tmp->text);
+}
+
+
 //gets the text
 static void _label_get_text(AWE_OBJECT *obj, void *data)
 {
@@ -116,34 +137,8 @@ static void _label_set_font_shadow_disabled(AWE_OBJECT *obj, void *data)
 }
 
 
-/*****************************************************************************
-    PUBLIC
- *****************************************************************************/
-
-
-//constructor
-void awe_label_constructor(AWE_OBJECT *obj)
-{
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    tmp->text = ustrdup(empty_string);
-    tmp->font = font;
-    memcpy(&tmp->color[AWE_LABEL_ENABLED].font_col, &_font_color_enabled, sizeof(RGB));
-    memcpy(&tmp->color[AWE_LABEL_DISABLED].font_col, &_font_color_disabled, sizeof(RGB));
-    memcpy(&tmp->color[AWE_LABEL_ENABLED].font_sdw, &_shadow_color_enabled, sizeof(RGB));
-    memcpy(&tmp->color[AWE_LABEL_DISABLED].font_sdw, &_shadow_color_disabled, sizeof(RGB));
-}
-
-
-//destructor
-void awe_label_destructor(AWE_OBJECT *obj)
-{
-    AWE_LABEL *tmp = (AWE_LABEL *)obj;
-    free(tmp->text);
-}
-
-
 //label properties
-AWE_CLASS_PROPERTY awe_label_properties[] = {
+static AWE_CLASS_PROPERTY _label_properties[] = {
     { AWE_ID_TEXT, "const char *", sizeof(const char *), _label_get_text, _label_set_text, 0 },
     { AWE_ID_FONT, "FONT *", sizeof(FONT *), _label_get_font, _label_set_font, 0 },
     { AWE_ID_FONT_COLOR_ENABLED, "RGB", sizeof(RGB), _label_get_font_color_enabled, _label_set_font_color_enabled, 0 },
@@ -152,6 +147,11 @@ AWE_CLASS_PROPERTY awe_label_properties[] = {
     { AWE_ID_SHADOW_COLOR_DISABLED, "RGB", sizeof(RGB), _label_get_font_shadow_disabled, _label_set_font_shadow_disabled, 0 },
     { 0 }
 };
+
+
+/*****************************************************************************
+    PUBLIC
+ *****************************************************************************/
 
 
 //label vtable
@@ -201,11 +201,11 @@ AWE_CLASS awe_label_class = {
     AWE_ID_AWE,
     &awe_widget_class,
     sizeof(AWE_LABEL),
-    awe_label_properties,
+    _label_properties,
     0,
     &awe_label_vtable.widget.object,
-    awe_label_constructor,
-    awe_label_destructor
+    _label_constructor,
+    _label_destructor
 };
 
 

@@ -15,18 +15,25 @@
 #endif
 
 
+/**@name Label
+    <p>Label widget.</p>
+ */
+/*@{*/
+
+
+///label class name
 #define AWE_ID_LABEL		"Label"
 
 
-enum AWE_LABEL_STATES {
+enum AWE_LABEL_STATE {
     AWE_LABEL_ENABLED,
     AWE_LABEL_DISABLED,
     AWE_LABEL_NUM_STATES,
 };
-typedef enum AWE_LABEL_STATES AWE_LABEL_STATES;
+typedef enum AWE_LABEL_STATE AWE_LABEL_STATE;
 
 
-// label colors
+///label colors
 struct AWE_LABEL_COLOR {
     RGB font_col;
     RGB font_sdw;
@@ -34,7 +41,7 @@ struct AWE_LABEL_COLOR {
 typedef struct AWE_LABEL_COLOR AWE_LABEL_COLOR;
 
 
-//label
+///label
 struct AWE_LABEL {
     AWE_WIDGET widget;
     char *text;
@@ -44,7 +51,7 @@ struct AWE_LABEL {
 typedef struct AWE_LABEL AWE_LABEL;
 
 
-//label vtable
+///label vtable
 struct AWE_LABEL_VTABLE {
     AWE_WIDGET_VTABLE widget;
     AWE_GEOMETRY_MANAGER_VTABLE geometry_manager;
@@ -52,24 +59,31 @@ struct AWE_LABEL_VTABLE {
 typedef struct AWE_LABEL_VTABLE AWE_LABEL_VTABLE;
 
 
-//label vtable
-extern AWE_LABEL_VTABLE AWE_LABEL_vtable;
+///label vtable
+extern AWE_LABEL_VTABLE awe_label_vtable;
 
 
-//label class
+///label class
 extern AWE_CLASS awe_label_class;
 
 
-//label properties
-extern AWE_CLASS_PROPERTY awe_label_properties[];
-
-
-void awe_label_constructor(AWE_OBJECT *obj);
-void awe_label_destructor(AWE_OBJECT *obj);
+///returns a label interface
 void *awe_label_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace);
+
+
+///clones a label
 AWE_OBJECT *awe_label_clone(AWE_OBJECT *wgt);
+
+
+///paints a label
 void awe_label_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip);
+
+
+///sets a labels geometry
 void awe_label_set_geometry(AWE_WIDGET *wgt);
+
+
+/*@}*/
 
 
 #ifdef __cplusplus
