@@ -38,24 +38,24 @@ static void _push_button_constructor(AWE_OBJECT *obj)
     for(i = 0; i < AWE_PUSH_BUTTON_NUM_TEXTURES; i++){
         for(j = 0; j < AWE_PUSH_BUTTON_NUM_FACES; j++){
             if(i == AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED)
-                tmp->face_col[i][j] = &_face_color_highlighted;
+                memcpy(&tmp->face_col[i][j], &_face_color_highlighted, sizeof(RGB));
             else
-                tmp->face_col[i][j] = &_face_color_normal;
+                memcpy(&tmp->face_col[i][j], &_face_color_normal, sizeof(RGB));
         }
         if(i == AWE_PUSH_BUTTON_TEXTURE_DISABLED){
-            tmp->font_col[i] = &_font_color_disabled;
-            tmp->font_sdw[i] = &_font_shadow_disabled;
+            memcpy(&tmp->font_col[i], &_font_color_disabled, sizeof(RGB));
+            memcpy(&tmp->font_sdw[i], &_font_shadow_disabled, sizeof(RGB));
         }
         else{
-            tmp->font_col[i] = &_font_color_normal;
-            tmp->font_sdw[i] = &_font_shadow_normal;
+            memcpy(&tmp->font_col[i], &_font_color_normal, sizeof(RGB));
+            memcpy(&tmp->font_sdw[i], &_font_shadow_normal, sizeof(RGB));
         }         
     }
     for(i = 0; i < AWE_PUSH_BUTTON_NUM_EDGES; i++){
         if(i == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
-            tmp->edge_col[i] = &_edge_color_top_left;
+            memcpy(&tmp->edge_col[i], &_edge_color_top_left, sizeof(RGB));
         else
-            tmp->edge_col[i] = &_edge_color_bottom_right;
+            memcpy(&tmp->edge_col[i], &_edge_color_bottom_right, sizeof(RGB));
     }
     *(tmp->texture) = NULL;
 }
@@ -202,7 +202,75 @@ static void _push_button_get_margin_bottom(AWE_OBJECT *obj, void *data)
 static void _push_button_set_margin_bottom(AWE_OBJECT *obj, void *data)
 {
     AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->margin.bottom= *(int *)data;
+    tmp->margin.bottom = *(int *)data;
+    awe_set_widget_dirty(&tmp->widget);
+}
+
+
+//gets the top left enabled face color
+static void _push_button_get_face_color_top_left_enabled(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    memcpy((RGB *)data, &tmp->face_col[AWE_PUSH_BUTTON_TEXTURE_ENABLED][AWE_PUSH_BUTTON_FACE_TOP_LEFT], sizeof(RGB));
+}
+
+
+//sets the top left enabled face color
+static void _push_button_set_face_color_top_left_enabled(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    memcpy(&tmp->face_col[AWE_PUSH_BUTTON_TEXTURE_ENABLED][AWE_PUSH_BUTTON_FACE_TOP_LEFT], (RGB *)data, sizeof(RGB));
+    awe_set_widget_dirty(&tmp->widget);
+}
+
+
+//gets the top right enabled face color
+static void _push_button_get_face_color_top_right_enabled(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    memcpy((RGB *)data, &tmp->face_col[AWE_PUSH_BUTTON_TEXTURE_ENABLED][AWE_PUSH_BUTTON_FACE_TOP_RIGHT], sizeof(RGB));
+}
+
+
+//sets the top right enabled face color
+static void _push_button_set_face_color_top_right_enabled(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    memcpy(&tmp->face_col[AWE_PUSH_BUTTON_TEXTURE_ENABLED][AWE_PUSH_BUTTON_FACE_TOP_RIGHT], (RGB *)data, sizeof(RGB));
+    awe_set_widget_dirty(&tmp->widget);
+}
+
+
+//gets the bottom left enabled face color
+static void _push_button_get_face_color_bottom_left_enabled(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    memcpy((RGB *)data, &tmp->face_col[AWE_PUSH_BUTTON_TEXTURE_ENABLED][AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT], sizeof(RGB));
+}
+
+
+//sets the bottom left enabled face color
+static void _push_button_set_face_color_bottom_left_enabled(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    memcpy(&tmp->face_col[AWE_PUSH_BUTTON_TEXTURE_ENABLED][AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT], (RGB *)data, sizeof(RGB));
+    awe_set_widget_dirty(&tmp->widget);
+}
+
+
+//gets the bottom right enabled face color
+static void _push_button_get_face_color_bottom_right_enabled(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    memcpy((RGB *)data, &tmp->face_col[AWE_PUSH_BUTTON_TEXTURE_ENABLED][AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT], sizeof(RGB));
+}
+
+
+//sets the bottom right enabled face color
+static void _push_button_set_face_color_bottom_right_enabled(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    memcpy(&tmp->face_col[AWE_PUSH_BUTTON_TEXTURE_ENABLED][AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT], (RGB *)data, sizeof(RGB));
     awe_set_widget_dirty(&tmp->widget);
 }
 
@@ -217,6 +285,10 @@ static AWE_CLASS_PROPERTY _push_button_properties[] = {
     { AWE_ID_MARGIN_LEFT, "int", sizeof(int), _push_button_get_margin_left, _push_button_set_margin_left, 0 },
     { AWE_ID_MARGIN_RIGHT, "int", sizeof(int), _push_button_get_margin_right, _push_button_set_margin_right, 0 },
     { AWE_ID_MARGIN_BOTTOM, "int", sizeof(int), _push_button_get_margin_bottom, _push_button_set_margin_bottom, 0 },
+    { AWE_ID_FACE_COLOR_TOP_LEFT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_top_left_enabled, _push_button_set_face_color_top_left_enabled, 0 },
+    { AWE_ID_FACE_COLOR_TOP_RIGHT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_top_right_enabled, _push_button_set_face_color_top_right_enabled, 0 },
+    { AWE_ID_FACE_COLOR_BOTTOM_LEFT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_bottom_left_enabled, _push_button_set_face_color_bottom_left_enabled, 0 },
+    { AWE_ID_FACE_COLOR_BOTTOM_RIGHT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_bottom_right_enabled, _push_button_set_face_color_bottom_right_enabled, 0 },
     { 0 }
 };
 
@@ -353,32 +425,32 @@ void awe_push_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *
         state = AWE_PUSH_BUTTON_TEXTURE_ENABLED;
 
     awe_fill_gradient_s(canvas, 3, 3, wgt->width - 6, wgt->height - 6, 
-        rgb_to_color(btn->face_col[state][AWE_PUSH_BUTTON_FACE_TOP_LEFT]),
-        rgb_to_color(btn->face_col[state][AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT]),
-        rgb_to_color(btn->face_col[state][AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT]),
-        rgb_to_color(btn->face_col[state][AWE_PUSH_BUTTON_FACE_TOP_RIGHT]));
+        AWE_MAKE_COLOR(btn->face_col[state][AWE_PUSH_BUTTON_FACE_TOP_LEFT]),
+        AWE_MAKE_COLOR(btn->face_col[state][AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT]),
+        AWE_MAKE_COLOR(btn->face_col[state][AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT]),
+        AWE_MAKE_COLOR(btn->face_col[state][AWE_PUSH_BUTTON_FACE_TOP_RIGHT]));
 
     if(state == AWE_PUSH_BUTTON_TEXTURE_PRESSED){
         awe_draw_3d_rect_s(canvas, 0, 0, wgt->width, wgt->height, 
-            rgb_to_color(btn->edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]),
-            rgb_to_color(btn->edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]), 
+            AWE_MAKE_COLOR(btn->edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]),
+            AWE_MAKE_COLOR(btn->edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]), 
             3);
         tx += 1;
         ty += 1;
     }
     else
         awe_draw_3d_rect_s(canvas, 0, 0, wgt->width, wgt->height, 
-            rgb_to_color(btn->edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]),
-            rgb_to_color(btn->edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]), 
+            AWE_MAKE_COLOR(btn->edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]),
+            AWE_MAKE_COLOR(btn->edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]), 
             3);
 
-    if(rgb_to_color(btn->font_sdw[state]) != makecol(255, 0, 255))
-        awe_draw_gui_text(canvas, btn->font, btn->text, tx + 1, ty + 1, rgb_to_color(btn->font_sdw[state]), -1);
+    if(AWE_MAKE_COLOR(btn->font_sdw[state]) != makecol(255, 0, 255))
+        awe_draw_gui_text(canvas, btn->font, btn->text, tx + 1, ty + 1, AWE_MAKE_COLOR(btn->font_sdw[state]), -1);
     
-    awe_draw_gui_text(canvas, btn->font, btn->text, tx, ty, rgb_to_color(btn->font_col[state]), -1);
+    awe_draw_gui_text(canvas, btn->font, btn->text, tx, ty, AWE_MAKE_COLOR(btn->font_col[state]), -1);
     
     if (awe_get_focus_widget() == wgt && state != AWE_PUSH_BUTTON_TEXTURE_DISABLED)
-        awe_draw_rect_pattern_s(canvas, 4, 4, wgt->width - 9, wgt->height - 9, rgb_to_color(btn->font_col[state]), AWE_PATTERN_DOT_DOT);
+        awe_draw_rect_pattern_s(canvas, 4, 4, wgt->width - 9, wgt->height - 9, AWE_MAKE_COLOR(btn->font_col[state]), AWE_PATTERN_DOT_DOT);
 }
 
 
