@@ -14,6 +14,8 @@
 #include "geomman.h"
 #include "control.h"
 #include "pushbutton.h"
+#include "togglebutton.h"
+#include "label.h"
 
 #ifdef __cplusplus
    extern "C" {
