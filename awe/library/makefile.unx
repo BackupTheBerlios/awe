@@ -5,8 +5,9 @@ UNIXDIR_D=/usr/local
 OBJECTS += input_linux.o
 
 lib/unix/libawe.a: $(addprefix $(OBJ),$(OBJECTS))
-	ar cr $(LIBDIR)libawe.a $(OBJ)*.o
-	ranlib $(LIBDIR)libawe.a
+	#ar cr $(LIBDIR)libawe.a $(OBJ)*.o
+	#ranlib $(LIBDIR)libawe.a
+	gcc -shared $(OBJ)*.o -o $(LIBDIR)libawe.a `allegro-config --libs` -lpthread
 	@echo Make Completed Successfully
 	@echo Run Make Install
 install:

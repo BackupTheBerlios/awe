@@ -8,9 +8,9 @@ This folder contains the following items:
 **************************
 * NOTICE FOR LINUX USERS *
 **************************
-The code doesn't seem to want to compile into the examples
-correctly.  Right now I'm not sure what's wrong, but I'll
-be investigating it very soon.
+The makefile has changed a lot in my possesion.  The method for 
+outputting the final lib is very different.  It may not work, if 
+not, contact me.
 
 If you have any questions, please e-mail me at QBasicer@gmail.com
 
