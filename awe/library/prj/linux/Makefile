@@ -2,9 +2,9 @@
 
 CC=gcc
 LIB=libawe.a
-INCLUDE=../../include/
+INCLUDE=../../include/awe/
 AWEDIR=./
-OBJ=../../obj/
+OBJ=./obj/
 SRC=../../src/
 OBJECTS=linkedlist.o symbintree.o font.o mouse.o skin.o gdi.o com.o input.o event.o widget.o dataobjects.o draganddrop.o geomman.o control.o pushbutton.o togglebutton.o label.o checkbox.o radio.o
 
@@ -23,11 +23,11 @@ ifeq "$(LOADPNG)" "1"
 DEFS+=-DLOADPNG
 endif
 
-LIBDIR=../../lib/unix/
+LIBDIR=./
 UNIXDIR_D=/usr/local
 OBJECTS += input_linux.o
 
-../../lib/unix/libawe.a: $(addprefix $(OBJ),$(OBJECTS))
+./unix/libawe.a: $(addprefix $(OBJ),$(OBJECTS))
 	#ar cr $(LIBDIR)libawe.a $(OBJ)*.o
 	#ranlib $(LIBDIR)libawe.a
 	gcc -shared $(OBJ)*.o -o $(LIBDIR)libawe.a `allegro-config --libs` -lpthread
@@ -37,7 +37,7 @@ install:
 	mkdir $(UNIXDIR_D)/include/awe
 	cp include/awe.h $(UNIXDIR_D)/include
 	cp include/awe/*.* $(UNIXDIR_D)/include/awe
-	cp lib/unix/libawe.a $(UNIXDIR_D)/lib
+	cp ./libawe.a $(UNIXDIR_D)/lib
 uninstall:
 	rm -f $(UNIXDIR_D)/include/awe.h
 	rm -r $(UNIXDIR_D)/include/awe/*.*
