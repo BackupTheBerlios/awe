@@ -1,0 +1,21 @@
+.PHONY: install uninstall
+
+LIBDIR=lib/unix/
+UNIXDIR_D=/usr/local
+OBJECTS += input_linux.o
+
+../../lib/unix/libawe.a: $(addprefix $(OBJ),$(OBJECTS))
+	#ar cr $(LIBDIR)libawe.a $(OBJ)*.o
+	#ranlib $(LIBDIR)libawe.a
+	gcc -shared $(OBJ)*.o -o $(LIBDIR)libawe.a `allegro-config --libs` -lpthread
+	@echo Make Completed Successfully
+	@echo Run Make Install
+install:
+	mkdir $(UNIXDIR_D)/include/awe
+	cp include/awe.h $(UNIXDIR_D)/include
+	cp include/awe/*.* $(UNIXDIR_D)/include/awe
+	cp lib/unix/libawe.a $(UNIXDIR_D)/lib
+uninstall:
+	rm -f $(UNIXDIR_D)/include/awe.h
+	rm -r $(UNIXDIR_D)/include/awe/*.*
+	rm -f $(UNIXDIR_D)/lib/libawe.a
