@@ -1,0 +1,15 @@
+CC=gcc
+EX01=ex01.exe
+EX02=ex02.exe
+EX03=ex03.exe
+EX04=ex04.exe
+EX05=ex05.exe
+AL_LINK=-lawe
+ifeq "$(ALFONT)" "1"
+AL_LINK+=-lalfont
+endif
+ifeq "$(LOADPNG)" "1"
+AL_LINK+=-lldpng -lpng -lz
+endif
+AL_LINK+=-lalleg -mwindows
+ALL=$(EX01) $(EX02) $(EX03) $(EX04) $(EX05)
