@@ -15,7 +15,12 @@ static RGB _bar_color_bottom        = { 241, 239, 226, 0 };
 
 
 #define DEFAULT_HANDLE_WIDTH        9
+#define DEFAULT_HANDLE_HEIGHT       16
 #define DEFAULT_SLIDER_MAX          100
+
+
+#define MINOR_TICK_LEN              4
+#define MAJOR_TICK_LEN              6
 
 
 //slider moved argument
@@ -32,12 +37,36 @@ static AWE_CLASS_EVENT _slider_events[] = {
 };
 
 
+//insterts label into slider label list
+static void _slider_list_insert(AWE_DL_LIST *list, AWE_SLIDER_LABEL *label)
+{
+    AWE_DL_NODE *t;
+    for(t = list->first; t; t = t->next) {
+        if(((AWE_SLIDER_LABEL *)t)->val > label->val){
+            awe_list_insert(list, (AWE_DL_NODE *)label, t);
+            return;
+        }
+        else if(((AWE_SLIDER_LABEL *)t)->val == label->val){
+            AWE_DL_NODE *next = t->next;
+            awe_list_remove(list, t);
+            free(&((AWE_SLIDER_LABEL *)t)->label);
+            free(t);
+            if(label->label)
+                awe_list_insert(list, (AWE_DL_NODE *)label, next);
+            return;
+        }
+    }
+    awe_list_insert(list, (AWE_DL_NODE *)label, NULL);
+}
+
+
 //constructor
 static void _slider_constructor(AWE_OBJECT *obj)
 {
     AWE_SLIDER *tmp = (AWE_SLIDER *)obj;
     int i;
     tmp->handle_width = DEFAULT_HANDLE_WIDTH;
+    tmp->handle_height = DEFAULT_HANDLE_HEIGHT;
     tmp->max_val = DEFAULT_SLIDER_MAX;
     memcpy(&tmp->bar_col[0], &_bar_color_top, sizeof(RGB));
     memcpy(&tmp->bar_col[1], &_bar_color_bottom, sizeof(RGB));
@@ -55,7 +84,15 @@ static void _slider_constructor(AWE_OBJECT *obj)
 //destructor
 static void _slider_destructor(AWE_OBJECT *obj)
 {
-    
+    AWE_DL_NODE *t, *next;
+    TRACE("Cleaning up slider label table\n");
+    for(t = ((AWE_SLIDER *)obj)->label_table.first; t; t = next) {
+        next = t->next;
+        awe_list_remove(&((AWE_SLIDER *)obj)->label_table, t);
+        TRACE("Removing %d %s\n", ((AWE_SLIDER_LABEL *)t)->val, ((AWE_SLIDER_LABEL *)t)->label);
+        free(&((AWE_SLIDER_LABEL *)t)->label);
+        free(t);
+    }
 }
 
 
@@ -89,6 +126,22 @@ static void _slider_set_position(AWE_OBJECT *obj, void *data)
 }
 
 
+//gets the slider min
+static void _slider_get_min(AWE_OBJECT *obj, void *data)
+{
+    *(int *)data = ((AWE_SLIDER *)obj)->min_val;
+}
+
+
+//sets the slider min
+static void _slider_set_min(AWE_OBJECT *obj, void *data)
+{
+    ((AWE_SLIDER *)obj)->min_val = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
+}
+
+
+
 //gets the slider max
 static void _slider_get_max(AWE_OBJECT *obj, void *data)
 {
@@ -99,22 +152,38 @@ static void _slider_get_max(AWE_OBJECT *obj, void *data)
 //sets the slider max
 static void _slider_set_max(AWE_OBJECT *obj, void *data)
 {
-    ((AWE_SLIDER *)obj)->max_val = MAX(0, *(int *)data);
+    ((AWE_SLIDER *)obj)->max_val = *(int *)data;
     awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
 
-//gets the handle width
-static void _slider_get_width(AWE_OBJECT *obj, void *data)
+//gets the slider minor ticks
+static void _slider_get_minortick(AWE_OBJECT *obj, void *data)
 {
-    *(int *)data = ((AWE_SLIDER *)obj)->handle_width;
+    *(int *)data = ((AWE_SLIDER *)obj)->minor_tick;
 }
 
 
-//sets the handle width
-static void _slider_set_width(AWE_OBJECT *obj, void *data)
+//sets the slider minor ticks
+static void _slider_set_minortick(AWE_OBJECT *obj, void *data)
 {
-    ((AWE_SLIDER *)obj)->handle_width = MAX(0, *(int *)data);
+    ((AWE_SLIDER *)obj)->minor_tick = MAX(0, *(int *)data);
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
+}
+
+
+
+//gets the slider major ticks
+static void _slider_get_majortick(AWE_OBJECT *obj, void *data)
+{
+    *(int *)data = ((AWE_SLIDER *)obj)->major_tick;
+}
+
+
+//sets the slider major ticks
+static void _slider_set_majortick(AWE_OBJECT *obj, void *data)
+{
+    ((AWE_SLIDER *)obj)->major_tick = MAX(0, *(int *)data);
     awe_set_widget_dirty((AWE_WIDGET *)obj);
 }
 
@@ -148,14 +217,90 @@ static void _slider_set_step(AWE_OBJECT *obj, void *data)
 }
 
 
+//gets the slider show tick value
+static void _slider_get_showtick(AWE_OBJECT *obj, void *data)
+{
+    *(int *)data = ((AWE_SLIDER *)obj)->show_ticks;
+}
+
+
+//sets the slider show tick value
+static void _slider_set_showtick(AWE_OBJECT *obj, void *data)
+{
+    ((AWE_SLIDER *)obj)->show_ticks = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
+}
+
+
+//gets the slider show label value
+static void _slider_get_showlabel(AWE_OBJECT *obj, void *data)
+{
+    *(int *)data = ((AWE_SLIDER *)obj)->show_labels;
+}
+
+
+//sets the slider show label value
+static void _slider_set_showlabel(AWE_OBJECT *obj, void *data)
+{
+    ((AWE_SLIDER *)obj)->show_labels = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
+}
+
+
+//gets the slider inverted value
+static void _slider_get_inverted(AWE_OBJECT *obj, void *data)
+{
+    *(int *)data = ((AWE_SLIDER *)obj)->inverted;
+}
+
+
+//sets the slider inverted value
+static void _slider_set_inverted(AWE_OBJECT *obj, void *data)
+{
+    ((AWE_SLIDER *)obj)->inverted = *(int *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
+}
+
+
+//gets the slider label table
+static void _slider_get_label_table(AWE_OBJECT *obj, void *data)
+{
+    *(AWE_DL_LIST *)data = ((AWE_SLIDER *)obj)->label_table;
+}
+
+
+//sets the slider label table
+static void _slider_set_label_table(AWE_OBJECT *obj, void *data)
+{
+    ((AWE_SLIDER *)obj)->label_table = *(AWE_DL_LIST *)data;
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
+}
+
+
+//adds a slider label table entry
+static void _slider_add_label_entry(AWE_OBJECT *obj, void *data)
+{
+    TRACE("Adding Label Entry: %d %s\n", (*(AWE_SLIDER_LABEL **)data)->val, (*(AWE_SLIDER_LABEL **)data)->label);
+    _slider_list_insert(&((AWE_SLIDER *)obj)->label_table, *(AWE_SLIDER_LABEL **)data);
+    awe_set_widget_dirty((AWE_WIDGET *)obj);
+}
+
+
 //slider properties
 static AWE_CLASS_PROPERTY _slider_properties[] = {
     { AWE_ID_ORIENTATION, "AWE_SLIDER_ORIENTATION", sizeof(AWE_SLIDER_ORIENTATION), _slider_get_orientation, _slider_set_orientation, 0 },
     { AWE_ID_POSITION, "int", sizeof(int), _slider_get_position, _slider_set_position, 0 },
+    { AWE_ID_MIN, "int", sizeof(int), _slider_get_min, _slider_set_min, 0 },
     { AWE_ID_MAX, "int", sizeof(int), _slider_get_max, _slider_set_max, 0 },
-    { AWE_ID_HANDLE_WIDTH, "int", sizeof(int), _slider_get_width, _slider_set_width, 0 },
+    { AWE_ID_MINOR_TICK, "int", sizeof(int), _slider_get_minortick, _slider_set_minortick, 0 },
+    { AWE_ID_MAJOR_TICK, "int", sizeof(int), _slider_get_majortick, _slider_set_majortick, 0 },
+    { AWE_ID_SHOW_TICKS, "int", sizeof(int), _slider_get_showtick, _slider_set_showtick, 0 },
+    { AWE_ID_SHOW_LABELS, "int", sizeof(int), _slider_get_showlabel, _slider_set_showlabel, 0 },
     { AWE_ID_HANDLE_TYPE,  "AWE_SLIDER_HANDLE_TYPE", sizeof(AWE_SLIDER_HANDLE_TYPE), _slider_get_type, _slider_set_type, 0 },
     { AWE_ID_STEP,  "int", sizeof(int), _slider_get_step, _slider_set_step, 0 },
+    { AWE_ID_INVERTED, "int", sizeof(int), _slider_get_inverted, _slider_set_inverted, 0 },
+    { AWE_ID_SLIDER_LABEL_TABLE, "AWE_DL_LIST", sizeof(AWE_DL_LIST), _slider_get_label_table, _slider_set_label_table, 0 },
+    { AWE_ID_SLIDER_LABEL, "AWE_SLIDER_LABEL *", sizeof(AWE_SLIDER_LABEL *), NULL, _slider_add_label_entry, 0 },
     { 0 }
 };
 
@@ -247,9 +392,13 @@ AWE_OBJECT *awe_slider_clone(AWE_OBJECT *wgt)
 {
     return awe_create_object(&awe_slider_class,
         AWE_ID_POSITION, ((AWE_SLIDER *)wgt)->pos,
+        AWE_ID_MIN, ((AWE_SLIDER *)wgt)->min_val,
         AWE_ID_MAX, ((AWE_SLIDER *)wgt)->max_val,
+        AWE_ID_MINOR_TICK, ((AWE_SLIDER *)wgt)->minor_tick,
+        AWE_ID_MAJOR_TICK, ((AWE_SLIDER *)wgt)->major_tick,
+        AWE_ID_SHOW_TICKS, ((AWE_SLIDER *)wgt)->show_ticks,
+        AWE_ID_SHOW_LABELS, ((AWE_SLIDER *)wgt)->show_labels,
         AWE_ID_ORIENTATION, ((AWE_SLIDER *)wgt)->orientation,
-        AWE_ID_HANDLE_WIDTH, ((AWE_SLIDER *)wgt)->handle_width,
         AWE_ID_HANDLE_TYPE, ((AWE_SLIDER *)wgt)->handle_type,
         AWE_ID_STEP, ((AWE_SLIDER *)wgt)->step,
         0);
@@ -262,7 +411,6 @@ void awe_slider_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
     AWE_SLIDER *sldr = (AWE_SLIDER *)wgt;
     int pos = (((sldr->orientation ? wgt->height : wgt->width) - sldr->handle_width) * sldr->pos) / sldr->max_val;
     int state;
-
     if(!awe_is_enabled_widget_tree(wgt))
         state = AWE_SLIDER_TEXTURE_DISABLED;
     else if(sldr->pressed)
@@ -284,6 +432,21 @@ void awe_slider_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
             AWE_MAKE_COLOR(sldr->bar_col[0]),
             AWE_MAKE_COLOR(sldr->bar_col[1]),
             2);
+        /* Ticks: to be added later */
+        //if(sldr->step > 0){
+        //    int i, newpos;
+        //    float steprange = sldr->max_val / (float)sldr->step;
+        //    for(i = 0; i <= sldr->step; i++){
+	    //    int tick_len;
+	    //    newpos = (((wgt->width - sldr->handle_width) / (float)sldr->step) / steprange) * (int)(steprange * i);
+	    //    tick_len = 4;//(type & 1) ? 6 : 4;
+	    //    if(sldr->handle_type == AWE_SLIDER_HANDLE_NORMAL || sldr->handle_type == AWE_SLIDER_HANDLE_UP)
+	    //        awe_draw_vline(canvas, (sldr->handle_width >> 1) + newpos, 0, tick_len - 1, makecol(0, 0, 0));
+        //   if(sldr->handle_type == AWE_SLIDER_HANDLE_NORMAL || sldr->handle_type == AWE_SLIDER_HANDLE_DOWN)
+	    //        awe_draw_vline(canvas, (sldr->handle_width >> 1) + newpos, wgt->height - tick_len, wgt->height - 1, makecol(0, 0, 0));
+        //    }
+        //    //sldr->step_pos = sldr->cur_pos / (sldr->max_val / sldr->num_steps);
+        //}
     }
     if (awe_get_focus_widget() == wgt && state != AWE_SLIDER_TEXTURE_DISABLED)
         awe_draw_rect_pattern_s(canvas, 0, 0, wgt->width, wgt->height, makecol(0, 0, 0), AWE_PATTERN_DOT_DOT);
@@ -446,7 +609,8 @@ void awe_slider_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event)
 
 
 //slider wheel
-void awe_slider_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event){
+void awe_slider_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event)
+{
     AWE_SLIDER *sldr = (AWE_SLIDER *)wgt;
     int newpos;
 
@@ -462,4 +626,14 @@ void awe_slider_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event){
         awe_set_widget_dirty(wgt);
     }
     sldr->oz = event->mouse.z;
+}
+
+
+//creates a slider label
+AWE_SLIDER_LABEL *awe_make_slider_label(int val, const char *label)
+{
+    AWE_SLIDER_LABEL *s = (AWE_SLIDER_LABEL *)malloc(sizeof(AWE_SLIDER_LABEL));
+    s->val = val;
+    s->label = label ? ustrdup(label) : NULL;
+    return s;
 }

@@ -6,6 +6,7 @@
 #include "widget.h"
 #include "control.h"
 #include "dataobjects.h"
+#include "linkedlist.h"
 #include "geomman.h"
 #include "skin.h"
 
@@ -21,35 +22,63 @@
 
 
 ///slider class name
-#define AWE_ID_SLIDER         "Slider"
+#define AWE_ID_SLIDER                 "Slider"
 
 
 ///position property
-#define AWE_ID_POSITION       "Position"
+#define AWE_ID_POSITION               "Position"
+
+
+///minimum value property
+#define AWE_ID_MIN                    "Min"
 
 
 ///maximum value property
-#define AWE_ID_MAX            "Max"
+#define AWE_ID_MAX                    "Max"
+
+
+///minor tick value property
+#define AWE_ID_MINOR_TICK             "MinorTick"
+
+
+///major tick value property
+#define AWE_ID_MAJOR_TICK             "MajorTick"
 
 
 ///orientation property
-#define AWE_ID_ORIENTATION    "Orientation"
-
-
-///handle width property
-#define AWE_ID_HANDLE_WIDTH   "HandleWidth"
+#define AWE_ID_ORIENTATION            "Orientation"
 
 
 ///handle type property
-#define AWE_ID_HANDLE_TYPE    "HandleType"
+#define AWE_ID_HANDLE_TYPE            "HandleType"
 
 
 ///step property
-#define AWE_ID_STEP           "Step"
+#define AWE_ID_STEP                   "Step"
+
+
+///show ticks property
+#define AWE_ID_SHOW_TICKS             "ShowTicks"
+
+
+///show labels property
+#define AWE_ID_SHOW_LABELS            "ShowLabels"
+
+
+///slider inverted property
+#define AWE_ID_INVERTED               "Inverted"
+
+
+///slider label table entry property
+#define AWE_ID_SLIDER_LABEL           "SliderLabel"
+
+
+///slider label table
+#define AWE_ID_SLIDER_LABEL_TABLE     "SliderLabelTable"
 
 
 ///moved event name
-#define AWE_ID_SLIDER_MOVED   "SliderMoved"
+#define AWE_ID_SLIDER_MOVED           "SliderMoved"
 
 
 ///slider orientation
@@ -91,24 +120,40 @@ enum AWE_SLIDER_HANDLE_TYPE {
 typedef enum AWE_SLIDER_HANDLE_TYPE AWE_SLIDER_HANDLE_TYPE;
 
 
+///label structure
+struct AWE_SLIDER_LABEL {
+    AWE_DL_NODE node;
+    int val;
+    const char *label;
+};
+typedef struct AWE_SLIDER_LABEL AWE_SLIDER_LABEL;
+
+
 ///slider
 struct AWE_SLIDER {
     AWE_WIDGET widget;
     RGB bar_col[AWE_SLIDER_NUM_EDGES];
     RGB edge_col[AWE_SLIDER_NUM_TEXTURES][AWE_SLIDER_NUM_EDGES];
     RGB face_col[AWE_SLIDER_NUM_TEXTURES];
+    AWE_DL_LIST label_table;
     AWE_SLIDER_HANDLE_TYPE handle_type;
     AWE_SLIDER_ORIENTATION orientation;
     int handle_width;
+    int handle_height;
     int pos;
-    int old_pos;
+    int min_val;
     int max_val;
     int step;
     int step_pos;
+    int minor_tick;
+    int major_tick;
     int oz;
     int highlighted:1;
     int pressed:1;
     int lostmouse:1;
+    int show_ticks:1;
+    int show_labels:1;
+    int inverted:1;
 };
 typedef struct AWE_SLIDER AWE_SLIDER;
 
@@ -164,6 +209,10 @@ void awe_slider_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 ///slider wheel movement
 void awe_slider_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event);
+
+
+///creates a slider label
+AWE_SLIDER_LABEL *awe_make_slider_label(int val, const char *label);
 
 
 /*@}*/
