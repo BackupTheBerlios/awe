@@ -76,10 +76,10 @@ AWE_CLASS_PROPERTY _push_button_properties[] = {
 
 
 AWE_CLASS_EVENT _push_button_events[] = {
-    { AWE_PUSH_BUTTON_EVENT_ACTIVATED, 0 },
-    { AWE_PUSH_BUTTON_EVENT_RELEASED,  0 },
-    { AWE_PUSH_BUTTON_EVENT_HELD_DOWN, 0 },
-    { AWE_PUSH_BUTTON_EVENT_PRESSED,   0 },
+    { AWE_ID_PUSH_BUTTON_ACTIVATED, 0 },
+    { AWE_ID_PUSH_BUTTON_RELEASED,  0 },
+    { AWE_ID_PUSH_BUTTON_HELD_DOWN, 0 },
+    { AWE_ID_PUSH_BUTTON_PRESSED,   0 },
     { 0 }
 };
 
@@ -110,7 +110,7 @@ AWE_PUSH_BUTTON_VTABLE awe_push_button_vtable = {
         awe_widget_key_up,
         0,
         awe_widget_get_focus,
-        0,
+        awe_widget_lose_focus,
         awe_widget_begin_display,
         awe_widget_end_display,
         awe_widget_insert_widget,
@@ -216,7 +216,7 @@ void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
     btn->state |= AWE_PUSH_BUTTON_PRESSED;
-    awe_do_widget_event0((AWE_OBJECT *)wgt, AWE_PUSH_BUTTON_EVENT_PRESSED);
+    awe_do_widget_event0((AWE_OBJECT *)wgt, AWE_ID_PUSH_BUTTON_PRESSED);
     awe_set_widget_dirty(wgt);
 }
 
@@ -227,10 +227,10 @@ void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
     awe_leave_event_mode();
     btn->state &= ~AWE_PUSH_BUTTON_PRESSED;
     if(awe_widget_has_mouse(wgt)){
-        awe_do_widget_event0(wgt, AWE_PUSH_BUTTON_EVENT_ACTIVATED);
+        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_ACTIVATED);
     }
     else{
-        awe_do_widget_event0(wgt, AWE_PUSH_BUTTON_EVENT_RELEASED);
+        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_RELEASED);
     }
     awe_set_widget_dirty(wgt);
 }

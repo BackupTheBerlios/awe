@@ -84,10 +84,10 @@
 #define AWE_ID_ANIM_FOCUSED			"AnimFocused"
 
 
-#define AWE_PUSH_BUTTON_EVENT_ACTIVATED		"Activated"
-#define AWE_PUSH_BUTTON_EVENT_RELEASED		"Released"
-#define AWE_PUSH_BUTTON_EVENT_HELD_DOWN		"HeldDown"
-#define AWE_PUSH_BUTTON_EVENT_PRESSED		"Pressed"
+#define AWE_ID_PUSH_BUTTON_ACTIVATED		"PushButtonActivated"
+#define AWE_ID_PUSH_BUTTON_RELEASED		"PushButtonReleased"
+#define AWE_ID_PUSH_BUTTON_HELD_DOWN		"PushButtonHeldDown"
+#define AWE_ID_PUSH_BUTTON_PRESSED		"PushButtonPressed"
 
 
 enum AWE_PUSH_BUTTON_EDGE {
@@ -111,6 +111,7 @@ typedef enum AWE_PUSH_BUTTON_FACE AWE_PUSH_BUTTON_FACE;
 enum AWE_PUSH_BUTTON_STATE {
     AWE_PUSH_BUTTON_ENABLED,
     AWE_PUSH_BUTTON_PRESSED,
+    AWE_PUSH_BUTTON_GOTMOUSE,
 };
 typedef enum AWE_PUSH_BUTTON_STATE AWE_PUSH_BUTTON_STATE;
 
@@ -168,7 +169,6 @@ void awe_push_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *
 void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event);
 void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event);
 int awe_push_button_key_press(AWE_WIDGET *wgt, const AWE_EVENT *event);
-int awe_push_button_lose_focus(AWE_WIDGET *wgt);
 void awe_push_button_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event);
 void awe_push_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event);
 void awe_push_button_set_geometry(AWE_WIDGET *wgt);
