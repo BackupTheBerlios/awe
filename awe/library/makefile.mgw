@@ -1,0 +1,28 @@
+.PHONY: install uninstall
+
+LIBDIR=lib/mingw/
+OBJECTS+=input_win32.o
+    
+.PHONY: badmingw
+
+ifdef MINGDIR
+MINGDIR_D = $(subst /,\,$(MINGDIR))
+else
+badmingw:
+	@echo Your MINGDIR environment variable is not set!
+endif
+
+$(LIBDIR)$(LIB): $(addprefix $(OBJ),$(OBJECTS))
+	ar cr lib\mingw\libawe.a $(OBJ)*.o
+	ranlib lib\mingw\libawe.a
+	@echo Make Completed Successfully
+	@echo Run Make Install
+install:
+	mkdir $(MINGDIR_D)\include\awe
+	copy include\awe.h $(MINGDIR_D)\include
+	copy include\awe\*.* $(MINGDIR_D)\include\awe
+	copy lib\mingw\libawe.a $(MINGDIR_D)\lib
+uninstall:
+	rm -f $(MINGDIR_D)\include\awe.h
+	rm -r $(MINGDIR_D)\include\awe\*.*
+	rm -f $(MINGDIR_D)\lib\$(LIB)    
