@@ -171,10 +171,8 @@ void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event);
 int awe_push_button_key_press(AWE_WIDGET *wgt, const AWE_EVENT *event);
 void awe_push_button_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event);
 void awe_push_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event);
+void awe_push_button_timer(AWE_WIDGET *wgt, const AWE_EVENT *event);
 void awe_push_button_set_geometry(AWE_WIDGET *wgt);
-void awe_push_button_geometry_changed(AWE_WIDGET *wgt, int x, int y, int width, int height);
-void awe_push_button_z_order_changed(AWE_WIDGET *wgt, int z);
-void awe_push_button_visible_changed(AWE_WIDGET *wgt, int visible);
 
 
 #ifdef __cplusplus

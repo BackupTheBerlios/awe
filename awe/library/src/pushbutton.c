@@ -108,16 +108,16 @@ AWE_PUSH_BUTTON_VTABLE awe_push_button_vtable = {
         awe_widget_mouse_wheel,
         awe_widget_key_down,
         awe_widget_key_up,
-        0,
+        awe_push_button_timer,
         awe_widget_get_focus,
         awe_widget_lose_focus,
         awe_widget_begin_display,
         awe_widget_end_display,
         awe_widget_insert_widget,
         awe_widget_remove_widget,
-        awe_push_button_geometry_changed,
-        awe_push_button_z_order_changed,
-        awe_push_button_visible_changed,
+        awe_geometry_manager_geometry_changed,
+        awe_geometry_manager_z_order_changed,
+        awe_geometry_manager_visible_changed,
         0
     }
     ,
@@ -216,7 +216,8 @@ void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
     btn->state |= AWE_PUSH_BUTTON_PRESSED;
-    awe_do_widget_event0((AWE_OBJECT *)wgt, AWE_ID_PUSH_BUTTON_PRESSED);
+    awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_PRESSED);
+    awe_add_widget_timer(wgt, 0, 100);
     awe_set_widget_dirty(wgt);
 }
 
@@ -232,6 +233,7 @@ void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
     else{
         awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_RELEASED);
     }
+    awe_remove_widget_timer(wgt, 0);
     awe_set_widget_dirty(wgt);
 }
 
@@ -261,25 +263,20 @@ int awe_push_button_key_press(AWE_WIDGET *wgt, const AWE_EVENT *event)
 }
 
 
+void awe_push_button_timer(AWE_WIDGET *wgt, const AWE_EVENT *event)
+{
+    awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_HELD_DOWN);
+}
+
+
 void awe_push_button_set_geometry(AWE_WIDGET *wgt)
 {
-
+    AWE_PUSH_BUTTON *btn = (AWE_PUSH_BUTTON *)wgt;
+    awe_override_widget_size(
+        wgt, 
+        text_length(btn->font,
+        btn->text) + btn->margin.left + btn->margin.right, 
+        text_height(btn->font) + btn->margin.top + btn->margin.bottom
+    );
 }
 
-
-void awe_push_button_geometry_changed(AWE_WIDGET *wgt, int x, int y, int width, int height)
-{
-
-}
-
-
-void awe_push_button_z_order_changed(AWE_WIDGET *wgt, int z)
-{
-
-}
-
-
-void awe_push_button_visible_changed(AWE_WIDGET *wgt, int visible)
-{
-
-}
