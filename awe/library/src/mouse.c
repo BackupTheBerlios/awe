@@ -1249,7 +1249,7 @@ void awe_update_mouse(){
 
 // Hides the mouse
 void awe_scare_mouse(void){
-    if (!mouse_driver)
+    if(!_mouse_install_count)
         return;
     if (_scared_size < MOUSE_SCARED_SIZE) {
         _scared_screen[_scared_size] = _mouse_screen;
@@ -1262,7 +1262,7 @@ void awe_scare_mouse(void){
 
 // Unhides the mouse
 void awe_unscare_mouse(void){
-    if (!mouse_driver)
+    if(!_mouse_install_count)
         return;
     if (_scared_size > 0)
         _scared_size--;
@@ -1337,6 +1337,8 @@ void awe_set_mouse_shadow_focus(int focus){
 // Like mouse_scare_mouse, but it will only hide the mouse if it lies within the area
 void awe_scare_mouse_area(int x, int y, int w, int h){
     int x2, y2, w2, h2;
+    if(!_mouse_install_count)
+        return;
     awe_get_mouse_area(&x2, &y2, &w2, &h2);
     if(_mouse_collision(x, y, w, h, x2, y2, w2, h2))
         awe_scare_mouse();

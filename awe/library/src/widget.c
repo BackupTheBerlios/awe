@@ -471,14 +471,15 @@ static void _redraw_widget(AWE_WIDGET *wgt)
 {
     int cl, ct, cr, cb;
     AWE_RECT t;
-
+    BITMAP *tmp = _mouse_screen;  
+  
     AWE_RECT_INTERSECTION(t, wgt->clip, wgt->dirty);
 
     //acquire bitmap
     acquire_bitmap(_gui_screen);
 
     //hide mouse
-    if (awe_get_mouse_screen() == _gui_screen)
+    if (tmp == _gui_screen)
         awe_scare_mouse_area(t.left, t.top, AWE_RECT_WIDTH(t), AWE_RECT_HEIGHT(t));
 
     //save screen clipping
@@ -497,7 +498,8 @@ static void _redraw_widget(AWE_WIDGET *wgt)
     _gui_screen->cb = cb;
 
     //show mouse
-    if (awe_get_mouse_screen() == _gui_screen) awe_unscare_mouse();
+    if (tmp == _gui_screen) 
+        awe_unscare_mouse();
 
     //release bitmap
     release_bitmap(_gui_screen);
