@@ -2,10 +2,10 @@
 
 CC=gcc
 LIB=libawe.a
-INCLUDE=include/
+INCLUDE=../../include/
 AWEDIR=./
-OBJ=obj/
-SRC=src/
+OBJ=../../obj/
+SRC=../../src/
 OBJECTS=linkedlist.o symbintree.o font.o mouse.o skin.o gdi.o com.o input.o event.o widget.o dataobjects.o draganddrop.o geomman.o control.o pushbutton.o togglebutton.o label.o
 
 ifeq "$(DEBUGMODE)" "1"
@@ -23,15 +23,26 @@ ifeq "$(LOADPNG)" "1"
 DEFS+=-DLOADPNG
 endif
 
-ifdef DJDIR
-include makefile.dj
-else
-ifdef MINGDIR
-include makefile.mgw
-else
-include makefile.unx
-endif
-endif
+LIBDIR=lib/unix/
+UNIXDIR_D=/usr/local
+OBJECTS += input_linux.o
+
+../../lib/unix/libawe.a: $(addprefix $(OBJ),$(OBJECTS))
+	#ar cr $(LIBDIR)libawe.a $(OBJ)*.o
+	#ranlib $(LIBDIR)libawe.a
+	gcc -shared $(OBJ)*.o -o $(LIBDIR)libawe.a `allegro-config --libs` -lpthread
+	@echo Make Completed Successfully
+	@echo Run Make Install
+install:
+	mkdir $(UNIXDIR_D)/include/awe
+	cp include/awe.h $(UNIXDIR_D)/include
+	cp include/awe/*.* $(UNIXDIR_D)/include/awe
+	cp lib/unix/libawe.a $(UNIXDIR_D)/lib
+uninstall:
+	rm -f $(UNIXDIR_D)/include/awe.h
+	rm -r $(UNIXDIR_D)/include/awe/*.*
+	rm -f $(UNIXDIR_D)/lib/libawe.a
+
 
 $(OBJ)linkedlist.o: $(SRC)linkedlist.c $(INCLUDE)$(AWEDIR)linkedlist.h
 	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)linkedlist.c -o $(OBJ)linkedlist.o $(DEFS)
