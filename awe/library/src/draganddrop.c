@@ -83,6 +83,10 @@ int awe_drag_and_drop_event_proc(AWE_EVENT_MODE_ACTION_TYPE action, AWE_EVENT *e
         case AWE_EVENT_MODE_ACTION_END:
             awe_end_drag_and_drop();
             return 0;
+
+        //avoid GCC warning
+        default:
+            break;
     }
 
     //must have root because events will be 'played' from root
@@ -91,8 +95,12 @@ int awe_drag_and_drop_event_proc(AWE_EVENT_MODE_ACTION_TYPE action, AWE_EVENT *e
 
     //send event to widgets
     switch (event->type) {
+        //mouse down not handled (drag-n-drop starts from mouse down)
+        case AWE_EVENT_BUTTON_DOWN:
+            return 0;
+
         //event is sent to the widget under mouse; drag-and-drop ends
-        case AWE_EVENT_MOUSE_UP:
+        case AWE_EVENT_BUTTON_UP:
             wgt = _widget_from_point(root, event->mouse.x, event->mouse.y);
             _DO_MOUSE_EVENT_TARGET(wgt, button_up, event, data);
             awe_end_drag_and_drop();
@@ -138,6 +146,10 @@ int awe_drag_and_drop_event_proc(AWE_EVENT_MODE_ACTION_TYPE action, AWE_EVENT *e
         //event is sent to the widget it belongs to
         case AWE_EVENT_TIMER:
             return awe_def_event_proc(action, event, data);
+
+        //avoid GCC warnings
+        default:
+            break;
     }
 
     return 0;

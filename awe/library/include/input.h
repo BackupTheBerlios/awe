@@ -39,10 +39,10 @@ enum AWE_EVENT_TYPE {
     AWE_EVENT_NONE = 0,
 
     ///button down event
-    AWE_EVENT_MOUSE_DOWN,
+    AWE_EVENT_BUTTON_DOWN,
 
     ///button up event
-    AWE_EVENT_MOUSE_UP,
+    AWE_EVENT_BUTTON_UP,
 
     ///mouse moved event
     AWE_EVENT_MOUSE_MOVE,

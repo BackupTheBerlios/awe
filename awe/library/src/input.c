@@ -171,12 +171,12 @@ static void mouse_proc(int flags)
     //mouse down
     if (mouse_b && !mouse_button) {
         mouse_button = mouse_b;
-        put_mouse_event(AWE_EVENT_MOUSE_DOWN);
+        put_mouse_event(AWE_EVENT_BUTTON_DOWN);
     }
 
     //else mouse up
     else if (!mouse_b && mouse_button) {
-        put_mouse_event(AWE_EVENT_MOUSE_UP);
+        put_mouse_event(AWE_EVENT_BUTTON_UP);
         mouse_button = 0;
     }
 

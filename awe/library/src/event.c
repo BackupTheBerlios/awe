@@ -128,7 +128,7 @@ static int _do_event(AWE_WIDGET *root, AWE_EVENT *event, int force)
 
     switch (event->type) {
         //button down event
-        case AWE_EVENT_MOUSE_DOWN:
+        case AWE_EVENT_BUTTON_DOWN:
             curr = _widget_from_point(root, event->mouse.x, event->mouse.y);
             if (!curr) {
                 if (!force) return 0;
@@ -140,7 +140,7 @@ static int _do_event(AWE_WIDGET *root, AWE_EVENT *event, int force)
             return 1;
 
         //button up event
-        case AWE_EVENT_MOUSE_UP:
+        case AWE_EVENT_BUTTON_UP:
             curr = _widget_from_point(root, event->mouse.x, event->mouse.y);
             if (!curr) {
                 if (!force) return 0;
@@ -377,14 +377,14 @@ int awe_grab_event_proc(AWE_EVENT_MODE_ACTION_TYPE action, AWE_EVENT *event, voi
 
     switch (event->type) {
         //button down event
-        case AWE_EVENT_MOUSE_DOWN:
+        case AWE_EVENT_BUTTON_DOWN:
             _DO_MOUSE_EVENT(wgt, button_down, event);
             _last_x = event->mouse.x;
             _last_y = event->mouse.y;
             return 1;
 
         //button up event
-        case AWE_EVENT_MOUSE_UP:
+        case AWE_EVENT_BUTTON_UP:
             _DO_MOUSE_EVENT(wgt, button_up, event);
             _last_x = event->mouse.x;
             _last_y = event->mouse.y;
