@@ -14,8 +14,7 @@
 //does a mouse event; takes care of mapping event coordinates to widget space
 #define _DO_MOUSE_EVENT(WGT, METHOD, EVENT) {\
     if (WGT) {\
-        int x = EVENT->mouse.x, y = EVENT->mouse.y;\
-        int tx, ty;\
+        int x = EVENT->mouse.x, y = EVENT->mouse.y, tx, ty;\
         awe_map_point(0, WGT, x, y, &tx, &ty);\
         EVENT->mouse.x = tx;\
         EVENT->mouse.y = ty;\

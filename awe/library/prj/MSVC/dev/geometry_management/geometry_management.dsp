@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="drag_and_drop" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="geometry_management" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=drag_and_drop - Win32 Debug
+CFG=geometry_management - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "drag_and_drop.mak".
+!MESSAGE NMAKE /f "geometry_management.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "drag_and_drop.mak" CFG="drag_and_drop - Win32 Debug"
+!MESSAGE NMAKE /f "geometry_management.mak" CFG="geometry_management - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "drag_and_drop - Win32 Release" (based on "Win32 (x86) Application")
-!MESSAGE "drag_and_drop - Win32 Debug" (based on "Win32 (x86) Application")
+!MESSAGE "geometry_management - Win32 Release" (based on "Win32 (x86) Application")
+!MESSAGE "geometry_management - Win32 Debug" (based on "Win32 (x86) Application")
 !MESSAGE 
 
 # Begin Project
@@ -29,7 +29,7 @@ CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "drag_and_drop - Win32 Release"
+!IF  "$(CFG)" == "geometry_management - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -54,7 +54,7 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 
-!ELSEIF  "$(CFG)" == "drag_and_drop - Win32 Debug"
+!ELSEIF  "$(CFG)" == "geometry_management - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -68,7 +68,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../../../../include" /D "DEBUGMODE" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "../../../../include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUGMODE" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x408 /d "_DEBUG"
@@ -84,8 +84,8 @@ LINK32=link.exe
 
 # Begin Target
 
-# Name "drag_and_drop - Win32 Release"
-# Name "drag_and_drop - Win32 Debug"
+# Name "geometry_management - Win32 Release"
+# Name "geometry_management - Win32 Debug"
 # Begin Group "include"
 
 # PROP Default_Filter ""

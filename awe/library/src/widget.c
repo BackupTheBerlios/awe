@@ -1101,7 +1101,6 @@ int awe_widget_remove_widget(AWE_WIDGET *wgt, AWE_WIDGET *child)
 
     //remove
     awe_list_remove(&wgt->children, &child->node.node);
-    child->parent = 0;
     wgt->children_count--;
 
     //set the enabled tree flag
@@ -1117,6 +1116,10 @@ int awe_widget_remove_widget(AWE_WIDGET *wgt, AWE_WIDGET *child)
         _clean_up_widget(child);
         _DO(child, end_display, (child));
     }
+
+    //set child's parent to null after the update screen step,
+    //in order for the child to be able to notify its parent
+    child->parent = 0;
 
     return 1;
 }
@@ -1684,4 +1687,30 @@ int awe_override_widget_geometry(AWE_WIDGET *wgt, int x, int y, int width, int h
     wgt->height = height;
     if (wgt->on_screen) _set_update_geometry(wgt);
     return 1;
+}
+
+
+/** same as 'awe_override_widget_geometry', but for position only
+    @param wgt widget to set the geometry of
+    @param x left coordinate relative to parent (or to screen if root)
+    @param y top coordinate relative to parent (or to screen if root)
+    @return zero if supplied geometry is the same as the current one; used
+            in knowing when a widget's geometry is actually changed
+ */
+int awe_override_widget_position(AWE_WIDGET *wgt, int x, int y)
+{
+    return awe_override_widget_geometry(wgt, x, y, wgt->width, wgt->height);
+}
+
+
+/** same as 'awe_override_widget_geometry', but for size only
+    @param wgt widget to set the geometry of
+    @param width width of widget
+    @param height height of widget
+    @return zero if supplied geometry is the same as the current one; used
+            in knowing when a widget's geometry is actually changed
+ */
+int awe_override_widget_size(AWE_WIDGET *wgt, int width, int height)
+{
+    return awe_override_widget_geometry(wgt, wgt->x, wgt->y, width, height);
 }
