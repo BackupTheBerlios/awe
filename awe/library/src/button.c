@@ -31,15 +31,15 @@ AWE_BUTTON_VTABLE awe_button_vtable = {
         awe_button_paint,
         awe_button_down,
         awe_button_up,
-        awe_widget_mouse_enter,
+        awe_button_mouse_enter,
         awe_widget_mouse_move,
-        awe_widget_mouse_leave,
+        awe_button_mouse_leave,
         awe_widget_mouse_wheel,
         awe_widget_key_down,
         awe_widget_key_up,
         0,
         awe_widget_get_focus,
-        awe_widget_loose_focus,
+        awe_button_loose_focus,
         awe_widget_begin_display,
         awe_widget_end_display,
         awe_widget_insert_widget,
@@ -59,7 +59,7 @@ AWE_BUTTON_VTABLE awe_button_vtable = {
 
 //button class
 AWE_CLASS awe_button_class = {
-    "Button",
+    AWE_ID_BUTTON,
     AWE_ID_AWE,
     &awe_widget_class,
     sizeof(AWE_BUTTON),
@@ -76,7 +76,7 @@ void awe_button_constructor(AWE_OBJECT *obj)
 {
     AWE_BUTTON *tmp = (AWE_BUTTON *)obj;
     tmp->text = ustrdup(empty_string);
-    tmp->state = 0;
+    tmp->state = AWE_BUTTON_NORMAL;
 }
 
 
@@ -110,7 +110,7 @@ void awe_button_set_text(AWE_OBJECT *obj, void *data)
 void *awe_button_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace)
 {
     if (!strcmp(pnamespace, AWE_ID_AWE)) {
-        if (!strcmp(name, "Button")) {
+        if (!strcmp(name, AWE_ID_BUTTON)) {
             return (AWE_BUTTON_VTABLE *)obj->pclass->vtable;
         }
         if (!strcmp(name, AWE_ID_CONTROL)) {
@@ -127,13 +127,18 @@ void awe_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
     AWE_BUTTON *btn = (AWE_BUTTON *)wgt;
     int tx = (wgt->width - gui_strlen(btn->text)) >> 1;
     int ty = (wgt->height - text_height(font)) >> 1;
-
     solid_mode();
-    awe_fill_rect_s(canvas, 3, 3, wgt->width - 3, wgt->height - 3, makecol(212, 208, 200));
-    if(btn->state == 0)
-        awe_draw_3d_rect_s(canvas, 0, 0, wgt->width, wgt->height, makecol(241, 239, 226), makecol(128, 128, 128), 3);
-    if(btn->state == 1)
+    if(btn->state & AWE_BUTTON_GOTMOUSE)
+        awe_fill_rect_s(canvas, 3, 3, wgt->width - 6, wgt->height - 6, makecol(228, 224, 216));
+    else
+        awe_fill_rect_s(canvas, 3, 3, wgt->width - 6, wgt->height - 6, makecol(212, 208, 200));
+    if(btn->state & AWE_BUTTON_PRESSED){
         awe_draw_3d_rect_s(canvas, 0, 0, wgt->width, wgt->height, makecol(128, 128, 128), makecol(241, 239, 226), 3);
+        tx += 1;
+        ty += 1;
+    }
+    else
+        awe_draw_3d_rect_s(canvas, 0, 0, wgt->width, wgt->height, makecol(241, 239, 226), makecol(128, 128, 128), 3);
     awe_draw_gui_text(canvas, font, btn->text, tx, ty, makecol(0, 0, 0), -1);
     if (awe_get_focus_widget() == wgt) {
         awe_draw_rect_pattern_s(canvas, 4, 4, wgt->width - 9, wgt->height - 9, makecol(0, 0, 0), AWE_PATTERN_DOT_DOT);
@@ -146,7 +151,8 @@ void awe_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
     AWE_BUTTON *btn = (AWE_BUTTON *)wgt;
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
-    btn->state = 1;
+    btn->state |= AWE_BUTTON_PRESSED;
+    awe_set_widget_dirty(wgt);
 }
 
 
@@ -154,7 +160,34 @@ void awe_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     AWE_BUTTON *btn = (AWE_BUTTON *)wgt;
     awe_leave_event_mode();
-    btn->state = 0; 
+    btn->state &= ~AWE_BUTTON_PRESSED; 
+    awe_set_widget_dirty(wgt);
+}
+
+
+int awe_button_loose_focus(AWE_WIDGET *wgt)
+{
+    AWE_BUTTON *btn = (AWE_BUTTON *)wgt;
+    awe_leave_event_mode();
+    btn->state &= ~AWE_BUTTON_PRESSED; 
+    awe_set_widget_dirty(wgt);
+    return 1;
+}
+
+
+void awe_button_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event)
+{
+    AWE_BUTTON *btn = (AWE_BUTTON *)wgt;
+    btn->state |= AWE_BUTTON_GOTMOUSE;
+    awe_set_widget_dirty(wgt);
+}
+
+
+void awe_button_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event)
+{
+    AWE_BUTTON *btn = (AWE_BUTTON *)wgt;
+    btn->state &= ~AWE_BUTTON_GOTMOUSE;
+    awe_set_widget_dirty(wgt);
 }
 
 
