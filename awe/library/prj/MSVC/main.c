@@ -61,10 +61,10 @@ int main()
         AWE_ID_Y, 50,
         AWE_ID_WIDTH, 250,
         AWE_ID_HEIGHT, 100,
-        AWE_ID_FACE_COLOR_LEFT_ENABLED, mk_rgb(255, 255, 255),
-        AWE_ID_FACE_COLOR_TOP_ENABLED, mk_rgb(255, 0, 255),
-        AWE_ID_FACE_COLOR_RIGHT_ENABLED, mk_rgb(0, 255, 255),
-        AWE_ID_FACE_COLOR_BOTTOM_ENABLED, mk_rgb(0, 0, 255),
+        AWE_ID_FACE_COLOR_TOP_LEFT_ENABLED, mk_rgb(255, 255, 255),
+        AWE_ID_FACE_COLOR_TOP_RIGHT_ENABLED, mk_rgb(255, 0, 255),
+        AWE_ID_FACE_COLOR_BOTTOM_LEFT_ENABLED, mk_rgb(0, 255, 255),
+        AWE_ID_FACE_COLOR_BOTTOM_RIGHT_ENABLED, mk_rgb(0, 0, 255),
         0);
 
     button2 = awe_create_widget(&awe_push_button_class, root,
