@@ -57,22 +57,23 @@
 /** The drag-and-drop source widget interface.
  */
 struct AWE_DRAG_AND_DROP_SOURCE_VTABLE {
-    /** called when the drag-and-drop session begins
+    /** called when the drag-and-drop session begins; optional method
         @param wgt widget to be called
      */
     void (*begin)(AWE_WIDGET *wgt);
 
-    /** called when the drag-and-drop session ends
+    /** called when the drag-and-drop session ends; optional method
         @param wgt widget to be called
      */
     void (*end)(AWE_WIDGET *wgt);
 
-    /** called when the dragged data selection must be cleared (data must be deleted)
+    /** called when the dragged data selection must be cleared (data must be deleted);
+        optional method
         @param wgt widget to be called
      */
     void (*clear)(AWE_WIDGET *wgt);
 
-    /** called when the mouse cursor moves over the widget
+    /** called when the mouse cursor moves over the widget; optional method
         @param wgt widget to be called 
         @param event input event
         @param data data object
@@ -85,49 +86,63 @@ typedef struct AWE_DRAG_AND_DROP_SOURCE_VTABLE AWE_DRAG_AND_DROP_SOURCE_VTABLE;
 /** the drag-and-drop target widget interface.
  */
 struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
-    /** called when data are dropped onto the widget
+    /** called when data are dropped onto the widget. Optional method;
+        the default implementation sends the event to the first ancestor that
+        implements the drag-and-drop target interface.
         @param wgt widget to be called
         @param event input event
         @param data data object
      */
     void (*button_up)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
 
-    /** called when the mouse cursor enters the widget
+    /** called when the mouse cursor enters the widget. Optional method;
+        the default implementation sends the event to the first ancestor that
+        implements the drag-and-drop target interface.
         @param wgt widget to be called 
         @param event input event
         @param data data object
      */
     void (*mouse_enter)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
 
-    /** called when the mouse cursor moves over the widget
+    /** called when the mouse cursor moves over the widget. Optional method;
+        the default implementation sends the event to the first ancestor that
+        implements the drag-and-drop target interface.
         @param wgt widget to be called 
         @param event input event
         @param data data object
      */
     void (*mouse_move)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
 
-    /** called when the mouse cursor leaves the widget
+    /** called when the mouse cursor leaves the widget. Optional method;
+        the default implementation sends the event to the first ancestor that
+        implements the drag-and-drop target interface.
         @param wgt widget to be called 
         @param event input event
         @param data data object
      */
     void (*mouse_leave)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
 
-    /** called when the mouse wheel is rolled over the widget
+    /** called when the mouse wheel is rolled over the widget. Optional method;
+        the default implementation sends the event to the first ancestor that
+        implements the drag-and-drop target interface.
         @param wgt widget to be called 
         @param event input event
         @param data data object
      */
     void (*mouse_wheel)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
 
-    /** called when a key is pressed
+    /** called when a key is pressed. Optional method;
+        the default implementation sends the event to the first ancestor that
+        implements the drag-and-drop target interface.
         @param wgt widget to be called 
         @param event input event
         @param data data object
      */
     void (*key_down)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
 
-    /** called when a key is released
+    /** called when a key is released. Optional method;
+        the default implementation sends the event to the first ancestor that
+        implements the drag-and-drop target interface.
         @param wgt widget to be called 
         @param event input event
         @param data data object
@@ -135,6 +150,76 @@ struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
     void (*key_up)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
 };
 typedef struct AWE_DRAG_AND_DROP_TARGET_VTABLE AWE_DRAG_AND_DROP_TARGET_VTABLE;
+
+
+/** the default implementation of the relevant drag-and-drop target event;
+    it propagates the event to the closest ancestor that implements the
+    drag-and-drop target interface
+    @param wgt widget to call
+    @param event input event
+    @param managed data
+ */
+void awe_drag_and_drop_target_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+
+
+/** the default implementation of the relevant drag-and-drop target event;
+    it propagates the event to the closest ancestor that implements the
+    drag-and-drop target interface
+    @param wgt widget to call
+    @param event input event
+    @param managed data
+ */
+void awe_drag_and_drop_target_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+
+
+/** the default implementation of the relevant drag-and-drop target event;
+    it propagates the event to the closest ancestor that implements the
+    drag-and-drop target interface
+    @param wgt widget to call
+    @param event input event
+    @param managed data
+ */
+void awe_drag_and_drop_target_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+
+
+/** the default implementation of the relevant drag-and-drop target event;
+    it propagates the event to the closest ancestor that implements the
+    drag-and-drop target interface
+    @param wgt widget to call
+    @param event input event
+    @param managed data
+ */
+void awe_drag_and_drop_target_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+
+
+/** the default implementation of the relevant drag-and-drop target event;
+    it propagates the event to the closest ancestor that implements the
+    drag-and-drop target interface
+    @param wgt widget to call
+    @param event input event
+    @param managed data
+ */
+void awe_drag_and_drop_target_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+
+
+/** the default implementation of the relevant drag-and-drop target event;
+    it propagates the event to the closest ancestor that implements the
+    drag-and-drop target interface
+    @param wgt widget to call
+    @param event input event
+    @param managed data
+ */
+void awe_drag_and_drop_target_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+
+
+/** the default implementation of the relevant drag-and-drop target event;
+    it propagates the event to the closest ancestor that implements the
+    drag-and-drop target interface
+    @param wgt widget to call
+    @param event input event
+    @param managed data
+ */
+void awe_drag_and_drop_target_key_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
 
 
 /** drag-and-drop event procedure

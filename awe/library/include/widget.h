@@ -161,52 +161,59 @@ struct AWE_WIDGET_VTABLE {
     void (*paint)(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *dirty_rect);
 
     /** called when a button is pressed over the widget; optional method. The
-        widget will receive all events until the mouse button is released.
+        default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
     void (*button_down)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
 
-    /** called when a button is released; optional method
+    /** called when a button is released; optional method. The
+        default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
     void (*button_up)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
 
-    /** called when the mouse cursor enters a widget; optional method
+    /** called when the mouse cursor enters a widget; optional method. The
+        default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
     void (*mouse_enter)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
 
-    /** called when the mouse cursor moves over a widget; optional method
+    /** called when the mouse cursor moves over a widget; optional method. The
+        default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
     void (*mouse_move)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
 
-    /** called when the mouse cursor leaves the widget; optional method
+    /** called when the mouse cursor leaves the widget; optional method. The
+        default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
     void (*mouse_leave)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
 
     /** called when the mouse wheel is rolled; optional method called when
-        the widget has the input focus
+        the widget has the input focus. The
+        default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
     void (*mouse_wheel)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
 
     /** called when a key is pressed; optional method called when
-        the widget has the input focus
+        the widget has the input focus. The
+        default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
     void (*key_down)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
 
     /** called when a key is released; optional method called when
-        the widget has the input focus
+        the widget has the input focus. The
+        default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
@@ -337,6 +344,70 @@ AWE_OBJECT *awe_widget_clone(AWE_OBJECT *wgt);
     @param update_rect rectangle, relative to widget, that is being affected
  */
 void awe_widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *update_rect);
+
+
+/** the default implementation of the relevant event; it sends the event to
+    the widget's parent
+    @param wgt widget to process the event
+    @param event the event to process
+ */
+void awe_widget_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+
+
+/** the default implementation of the relevant event; it sends the event to
+    the widget's parent
+    @param wgt widget to process the event
+    @param event the event to process
+ */
+void awe_widget_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+
+
+/** the default implementation of the relevant event; it sends the event to
+    the widget's parent
+    @param wgt widget to process the event
+    @param event the event to process
+ */
+void awe_widget_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+
+
+/** the default implementation of the relevant event; it sends the event to
+    the widget's parent
+    @param wgt widget to process the event
+    @param event the event to process
+ */
+void awe_widget_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+
+
+/** the default implementation of the relevant event; it sends the event to
+    the widget's parent
+    @param wgt widget to process the event
+    @param event the event to process
+ */
+void awe_widget_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+
+
+/** the default implementation of the relevant event; it sends the event to
+    the widget's parent
+    @param wgt widget to process the event
+    @param event the event to process
+ */
+void awe_widget_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+
+
+/** the default implementation of the relevant event; it sends the event to
+    the widget's parent
+    @param wgt widget to process the event
+    @param event the event to process
+ */
+void awe_widget_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+
+
+/** the default implementation of the relevant event; it sends the event to
+    the widget's parent
+    @param wgt widget to process the event
+    @param event the event to process
+ */
+void awe_widget_key_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
 
 
 /** the default implementation of the get_focus method

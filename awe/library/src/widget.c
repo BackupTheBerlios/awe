@@ -821,14 +821,14 @@ static AWE_WIDGET_VTABLE _widget_vtable = {
         awe_widget_clone
     },
     awe_widget_paint,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    awe_widget_button_down,
+    awe_widget_button_up,
+    awe_widget_mouse_enter,
+    awe_widget_mouse_move,
+    awe_widget_mouse_leave,
+    awe_widget_mouse_wheel,
+    awe_widget_key_down,
+    awe_widget_key_up,
     0,
     awe_widget_get_focus,
     awe_widget_loose_focus,
@@ -1007,6 +1007,70 @@ void awe_widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE
     text_x = awe_draw_text(canvas, font, "::", text_x, 2, text_color, -1);
     awe_draw_text(canvas, font, wgt->object.pclass->name, text_x, 2, text_color, -1);
     if (_focus_widget == wgt) awe_draw_rect_s(canvas, 1, 1, _WGT->width - 2, _WGT->height - 2, fore_color);
+}
+
+
+//sends the event to its parent
+void awe_widget_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+{
+    if (!wgt->parent) return;
+    AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, button_down, (wgt->parent, event));
+}
+
+
+//sends the event to its parent
+void awe_widget_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+{
+    if (!wgt->parent) return;
+    AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, button_up, (wgt->parent, event));
+}
+
+
+//sends the event to its parent
+void awe_widget_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+{
+    if (!wgt->parent) return;
+    AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, mouse_enter, (wgt->parent, event));
+}
+
+
+//sends the event to its parent
+void awe_widget_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+{
+    if (!wgt->parent) return;
+    AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, mouse_move, (wgt->parent, event));
+}
+
+
+//sends the event to its parent
+void awe_widget_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+{
+    if (!wgt->parent) return;
+    AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, mouse_leave, (wgt->parent, event));
+}
+
+
+//sends the event to its parent
+void awe_widget_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+{
+    if (!wgt->parent) return;
+    AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, mouse_wheel, (wgt->parent, event));
+}
+
+
+//sends the event to its parent
+void awe_widget_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+{
+    if (!wgt->parent) return;
+    AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, key_down, (wgt->parent, event));
+}
+
+
+//sends the event to its parent
+void awe_widget_key_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+{
+    if (!wgt->parent) return;
+    AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, key_up, (wgt->parent, event));
 }
 
 
