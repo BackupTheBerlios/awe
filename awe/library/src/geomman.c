@@ -21,6 +21,13 @@ static int _notify_parent(AWE_WIDGET *wgt)
 }
 
 
+//checks if the widget has changed geometry
+static int _geometry_changed(AWE_WIDGET *wgt)
+{
+    return wgt->geometry_changed || wgt->update_geometry;
+}
+
+
 /*****************************************************************************
     PUBLIC
  *****************************************************************************/
@@ -110,6 +117,17 @@ void awe_geometry_manager_do_layout(AWE_WIDGET *wgt)
 //manual geometry management
 void awe_manage_geometry(AWE_WIDGET *wgt)
 {
+    //tell widget to select its geometry
     _DO(wgt, set_geometry, (wgt));
-    if (!_notify_parent(wgt)) _DO(wgt, do_layout, (wgt));    
+
+    //if geometry changed, tell it to parent
+    if (_geometry_changed(wgt)) {
+        _notify_parent(wgt);
+
+        //return now because it is the parent's responsibility to do the given
+        //widget's layout
+        return;
+    }
+
+    _DO(wgt, do_layout, (wgt));    
 }
