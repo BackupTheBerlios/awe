@@ -35,8 +35,8 @@ OBJECTS += input_linux.o
 	@echo Run Make Install
 install:
 	mkdir $(UNIXDIR_D)/include/awe
-	cp include/awe.h $(UNIXDIR_D)/include
-	cp include/awe/*.* $(UNIXDIR_D)/include/awe
+	cp ../../include/awe.h $(UNIXDIR_D)/include
+	cp ../../include/awe/*.* $(UNIXDIR_D)/include/awe
 	cp ./libawe.a $(UNIXDIR_D)/lib
 uninstall:
 	rm -f $(UNIXDIR_D)/include/awe.h
