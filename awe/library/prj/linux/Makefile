@@ -6,7 +6,7 @@ INCLUDE=../../include/
 AWEDIR=./
 OBJ=../../obj/
 SRC=../../src/
-OBJECTS=linkedlist.o symbintree.o font.o mouse.o skin.o gdi.o com.o input.o event.o widget.o dataobjects.o draganddrop.o geomman.o control.o pushbutton.o togglebutton.o label.o
+OBJECTS=linkedlist.o symbintree.o font.o mouse.o skin.o gdi.o com.o input.o event.o widget.o dataobjects.o draganddrop.o geomman.o control.o pushbutton.o togglebutton.o label.o checkbox.o radio.o
 
 ifeq "$(DEBUGMODE)" "1"
 FLAGS=-Wall -g
@@ -78,6 +78,10 @@ $(OBJ)togglebutton.o: $(SRC)togglebutton.c $(INCLUDE)$(AWEDIR)togglebutton.h
 	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)togglebutton.c -o $(OBJ)togglebutton.o $(DEFS)
 $(OBJ)label.o: $(SRC)label.c $(INCLUDE)$(AWEDIR)label.h
 	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)label.c -o $(OBJ)label.o $(DEFS)
+$(OBJ)checkbox.o: $(SRC)checkbox.c $(INCLUDE)$(AWEDIR)checkbox.h
+	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)checkbox.c -o $(OBJ)checkbox.o $(DEFS)
+$(OBJ)radio.o: $(SRC)radio.c $(INCLUDE)$(AWEDIR)radio.h
+	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)radio.c -o $(OBJ)radio.o $(DEFS)
 $(OBJ)input_win32.o: $(SRC)input_win32.c
 	$(CC) $(FLAGS) -I$(INCLUDE)$(AWEDIR) -c $(SRC)input_win32.c -o $(OBJ)input_win32.o $(DEFS)
 $(OBJ)input_linux.o: $(SRC)input_linux.c

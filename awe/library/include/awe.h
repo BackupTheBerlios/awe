@@ -13,9 +13,12 @@
 #include "draganddrop.h"
 #include "geomman.h"
 #include "control.h"
+#include "label.h"
 #include "pushbutton.h"
 #include "togglebutton.h"
-#include "label.h"
+#include "checkbox.h"
+#include "radio.h"
+
 
 #ifdef __cplusplus
    extern "C" {
