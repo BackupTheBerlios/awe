@@ -9,6 +9,15 @@
 #define LITTLE_ENDIAN   1
 
 
+/** skin tile methods
+ */
+enum _SKIN_TILE_METHOD {
+    SKIN_TILE_HORIZONTAL,
+    SKIN_TILE_VERTICAL
+};
+typedef enum _SKIN_TILE_METHOD _SKIN_TILE_METHOD;
+
+
 /** skin object types
  */
 enum _SKIN_OBJECT_TYPE {
@@ -16,7 +25,8 @@ enum _SKIN_OBJECT_TYPE {
     SKIN_TEXTURE = DAT_ID('T', 'X', 'T', 'R'),
     SKIN_FONT = DAT_ID('F', 'O', 'N', 'T'),
     SKIN_RGB = DAT_ID('R', 'G', 'B', ' '),
-    SKIN_INT = DAT_ID('I', 'N', 'T', ' ')
+    SKIN_INT = DAT_ID('I', 'N', 'T', ' '),
+    SKIN_ANIM = DAT_ID('A', 'N', 'I', 'M')
 };
 typedef enum _SKIN_OBJECT_TYPE _SKIN_OBJECT_TYPE;
 
@@ -47,6 +57,12 @@ struct _BOARDER {
 typedef struct _BOARDER _BOARDER;
 
 
+static AWE_SKIN_ANIM _default_anim = { 0, 1, 0 };
+
+
+static RGB _default_color = { 0, 0, 0 };
+
+
 static void _skin_delete_func(const void *data){
     _SKIN_OBJECT *obj = (_SKIN_OBJECT*)data;
     TRACE("Skin: Destroying %s\n", obj->name);
@@ -74,6 +90,10 @@ static void _skin_destroy_font(void *data){
     destroy_font((FONT*)data);
 }
 
+
+static void _skin_destroy_data(void *data){
+    free(data);
+}
 
 static int _get_dat_idx(DATAFILE *dat, const char *name){
     int i;
@@ -143,37 +163,141 @@ static unsigned long _byte_swap(unsigned long nLongNumber){
 }
 
 
-/*****************************************************************************
-    PUBLIC
- *****************************************************************************/
+static int _generate_skin_texture(AWE_SKIN *skn, BITMAP *base, _BOARDER *boarder, const char *name, int idx, int startframe, int numframes, int animframes, _SKIN_TILE_METHOD basetile, _SKIN_TILE_METHOD animtile){
+    int offsetx = animtile ? 0 : base->w / numframes;
+    int offsety = animtile ? base->h / numframes : 0;
+    int startx = basetile ? 0 : startframe * (base->w / numframes);
+    int starty = basetile ? startframe * (base->h / numframes) : 0;
+    int texturew = basetile ? (animtile ? base->w : base->w / animframes) : base->w / numframes;
+    int textureh = basetile ? (animtile ? base->h / numframes : base->h / numframes) : (animtile ? base->h / animframes : base->h);
+    char curframe[8];
+    _SKIN_OBJECT *obj;
+    int i;
+    for(i = 0; i < animframes; i++){
+        if((obj = (_SKIN_OBJECT*)malloc(sizeof(_SKIN_OBJECT))) == NULL)
+            goto _skin_error;
+        if(animframes == 1){
+            if((obj->name = (char*)malloc(ustrlen(name) + uwidth_max(U_CURRENT))) == NULL)
+                goto _skin_error;
+            ustrcpy(obj->name, name);
+        }
+        else{
+            usprintf(curframe, "Frame%d", i);
+            if((obj->name = (char*)malloc(ustrlen(name) + ustrlen(curframe) + uwidth(".") + uwidth_max(U_CURRENT))) == NULL)
+                goto _skin_error;
+            usprintf(obj->name, "%s.%s", name, curframe);
+        }
+        obj->type = SKIN_TEXTURE;
+        obj->skin_idx = idx;
+        obj->destroy_object = _skin_destroy_texture;
+        TRACE("Skin: Loading %s as texture\n", obj->name);
+        if(((AWE_TEXTURE*)obj->data = awe_create_texture(base, startx, starty, texturew, textureh, boarder->left, boarder->top, boarder->right, boarder->bottom)) == NULL)
+            goto _skin_error;
+        awe_sbt_insert(&skn->obj_list, obj, _skin_compare_func);
+        startx += offsetx;
+        starty += offsety;
+    }
+    return 1;
+    _skin_error:
+    if(obj)
+        free(obj->name);
+    free(obj);
+    return 0;
+}
 
 
-AWE_SKIN *awe_load_skin(const char *filename){
-    AWE_SKIN *skn;
-    _SKIN_OBJECT *obj = NULL;
-    int i, alpha = 0;
-    const char *name;
-    skn = (AWE_SKIN*)malloc(sizeof(AWE_SKIN));
-    if(!skn)
+static int _create_animation(AWE_SKIN *skn, const char *name, AWE_SKIN_ANIM_TYPE type, int numframes, int speed){
+    _SKIN_OBJECT *obj;
+    char *anim = "Anim";
+    if((obj = (_SKIN_OBJECT*)malloc(sizeof(_SKIN_OBJECT))) == NULL)
         goto _skin_error;
-    if(filename){
-        skn->dat = load_datafile(filename);
-        if(skn->dat){
-            i = _get_dat_idx(skn->dat, "ALPHA_CFG");
-            alpha = _get_dat_int(skn->dat, i, DAT_ID('C', 'F', 'G', 'A'), 0);                
+    if((obj->name = (char*)malloc(ustrlen(name) + ustrlen(anim) + uwidth(".") + uwidth_max(U_CURRENT))) == NULL)
+        goto _skin_error;
+    if((obj->data = (AWE_SKIN_ANIM*)malloc(sizeof(AWE_SKIN_ANIM))) == NULL)
+        goto _skin_error;
+    usprintf(obj->name, "%s.%s", name, anim);
+    TRACE("Skin: Loading %s as animation\n", obj->name);
+    ((AWE_SKIN_ANIM*)(obj->data))->type = type;
+    ((AWE_SKIN_ANIM*)(obj->data))->numframes = numframes;
+    ((AWE_SKIN_ANIM*)(obj->data))->speed = speed;
+    obj->skin_idx = -1;
+    obj->type = SKIN_ANIM;
+    obj->destroy_object = _skin_destroy_data;
+    awe_sbt_insert(&skn->obj_list, obj, _skin_compare_func);
+    return 1;
+    _skin_error:
+    if(obj){
+        free(obj->name);
+        free(obj->data);
+    }
+    free(obj);
+    return 0;
+}
+
+
+static int _load_texture_references(AWE_SKIN *skn){
+    _SKIN_OBJECT *tmp;
+    _BOARDER boarder;
+    const char *name;
+    int num_frames, start_frame, anim_frames, base_tile, anim_tile, anim_type, anim_speed, i;
+    for(i = 0; skn->dat[i].type != DAT_END; i++){
+        /* Load references of type texture */
+        if(skn->dat[i].type == DAT_ID('R', 'E', 'F', ' ')){
+            name = get_datafile_property(skn->dat + i, DAT_ID('T', 'Y', 'P', 'E'));
+            if(ustricmp(name, "texture") == 0){
+                name = get_datafile_property(skn->dat + i, DAT_ID('S', 'K', 'I', 'D'));
+                if(*name == '\0'){
+                    /* Invalid skin id, continue on */
+                    TRACE("Skin: Warning - No Reference Specified\n");
+                    continue;
+                }
+                if((tmp = _get_skin_object(skn, name)) == NULL){
+                    TRACE("Skin: Warning - Reference %s Not Found\n", name);
+                    continue;
+                }
+                if(tmp->type != SKIN_BITMAP){
+                    TRACE("Skin: Warning - Reference Not Of Type Bitmap\n");
+                    continue;
+                }
+                _get_dat_boarder(skn->dat, &boarder, tmp->skin_idx);
+                num_frames = _get_dat_int(skn->dat, tmp->skin_idx, DAT_ID('N', 'F', 'R', 'M'), 1);
+                anim_frames = _get_dat_int(skn->dat, i, DAT_ID('N', 'F', 'R', 'M'), 1);
+                anim_type = _get_dat_int(skn->dat, i, DAT_ID('A', 'N', 'M', 'T'), 1);
+                anim_speed = _get_dat_int(skn->dat, i, DAT_ID('A', 'N', 'M', 'S'), 0);
+                start_frame = _get_dat_int(skn->dat, i, DAT_ID('F', 'R', 'M', 'E'), 0);
+                name = get_datafile_property(skn->dat + i, DAT_ID('T', 'I', 'L', 'E'));
+                if(*name == '\0' || ustricmp(name, "Horizontal") == 0)
+                    anim_tile = SKIN_TILE_HORIZONTAL;
+                else
+                    anim_tile = SKIN_TILE_VERTICAL;
+                name = get_datafile_property(skn->dat + tmp->skin_idx, DAT_ID('T', 'I', 'L', 'E'));
+                if(*name == '\0' || ustricmp(name, "Horizontal") == 0)
+                    base_tile = SKIN_TILE_HORIZONTAL;
+                else
+                    base_tile = SKIN_TILE_VERTICAL;
+                name = get_datafile_property(skn->dat + i, DAT_ID('A', 'W', 'E', ' '));
+                if(*name == '\0')
+                    continue;
+                else{ 
+                    if(!_generate_skin_texture(skn, tmp->data, &boarder, name, i, start_frame, num_frames, anim_frames, base_tile, anim_tile))
+                        return 0;
+                    if(anim_frames > 1){
+                        if(!_create_animation(skn, name, anim_type, anim_frames, anim_speed))
+                            return 0;
+                    }
+                }
+            }
         }
     }
-    /* Set color conversion if alpha channel is present */
-    if(alpha){
-        unload_datafile(skn->dat);
-        set_color_conversion(COLORCONV_EXPAND_HI_TO_TRUE);
-        skn->dat = load_datafile(filename);
-    }
-    if(!skn->dat)
-        goto _skin_error;
-    /* Load cursor */
-    awe_load_datafile_mouse(skn->dat);
-    skn->obj_list = awe_sbt_init();
+    return 1;
+}
+
+
+static int _load_objects(AWE_SKIN *skn){
+    _SKIN_OBJECT *obj;
+    _BOARDER boarder;
+    const char *name;
+    int i;
     for(i = 0; skn->dat[i].type != DAT_END; i++){
         name = get_datafile_property(skn->dat + i, DAT_ID('A', 'W', 'E', ' '));
         if(*name == '\0')
@@ -181,12 +305,10 @@ AWE_SKIN *awe_load_skin(const char *filename){
         /* Skip references */
         if(skn->dat[i].type == DAT_ID('R', 'E', 'F', ' '))
             continue;
-        obj = (_SKIN_OBJECT*)malloc(sizeof(_SKIN_OBJECT));
-        if(!obj)
+        if((obj = (_SKIN_OBJECT*)malloc(sizeof(_SKIN_OBJECT))) == NULL)
             goto _skin_error;
         obj->skin_idx = i;
-        obj->name = (char*)malloc(ustrlen(name) + uwidth_max(U_CURRENT));
-        if(!obj->name)
+        if((obj->name = (char*)malloc(ustrlen(name) + uwidth_max(U_CURRENT))) == NULL)
             goto _skin_error;
         ustrcpy(obj->name, name);
         switch(skn->dat[i].type){
@@ -198,13 +320,11 @@ AWE_SKIN *awe_load_skin(const char *filename){
             #endif
                 name = get_datafile_property(skn->dat + i, DAT_ID('T', 'Y', 'P', 'E'));
                 if(ustricmp(name, "texture") == 0){
-                    _BOARDER boarder;
                     TRACE("Skin: Loading %s as texture\n", obj->name);
                     /* Create texture */
                     _get_dat_boarder(skn->dat, &boarder, i);
                     obj->type = SKIN_TEXTURE;
-                    (AWE_TEXTURE*)obj->data = awe_create_texture((BITMAP*)skn->dat[i].dat, 0, 0, ((BITMAP*)(skn->dat[i].dat))->w, ((BITMAP*)(skn->dat[i].dat))->h, boarder.left, boarder.top, boarder.right, boarder.bottom);
-                    if(!obj->data)
+                    if(((AWE_TEXTURE*)obj->data = awe_create_texture((BITMAP*)skn->dat[i].dat, 0, 0, ((BITMAP*)(skn->dat[i].dat))->w, ((BITMAP*)(skn->dat[i].dat))->h, boarder.left, boarder.top, boarder.right, boarder.bottom)) == NULL)
                         goto _skin_error;
                     obj->destroy_object = _skin_destroy_texture;
                 }
@@ -234,114 +354,46 @@ AWE_SKIN *awe_load_skin(const char *filename){
         }
         awe_sbt_insert(&skn->obj_list, obj, _skin_compare_func);
     }
+    return 1;
+    _skin_error:
+    if(obj)
+        free(obj->name);
+    free(obj);
+    return 0;
+}
+
+
+static int _load_references(AWE_SKIN *skn){
+    _SKIN_OBJECT *obj;
+    _SKIN_OBJECT *tmp;
+    const char *name;
+    int i;
     for(i = 0; skn->dat[i].type != DAT_END; i++){
-        name = get_datafile_property(skn->dat + i, DAT_ID('A', 'W', 'E', ' '));
-        if(*name == '\0')
-            continue;
         /* Load references */
         if(skn->dat[i].type == DAT_ID('R', 'E', 'F', ' ')){
-            _SKIN_OBJECT *tmp;
-            obj = (_SKIN_OBJECT*)malloc(sizeof(_SKIN_OBJECT));
-            if(!obj)
-                goto _skin_error;
-            obj->skin_idx = i;
-            obj->name = (char*)malloc(ustrlen(name) + uwidth_max(U_CURRENT));
-            if(!obj->name)
-                goto _skin_error;
-            ustrcpy(obj->name, name);
             name = get_datafile_property(skn->dat + i, DAT_ID('T', 'Y', 'P', 'E'));
-            if(ustricmp(name, "texture") == 0){
-                _BOARDER boarder;
-                int num_frames;
-                int cur_frame;
-                TRACE("Skin: Loading %s as texture\n", obj->name);
-                /* Create texture */
-                _get_dat_boarder(skn->dat, &boarder, i);
-                obj->type = SKIN_TEXTURE;
-                name = get_datafile_property(skn->dat + i, DAT_ID('S', 'K', 'I', 'D'));
-                if(*name == '\0'){
-                    /* Invalid skin id, continue on */
-                    TRACE("Skin: Warning - No Reference Specified\n");
-                    free(obj->name);
-                    free(obj);
-                    continue;
-                }
-                tmp = _get_skin_object(skn, name);
-                if(!tmp){
-                    TRACE("Skin: Warning - Reference %s Not Found\n", name);
-                    free(obj->name);
-                    free(obj);
-                    continue;
-                }
-                if(tmp->type != SKIN_BITMAP){
-                    TRACE("Skin: Warning - Reference Not Of Type Bitmap\n");
-                    free(obj->name);
-                    free(obj);
-                    continue;
-                }
-                name = get_datafile_property(skn->dat + tmp->skin_idx, DAT_ID('N', 'F', 'R', 'M'));
-                if(*name == '\0')
-                    num_frames = 1;
-                else
-                    num_frames = atoi(name);
-                name = get_datafile_property(skn->dat + i, DAT_ID('F', 'R', 'M', 'E'));
-                if(*name == '\0')
-                    cur_frame = 0;
-                else
-                    cur_frame = atoi(name);
-                name = get_datafile_property(skn->dat + i, DAT_ID('T', 'I', 'L', 'E'));
-                if(*name == '\0' || ustricmp(name, "Horizontal") == 0){
-                    (AWE_TEXTURE*)obj->data = awe_create_texture((BITMAP*)tmp->data, cur_frame * (((BITMAP*)(tmp->data))->w / num_frames), 0, ((BITMAP*)(tmp->data))->w / num_frames, ((BITMAP*)(tmp->data))->h, boarder.left, boarder.top, boarder.right, boarder.bottom);
-                    if(!obj->data)
-                        goto _skin_error;
-                }
-                else{
-                    (AWE_TEXTURE*)obj->data = awe_create_texture((BITMAP*)tmp->data, 0, cur_frame * (((BITMAP*)(tmp->data))->h / num_frames), ((BITMAP*)(tmp->data))->w, ((BITMAP*)(tmp->data))->h / num_frames, boarder.left, boarder.top, boarder.right, boarder.bottom);
-                    if(!obj->data)
-                        goto _skin_error;
-                }
-                obj->destroy_object = _skin_destroy_texture;
-                awe_sbt_insert(&skn->obj_list, obj, _skin_compare_func);
-            }
-        }
-    }
-    for(i = 0; skn->dat[i].type != DAT_END; i++){
-        name = get_datafile_property(skn->dat + i, DAT_ID('A', 'W', 'E', ' '));
-        if(*name == '\0')
-            continue;
-        /* Load references */
-        if(skn->dat[i].type == DAT_ID('R', 'E', 'F', ' ')){
-            _SKIN_OBJECT *tmp;
-            obj = (_SKIN_OBJECT*)malloc(sizeof(_SKIN_OBJECT));
-            if(!obj)
-                goto _skin_error;
-            obj->skin_idx = i;
-            obj->name = (char*)malloc(ustrlen(name) + uwidth_max(U_CURRENT));
-            if(!obj->name)
-                goto _skin_error;
-            ustrcpy(obj->name, name);
-            name = get_datafile_property(skn->dat + i, DAT_ID('T', 'Y', 'P', 'E'));
-            if(ustricmp(name, "texture") == 0){
-                free(obj->name);
-                free(obj);
+            if(ustricmp(name, "texture") == 0)
                 continue;
-            }
-            TRACE("Skin: Loading %s as binary data link\n", obj->name);
             name = get_datafile_property(skn->dat + i, DAT_ID('S', 'K', 'I', 'D'));
             if(*name == '\0'){
                 /* Invalid skin id, continue on */
                 TRACE("Skin: Warning - No Reference Specified\n");
-                free(obj->name);
-                free(obj);
                 continue;
             }
-            tmp = _get_skin_object(skn, name);
-            if(!tmp){
+            if((tmp = _get_skin_object(skn, name)) == NULL){
                 TRACE("Skin: Warning - Reference %s Not Found\n", name);
-                free(obj->name);
-                free(obj);
                 continue;
             }
+            name = get_datafile_property(skn->dat + i, DAT_ID('A', 'W', 'E', ' '));
+            if(*name == '\0')
+                continue;
+            TRACE("Skin: Loading %s as binary data link\n", name);
+            if((obj = (_SKIN_OBJECT*)malloc(sizeof(_SKIN_OBJECT))) == NULL)
+                goto _skin_error;
+            if((obj->name = (char*)malloc(ustrlen(name) + uwidth_max(U_CURRENT))) == NULL)
+                goto _skin_error;
+            ustrcpy(obj->name, name);
+            obj->skin_idx = i;
             obj->type = tmp->type;
             obj->data = tmp->data;
             /* Don't destroy linked data */
@@ -349,6 +401,50 @@ AWE_SKIN *awe_load_skin(const char *filename){
             awe_sbt_insert(&skn->obj_list, obj, _skin_compare_func);
         }
     }
+    return 1;
+    _skin_error:
+    if(obj)
+        free(obj->name);
+    free(obj);
+    return 0;
+}
+
+
+/*****************************************************************************
+    PUBLIC
+ *****************************************************************************/
+
+
+AWE_SKIN *awe_load_skin(const char *filename){
+    AWE_SKIN *skn;
+    int i, alpha = 0;
+    skn = (AWE_SKIN*)malloc(sizeof(AWE_SKIN));
+    if(!skn)
+        goto _skin_error;
+    if(filename){
+        skn->dat = load_datafile(filename);
+        if(skn->dat){
+            i = _get_dat_idx(skn->dat, "ALPHA_CFG");
+            alpha = _get_dat_int(skn->dat, i, DAT_ID('C', 'F', 'G', 'A'), 0);                
+        }
+    }
+    /* Set color conversion if alpha channel is present */
+    if(alpha){
+        unload_datafile(skn->dat);
+        set_color_conversion(COLORCONV_EXPAND_HI_TO_TRUE);
+        skn->dat = load_datafile(filename);
+    }
+    if(!skn->dat)
+        goto _skin_error;
+    /* Load cursor */
+    awe_load_datafile_mouse(skn->dat);
+    skn->obj_list = awe_sbt_init();
+    if(!_load_objects(skn))
+        goto _skin_error;
+    if(!_load_texture_references(skn))
+        goto _skin_error;
+    if(!_load_references(skn))
+        goto _skin_error;
     if(alpha)
         set_color_conversion(COLORCONV_TOTAL);
     TRACE("Skin: Loaded Successfully\n");
@@ -356,9 +452,6 @@ AWE_SKIN *awe_load_skin(const char *filename){
     _skin_error:
     TRACE("Skin: Unable to load skin\n");
     /* Cleanup */
-    if(obj)
-        free(obj->name);
-    free(obj);
     awe_unload_skin(skn);
     return NULL;
 }
@@ -387,7 +480,7 @@ RGB *awe_get_skin_color(AWE_SKIN *skn, const char *name){
     obj = _get_skin_object(skn, name);
     if(obj && obj->type == SKIN_RGB)
         return (RGB*)obj->data;
-    return NULL;
+    return &_default_color;
 }
 
 
@@ -406,6 +499,15 @@ BITMAP *awe_get_skin_bitmap(AWE_SKIN *skn, const char *name){
     if(obj && obj->type == SKIN_BITMAP)
         return (BITMAP*)obj->data;
     return NULL;
+}
+
+
+AWE_SKIN_ANIM *awe_get_skin_anim(AWE_SKIN *skn, const char *name){
+    _SKIN_OBJECT *obj;
+    obj = _get_skin_object(skn, name);
+    if(obj && obj->type == SKIN_ANIM)
+        return (AWE_SKIN_ANIM*)obj->data;
+    return &_default_anim;
 }
 
 

@@ -22,6 +22,17 @@
 /*@{*/
 
 
+///type of texture to draw
+enum AWE_TEXTURE_TYPE {
+    ///tiled texture
+    AWE_TEXTURE_TILE,
+    
+    ///stretched texture
+    AWE_TEXTURE_STRETCH
+};
+typedef enum AWE_TEXTURE_TYPE AWE_TEXTURE_TYPE;
+
+
 ///type of frame to draw
 enum AWE_FRAME_TYPE {
     ///flat frame
@@ -802,6 +813,54 @@ void awe_draw_texture_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex
     @param h height
  */
 void awe_draw_texture_ver_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h);
+
+
+/** draws a horizontal and vertical strip filled with a texture
+    @param canvas destination canvas
+    @param tex texture to draw
+    @param x1 left coordinate
+    @param y1 top coordinate
+    @param x2 right coordinate
+    @param y2 bottom coordinate
+ */
+void awe_draw_texture_hor_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
+
+
+/** draws a horizontal and vertical strip filled with a texture using position and size
+    @param canvas destination canvas
+    @param tex texture to draw
+    @param x left coordinate
+    @param y top coordinate
+    @param w width
+    @param h height
+ */
+void awe_draw_texture_hor_ver_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h);
+
+
+/** draws a texture based on type
+    @param canvas destination canvas
+    @param tex texture to draw
+    @param x1 left coordinate
+    @param y1 top coordinate
+    @param x2 right coordinate
+    @param y2 bottom coordinate
+    @param h_type horizontal texture type
+    @param v_type vertical texture type
+ */
+void awe_draw_texture_type(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2, AWE_TEXTURE_TYPE h_type, AWE_TEXTURE_TYPE v_type);
+
+
+/** draws a texture based on type using position and size
+    @param canvas destination canvas
+    @param tex texture to draw
+    @param x left coordinate
+    @param y top coordinate
+    @param w width
+    @param h height
+    @param h_type horizontal texture type
+    @param v_type vertical texture type
+ */
+void awe_draw_texture_type_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h, AWE_TEXTURE_TYPE h_type, AWE_TEXTURE_TYPE v_type);
 
 
 /** draws a shadow 

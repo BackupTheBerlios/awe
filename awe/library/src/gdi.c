@@ -50,9 +50,19 @@ static INLINE void _draw_3d_rect(BITMAP *bmp, int x1, int y1, int x2, int y2, in
 //blit fill
 static INLINE void _fill(BITMAP *bmp, BITMAP *src, int x, int y, int w, int h)
 {
+    int x1 = x;
+    int y1 = y;
+    int x2 = x + w;
+    int y2 = y + h;
     if (!src) return;
-    drawing_mode(DRAW_MODE_COPY_PATTERN, src, x, y);
-    rectfill(bmp, x, y, x + w - 1, y + h - 1, 0);
+    do{
+        x1 = x;
+        do{
+            masked_blit(src, bmp, 0, 0, x1, y1, MIN(x2 - x1, MIN(w, src->w)), MIN(y2 - y1, MIN(h, src->h)));
+            x1 += src->w;
+        }while(x1 < x2 - 1);
+        y1 += src->h;
+    }while(y1 < y2 - 1);
 }
 
 
@@ -68,7 +78,7 @@ static BITMAP *_create_sub_bitmap(BITMAP *bmp, int x, int y, int w, int h)
 static INLINE void _stretch(BITMAP *dst, BITMAP *src, int x, int y, int w, int h)
 {
     if (!src) return;
-    stretch_blit(src, dst, 0, 0, src->w, src->h, x, y, w, h);
+    masked_stretch_blit(src, dst, 0, 0, src->w, src->h, x, y, w, h);
 }
 
 
@@ -804,8 +814,6 @@ void awe_draw_restore_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius
     int half_width = MAX(width >> 1, 1);
     int width2 = width * 2;
     int width3 = width * 3;
-    int width4 = width * 4;
-    int width5 = width * 5;
     int x1 = x - radius;
     int y1 = y - radius;
     int x2 = x + radius;
@@ -874,15 +882,20 @@ void awe_draw_texture(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, in
     y2 += AWE_CANVAS_BASE_Y(canvas);
     w = x2 - x1 + 1 - tex->side[_LEFT] - tex->side[_RIGHT];
     h = y2 - y1 + 1 - tex->side[_TOP] - tex->side[_BOTTOM];
-    _fill(canvas->bitmap, tex->bitmap[0], x1, y1, tex->side[_LEFT], tex->side[_TOP]);    
+
+    if (tex->bitmap[0])
+        masked_blit(tex->bitmap[0], canvas->bitmap, 0, 0, x1, y1, tex->side[_LEFT], tex->side[_TOP]);
     _fill(canvas->bitmap, tex->bitmap[1], x1 + tex->side[_LEFT], y1, w, tex->side[_TOP]);
-    _fill(canvas->bitmap, tex->bitmap[2], x2 - tex->side[_RIGHT] + 1, y1, tex->side[_RIGHT], tex->side[_TOP]);
+    if (tex->bitmap[2])
+        masked_blit(tex->bitmap[2], canvas->bitmap, 0, 0, x2 - tex->side[_RIGHT] + 1, y1, tex->side[_RIGHT], tex->side[_TOP]);
     _fill(canvas->bitmap, tex->bitmap[3], x1, y1 + tex->side[_TOP], tex->side[_LEFT], h);
     _fill(canvas->bitmap, tex->bitmap[4], x1 + tex->side[_LEFT], y1 + tex->side[_TOP], w, h);
     _fill(canvas->bitmap, tex->bitmap[5], x2 - tex->side[_RIGHT] + 1, y1 + tex->side[_TOP], tex->side[_RIGHT], h);
-    _fill(canvas->bitmap, tex->bitmap[6], x1, y2 - tex->side[_BOTTOM] + 1, tex->side[_LEFT], tex->side[_BOTTOM]);    
+    if (tex->bitmap[6])
+        masked_blit(tex->bitmap[6], canvas->bitmap, 0, 0, x1, y2 - tex->side[_BOTTOM] + 1, tex->side[_LEFT], tex->side[_BOTTOM]);
     _fill(canvas->bitmap, tex->bitmap[7], x1 + tex->side[_LEFT], y2 - tex->side[_BOTTOM] + 1, w, tex->side[_BOTTOM]);
-    _fill(canvas->bitmap, tex->bitmap[8], x2 - tex->side[_RIGHT] + 1, y2 - tex->side[_BOTTOM] + 1, tex->side[_RIGHT], tex->side[_BOTTOM]);
+    if (tex->bitmap[8])
+        masked_blit(tex->bitmap[8], canvas->bitmap, 0, 0, x2 - tex->side[_RIGHT] + 1, y2 - tex->side[_BOTTOM] + 1, tex->side[_RIGHT], tex->side[_BOTTOM]);
 }
 
 
@@ -896,7 +909,9 @@ void awe_draw_texture_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, 
 //draws a texture horizontally
 void awe_draw_texture_hor(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2)
 {
-    int w, w2, h, n, r, x3;
+    AWE_RECT old_clip;
+    AWE_RECT new_clip;
+    int w, h, x3;
 
     if (!tex->bitmap[4]) return;
     if (x1 > x2) _SWAP(int, x1, x2);
@@ -922,22 +937,19 @@ void awe_draw_texture_hor(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex
         x3 += tex->bitmap[3]->w;
     }
 
-    w2 = x2 - x3 + 1;
-    if (tex->bitmap[5]) w2 -= tex->bitmap[5]->w;
-    n = w2 / tex->bitmap[4]->w;
-    r = w2 % tex->bitmap[4]->w;
+    awe_get_canvas_clip((AWE_CANVAS*)canvas, &old_clip);
+    new_clip.left = x1;
+    new_clip.top = y1 + tex->side[_TOP];
+    new_clip.right = x2;
+    new_clip.bottom = y2 - tex->side[_BOTTOM];    
+    awe_set_canvas_clip((AWE_CANVAS*)canvas, &new_clip);
 
-    //draw middle
-    for(; n > 0; n--, x3 += tex->bitmap[4]->w) {
-        _stretch(canvas->bitmap, tex->bitmap[4], x3, y1 + tex->side[_TOP], tex->bitmap[4]->w, h);
-    }
+    do{
+        _stretch(canvas->bitmap, tex->bitmap[4], x3, y1 + tex->side[_TOP], tex->bitmap[4]->w, h);//x1 + tex->side[_LEFT], y3, w, tex->bitmap[4]->h);
+        x3 += tex->bitmap[4]->h;
+    }while(x3 < x2);
 
-    //draw last one
-    if (r) {
-        x3 -= tex->bitmap[4]->w - r;
-        _stretch(canvas->bitmap, tex->bitmap[4], x3, y1 + tex->side[_TOP], tex->bitmap[4]->w, h);
-        x3 += tex->bitmap[4]->w;
-    }
+    awe_set_canvas_clip((AWE_CANVAS*)canvas, &old_clip);
 
     //draw right border
     if (tex->bitmap[5]) {
@@ -963,8 +975,9 @@ void awe_draw_texture_hor_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *t
 //draws a texture vertically
 void awe_draw_texture_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2)
 {
-    int w, h, h2, n, r, y3;
-
+    AWE_RECT old_clip;
+    AWE_RECT new_clip;
+    int w, h, y3;
     if (!tex->bitmap[4]) return;
     if (x1 > x2) _SWAP(int, x1, x2);
     if (y1 > y2) _SWAP(int, y1, y2);
@@ -989,22 +1002,19 @@ void awe_draw_texture_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex
         y3 += tex->bitmap[1]->h;
     }
 
-    h2 = y2 - y1 + 1;
-    if (tex->bitmap[7]) h2 -= tex->bitmap[7]->h;
-    n = h2 / tex->bitmap[4]->h;
-    r = h2 % tex->bitmap[4]->h;
+    awe_get_canvas_clip((AWE_CANVAS*)canvas, &old_clip);
+    new_clip.left = x1;
+    new_clip.top = y1 + tex->side[_TOP];
+    new_clip.right = x2;
+    new_clip.bottom = y2 - tex->side[_BOTTOM];    
+    awe_set_canvas_clip((AWE_CANVAS*)canvas, &new_clip);
 
-    //draw middle
-    for(; n > 0; n--, y3 += tex->bitmap[4]->h) {
-        _stretch(canvas->bitmap, tex->bitmap[4], x1 + tex->side[_LEFT], y3, w, tex->bitmap[4]->h);
-    }
-
-    //draw last one
-    if (r) {
-        y3 -= tex->bitmap[4]->h - r;
+    do{
         _stretch(canvas->bitmap, tex->bitmap[4], x1 + tex->side[_LEFT], y3, w, tex->bitmap[4]->h);
         y3 += tex->bitmap[4]->h;
-    }
+    }while(y3 < y2);
+
+    awe_set_canvas_clip((AWE_CANVAS*)canvas, &old_clip);
 
     //draw bottom border
     if (tex->bitmap[7]) {
@@ -1024,6 +1034,97 @@ void awe_draw_texture_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex
 void awe_draw_texture_ver_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h)
 {
     awe_draw_texture_ver(canvas, tex, x, y, x + w - 1, y + h - 1);
+}
+
+
+//draws a texture vertically
+void awe_draw_texture_hor_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2)
+{
+    AWE_RECT old_clip;
+    AWE_RECT new_clip;
+    int w, h, y3;
+    if (!tex->bitmap[4]) return;
+    if (x1 > x2) _SWAP(int, x1, x2);
+    if (y1 > y2) _SWAP(int, y1, y2);
+    x1 += AWE_CANVAS_BASE_X(canvas);
+    y1 += AWE_CANVAS_BASE_Y(canvas);
+    x2 += AWE_CANVAS_BASE_X(canvas);
+    y2 += AWE_CANVAS_BASE_Y(canvas);
+    y3 = y1;
+    w = x2 - x1 + 1 - tex->side[_LEFT] - tex->side[_RIGHT];
+    h = y2 - y1 + 1 - tex->side[_TOP] - tex->side[_BOTTOM];
+
+    if (tex->bitmap[0])
+        masked_blit(tex->bitmap[0], canvas->bitmap, 0, 0, x1, y1, tex->side[_LEFT], tex->side[_TOP]);
+    if (tex->bitmap[3])
+        _stretch(canvas->bitmap, tex->bitmap[3], x1, y1 + tex->side[_TOP], tex->side[_LEFT], h);
+    if (tex->bitmap[6])
+        masked_blit(tex->bitmap[6], canvas->bitmap, 0, 0, x1, y2 - tex->side[_BOTTOM] + 1, tex->side[_LEFT], tex->side[_BOTTOM]);
+
+    //draw top border
+    if (tex->bitmap[1]) {
+        _stretch(canvas->bitmap, tex->bitmap[1], x1 + tex->side[_LEFT], y1, w, tex->side[_TOP]);
+        y3 += tex->bitmap[1]->h;
+    }
+
+    awe_get_canvas_clip((AWE_CANVAS*)canvas, &old_clip);
+    new_clip.left = x1;
+    new_clip.top = y1 + tex->side[_TOP];
+    new_clip.right = x2;
+    new_clip.bottom = y2 - tex->side[_BOTTOM];    
+    awe_set_canvas_clip((AWE_CANVAS*)canvas, &new_clip);
+
+    _stretch(canvas->bitmap, tex->bitmap[4], x1 + tex->side[_LEFT], y3, w, h);
+
+    awe_set_canvas_clip((AWE_CANVAS*)canvas, &old_clip);
+
+    //draw bottom border
+    if (tex->bitmap[7]) {
+        _stretch(canvas->bitmap, tex->bitmap[7], x1 + tex->side[_LEFT], y2 - tex->side[_BOTTOM] + 1, w, tex->side[_BOTTOM]);
+    }
+
+    if (tex->bitmap[2])
+        masked_blit(tex->bitmap[2], canvas->bitmap, 0, 0, x2 - tex->side[_RIGHT] + 1, y1, tex->side[_RIGHT], tex->side[_TOP]);
+    if (tex->bitmap[5])    
+        _stretch(canvas->bitmap, tex->bitmap[5], x2 - tex->side[_RIGHT] + 1, y1 + tex->side[_TOP], tex->side[_RIGHT], h);
+    if (tex->bitmap[8])
+        masked_blit(tex->bitmap[8], canvas->bitmap, 0, 0, x2 - tex->side[_RIGHT] + 1, y2 - tex->side[_BOTTOM] + 1, tex->side[_RIGHT], tex->side[_BOTTOM]);
+}
+
+
+//draws a texture vertically with size and position
+void awe_draw_texture_hor_ver_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h)
+{
+    awe_draw_texture_hor_ver(canvas, tex, x, y, x + w - 1, y + h - 1);
+}
+
+
+//draws a texture based on type
+void awe_draw_texture_type(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2, AWE_TEXTURE_TYPE h_type, AWE_TEXTURE_TYPE v_type)
+{
+    int type = h_type << 1;
+    type |= v_type;
+    switch(type){
+        case 0:
+            awe_draw_texture(canvas, tex, x1, y1, x2, y2);
+        break;
+        case 1:
+            awe_draw_texture_hor(canvas, tex, x1, y1, x2, y2);
+        break;
+        case 2:
+            awe_draw_texture_ver(canvas, tex, x1, y1, x2, y2);
+        break;
+        case 3:
+            awe_draw_texture_hor_ver(canvas, tex, x1, y1, x2, y2);
+        break;
+    }
+}
+
+
+//draws a texture based on type with size and position
+void awe_draw_texture_type_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h, AWE_TEXTURE_TYPE h_type, AWE_TEXTURE_TYPE v_type)
+{
+    awe_draw_texture_type(canvas, tex, x, y, x + w - 1, y + h - 1, h_type, v_type);
 }
 
 

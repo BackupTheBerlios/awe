@@ -78,7 +78,7 @@ enum AWE_EVENT_MODE_ACTION_TYPE {
     ///end event mode
     AWE_EVENT_MODE_ACTION_END
 };
-typedef AWE_EVENT_MODE_ACTION_TYPE;
+typedef enum AWE_EVENT_MODE_ACTION_TYPE AWE_EVENT_MODE_ACTION_TYPE;
 
 
 /** type of event manager procedure

@@ -207,6 +207,10 @@ static int _do_event(AWE_WIDGET *root, AWE_EVENT *event, int force)
         //timer event
         case AWE_EVENT_TIMER:
             return _do_timer_event(event);
+
+        //no event
+        case AWE_EVENT_NONE:
+            return 0;
     }
 
     return 0;
@@ -417,6 +421,10 @@ int awe_grab_event_proc(AWE_EVENT_MODE_ACTION_TYPE action, AWE_EVENT *event, voi
         //timer event
         case AWE_EVENT_TIMER:
             return _do_timer_event(event);
+
+        //no event
+        case AWE_EVENT_NONE:
+            return 0;
     }
 
     return 0;

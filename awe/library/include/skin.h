@@ -43,6 +43,39 @@ struct AWE_SKIN_VTABLE {
 typedef struct AWE_SKIN_VTABLE AWE_SKIN_VTABLE;
 
 
+/** skin animation types
+ */
+enum AWE_SKIN_ANIM_TYPE {
+    /// disable animation
+    AWE_SKIN_ANIM_NONE = 0,
+ 
+    /// loop forward
+    AWE_SKIN_ANIM_LOOP_FORWARD = 1,
+
+    /// loop reverse
+    AWE_SKIN_ANIM_LOOP_REVERSE = 2,
+
+    /// loop only once
+    AWE_SKIN_ANIM_LOOP_ONCE = 4
+};
+typedef enum AWE_SKIN_ANIM_TYPE AWE_SKIN_ANIM_TYPE;
+    
+
+/** skin animation struct
+ */
+struct AWE_SKIN_ANIM {
+    /// animation type
+    AWE_SKIN_ANIM_TYPE type;
+
+    /// number of frames
+    int numframes;
+  
+    /// animation speed
+    int speed;
+};
+typedef struct AWE_SKIN_ANIM AWE_SKIN_ANIM;
+
+
 /** loads a skin
     @param filename path to skin
     @return returns a valid AWE_SKIN pointer, otherwise NULL
@@ -67,7 +100,7 @@ AWE_TEXTURE *awe_get_skin_texture(AWE_SKIN *skn, const char *name);
 /** retrieves a skin RGB structure
     @param skn valid AWE_SKIN pointer
     @param name name of RGB structure
-    @return returns a valid RGB pointer, otherwise NULL
+    @return returns a valid RGB pointer, otherwise the default color
  */
 RGB *awe_get_skin_color(AWE_SKIN *skn, const char *name);
 
@@ -86,6 +119,14 @@ FONT *awe_get_skin_font(AWE_SKIN *skn, const char *name);
     @return returns a valid BITMAP pointer, otherwise NULL
  */
 BITMAP *awe_get_skin_bitmap(AWE_SKIN *skn, const char *name);
+
+
+/** retrieves a skin SKIN_ANIM structure
+    @param skn valid AWE_SKIN pointer
+    @param name name of SKIN_ANIM structure
+    @return returns a valid SKIN_ANIM pointer, otherwise a default value
+ */
+AWE_SKIN_ANIM *awe_get_skin_anim(AWE_SKIN *skn, const char *name);
 
 
 /** retrieves a skin binary data structure
