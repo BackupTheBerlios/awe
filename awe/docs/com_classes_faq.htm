@@ -1,0 +1,341 @@
+<h1><font size="7">AWE COM FAQ</font></h1>
+<h2>&nbsp;</h2>
+<h2><a href="#Objects">Objects</a></h2>
+<h2><a href="#Classes">Classes</a></h2>
+<h2><a href="#Interfaces">Interfaces</a></h2>
+<h2><a href="#The class registry">The Class Registry</a></h2>
+<h2><a href="#Naming Rules">Naming Rules</a></h2>
+<p>&nbsp;</p>
+<h1><a name="Objects">Objects</a></h1>
+<h3>How do I create an object?</h3>
+<p>Objects are created by calling the <b>awe_create_object</b> function. You 
+must pass the object's class and a list of pairs {NULL-terminated 
+strings,values} that are the object's properties. The last string must be NULL 
+(and of course have no value paired with it). For example:</p>
+<pre>AWE_OBJECT *my_object = awe_create_object(&amp;foo_class, </pre>
+<pre>	&quot;FOO_VALUE&quot;, 10, </pre>
+<pre>	NULL);</pre>
+<h3>How do I destroy an object?</h3>
+<p>By calling <b>awe_destroy_object</b>:</p>
+<pre>awe_destroy_object(my_object);</pre>
+<h3>How do I clone objects?</h3>
+<p>By calling <b>awe_clone_object</b>:</p>
+<pre>AWE_OBJECT *copy_object = awe_clone_object(my_object);</pre>
+<h3>How do I change properties?</h3>
+<p>An object's properties are set with the function <b>awe_set_object_properties</b> 
+which functions just like the <b>awe_create_object</b> function. For example:</p>
+<pre>awe_set_object_properties(my_object, </pre>
+<pre>	&quot;FOO_VALUE&quot;, 10, </pre>
+<pre>	NULL);</pre>
+<h3>How do I retrieve properties?</h3>
+<p>An object's properties are retrieved with the function <b>
+awe_get_object_properties</b>. The function accepts a list of pairs of 
+{NULL-terminated strings, pointers to variables} that is NULL-terminated. For 
+example:</p>
+<pre>int i;</pre>
+<pre>awe_get_object_properties(my_object, </pre>
+<pre>	&quot;FOO_VALUE&quot;, &amp;i, </pre>
+<pre>	NULL);</pre>
+<h3>How do I call methods on an object?</h3>
+<p>A method of an object must be part of some interface. In order to call a 
+specific method, you must know its interface and namespace. You can then use the 
+macro <b>AWE_CALL_METHOD</b> to call the object. For example:</p>
+<pre>AWE_CALL_METHOD(my_object, &quot;Foo&quot;, &quot;AWE&quot;, FOO_VTABLE, process_value, (my_object, 10));</pre>
+<p>The above assumes that the Foo object has a method with the following 
+signature:</p>
+<pre>typedef struct FOO_VTABLE {</pre>
+<pre>	void (*process_value)(FOO *foo, int value);</pre>
+<pre>} FOO_VTABLE;</pre>
+<pre>&nbsp;</pre>
+<h1>&nbsp;<a name="Classes">Classes</a></h1>
+<h3>How can I program my own class?</h3>
+<p>You need to write the following pieces of code in an AWE_CLASS struct:</p>
+<ol>
+	<li><a href="#data structs">the class data struct that contains a superclass instance as the first 
+	member</a></li>
+	<li><a href="#vtables">the class vtable struct that contains a superclass' vtable instance as 
+	the first member</a></li>
+	<li><a href="#class declaration">the class descriptor</a></li>
+	<li><a href="#class property table">the class properties table</a></li>
+	<li><a href="#class event table">the class events table</a></li>
+	<li><a href="#constructors">the class constructor</a></li>
+	<li><a href="#destructors">the class destructor</a></li>
+</ol>
+<h3><a name="data structs">What is the 'class data struct'?</a></h3>
+<p>It is a struct that holds the data of an instance. For example, if your class 
+'Foo' inherits from 'Bar' and adds one data member named 'value', it would be 
+like this:</p>
+<pre>typedef struct FOO {</pre>
+<pre>	BAR bar;</pre>
+<pre>	int value;</pre>
+<pre>} FOO;</pre>
+<p>As you can see, Foo inherits from Bar. The first member of the FOO struct is 
+the superclass instance. This allows a pointer to FOO to be casted to BAR 
+safely. This is what we call 'single inheritance'.</p>
+<h3>Are 'class data structs' necessary?</h3>
+<p>If there are no data, then there is no class. Therefore, for each new class,
+a data struct must be declared.</p>
+<h3><a name="inheritance">What is 'single inheritance'?</a></h3>
+<p>Each data struct of a class contains as a first member an instance of the 
+superclass. This allows binary compatibilty of classes, just like in C++ and 
+other object-oriented languages. All classes must inherit from Object, i.e. all 
+data structs must have their top part to be an AWE_OBJECT. In the previous 
+example, the memory layout of the FOO struct would be:</p>
+<pre>----------------------
+|--------------------|
+||------------------||
+|||   AWE_OBJECT   |||
+||------------------||
+||       BAR        ||
+|-------------------||
+|                    |
+|                    |
+|        FOO         |
+|                    |
+----------------------
+</pre>
+<p>In other words, FOO has a first member as BAR, and BAR has a first member as 
+AWE_OBJECT.</p>
+<h3>When the class data struct will be initialized?</h3>
+<p>It will be initialized when the constructor of the class is called. This is 
+done automatically when an instance is created.</p>
+<h3><a name="vtables">what is the 'class vtable struct'?</a></h3>
+<p>It is a struct that defines the methods of the class. Just like data struct 
+inheritance, vtables also inherit from the vtable of the superclasses in the 
+same way as the data structs. For example, FOO could have the following vtable:</p>
+<pre>typedef struct FOO_VTABLE {</pre>
+<pre>	BAR_VTABLE bar;</pre>
+<pre>	void (*process_value)(FOO *foo, int value);</pre>
+<pre>} FOO_VTABLE;</pre>
+<p>As you can see from the above example, the FOO's vtable inherits from BAR's 
+vtable in the same way FOO inherits from BAR, i.e. the first member of the class 
+must be of the type of the superclass.</p>
+<h3>Are 'class vtable structs' necessary?</h3>
+<p>Only if the new class has methods new to the class. Otherwise, it can use the 
+superclass vtable as its vtable. The only vtable that a class must implement is 
+the <b>AWE_OBJECT_VTABLE</b>, which is the root vtable.</p>
+<h3>Are method implementations necessary?</h3>
+<p>Only if the task at hand says so. In other words, some are, some are not. It 
+depends on what is to be done.</p>
+<h3>Should method implementations be public? </h3>
+<p>Yes, absolutely, so as that subclasses can call them as needed.</p>
+<h3><a name="class declaration">How do I declare a class?</a></h3>
+<p>A class is declared by filling out an <b>AWE_CLASS</b> structure; it has the 
+following members:</p>
+<ul>
+	<li>pointer to class name NULL-terminated string</li>
+	<li>pointer to class namespace NULL-terminated string</li>
+	<li>pointer to superclass</li>
+	<li>size of the data struct</li>
+	<li>pointer to table of properties</li>
+	<li>pointer to table of events</li>
+	<li>pointer to constructor</li>
+	<li>pointer to destructor</li>
+</ul>
+<p>For example, a class <b>PushButton</b> would be declared like this:</p>
+<pre>AWE_CLASS pushbutton_class = {</pre>
+<pre>	&quot;PushButton&quot;,</pre>
+<pre>	&quot;MyNamespace&quot;,</pre>
+<pre>	&amp;awe_widget_class,</pre>
+<pre>	sizeof(PUSH_BUTTON),</pre>
+<pre>	pushbutton_properties,</pre>
+<pre>	pushbutton_events,</pre>
+<pre>	pushbutton_constructor,</pre>
+<pre>	pushbutton_destructor</pre>
+<pre>};</pre>
+<h3>What are namespaces?</h3>
+<p>Namespaces are used to separate libraries of classes. Each class can have the 
+same name as another class, but be in different namespaces. AWE COM uses 
+namespaces to register classes, so namespaces must not be empty.</p>
+<h3>What is the default namespace?</h3>
+<p>There is no default namespace. AWE uses 'AWE' as its namespace. You should 
+use your own.</p>
+<h3>Should not class descriptors be 'const'?</h3>
+<p>Nope. We trust that you will not make a mess of it.</p>
+<h3>What is the 'size of the data struct'?</h3>
+<p>It is the sizeof(&lt;struct&gt;). It is used by the framework to know the number of 
+bytes to allocate for an instance.</p>
+<h3><a name="class property table">What is the 'class property table'?</a></h3>
+<p>It is a series of AWE_CLASS_PROPERTY entries; each entry is a property 
+descriptor. The last entry must be NULL, i.e. has its 'name' member set to 0. 
+Property descriptors have the following information:</p>
+<ul>
+	<li>pointer to property name NULL-terminated string</li>
+	<li>pointer to property type NULL-terminated string</li>
+	<li>size of the data type when passed on the stack</li>
+	<li>a 'get' method called when the value of the property should be retrieved</li>
+	<li>a 'set' method called when the value of the property is set</li>
+	<li>an optional enumeration information table</li>
+</ul>
+<h3>When are get/set functions called?</h3>
+<p>'Get/Set' functions are called when the user retrieves/sets an object's 
+properties by using one of the 'awe_get_object_properties'/'awe_set_object_properties' 
+methods. The framework does a lookup by property name, and calls the relevant 
+function.</p>
+<h3>Are get/set functions obligatory?</h3>
+<p>Not really. But one of them should exist, otherwise the property has no 
+meaning.</p>
+<h3>When do side-effects from property changes are processed?</h3>
+<p>After calling all the 'set' methods, the framework calls the object's 'property_changed' 
+method. That is the place to process property changes.</p>
+<h3>Should the property table be public?</h3>
+<p>No. Property tables are not inheritable like data and vtable structs.</p>
+<h3>Can properties be overriden?</h3>
+<p>Of course. The framework searches from subclass to superclass when 
+setting/getting properties. Therefore, if a property is specified in a subclass 
+as well as a superclass, it is actually overriden for the subclass; the 
+superclass 'get/set' will never be called since it is shadowed by the subclass 
+declaration.</p>
+<h3><a name="class event table">What is the 'class event table'?</a></h3>
+<p>It is a table of NULL-terminated descriptors of events the class supports. 
+See the struct AWE_CLASS_EVENT for what you have to define; aside from the event name, the 
+event's arguments should have to be defined.</p>
+<h3>Is the 'class event table' necessary?</h3>
+<p>No, except if you want your events to be visible in the Visual Designer.</p>
+<h3><a name="constructors">When and how are constructors called?</a></h3>
+<p>Constructors are called from 'create_object' functions; they are called in 
+superclass to subclass order. In other words, FOO is initialized after BAR is 
+initialized.</p>
+<h3>What is the role of a constructor?</h3>
+<p>A constructor is used to initialize an object to meaningful default values.
+After initialization, it must immediately return.</p>
+<h3>Do I have to initialize everything in the constructor?</h3>
+<p>No. The framework sets the memory of an object to 0 before calling the 
+constructors.</p>
+<h3>Is a constructor obligatory?</h3>
+<p>No. If you don't specify one, there will be no consequence.</p>
+<h3><a name="destructors">When and how are destructors called?</a></h3>
+<p>Destructors are called when an object is destroyed through the 'destroy_object' 
+function. Destructors are called in the reverse order of constructors, i.e. from 
+subclass to superclass. In other words, FOO's destructor is called before BAR's 
+destructor is called.</p>
+<h3>What is the role of a destructor?</h3>
+<p>To free resources allocated in the constructor or during the lifetime of an object.</p>
+<h3>Is a destructor obligatory?</h3>
+<p>No. If you don't specify one, there will be no consequence.</p>
+
+<p>&nbsp;</p>
+<h1><a name="Interfaces">Interfaces</a></h1>
+<h3>What are 'interfaces'?</h3>
+<p>Interfaces are contracts between classes and the environment: when a class
+implements an interface, it provides a certain set of capabilities to other
+classes. In this library, an interface is a vtable, i.e. a collection of methods
+that should be implemented by a class. For example, here is an interface:</p>
+<pre>typedef struct PERSISTENT_VTABLE {</pre>
+<pre>	void (*save)(AWE_OBJECT *obj, FILE *file);</pre>
+<pre>	void (*load)(AWE_OBJECT *obj, FILE *file);</pre>
+<pre>} PERSISTENT_VTABLE;</pre>
+<h3>How are interfaces implemented?</h3>
+<p>Interface vtable structs must be parts of the vtables of classes. An object
+provides access to the relevant part of a vtable in the <b>get_interface</b>
+method of the <b>AWE_OBJECT_VTABLE</b> vtable. Here is an example of
+implementation (adding the persistent interface to the class 'Foo' defined
+above):</p>
+<pre>//FOO vtable that supports the persistent interface</pre>
+<pre>typedef struct FOO_VTABLE {</pre>
+<pre>	BAR_VTABLE bar;</pre>
+<pre>	PERSISTENT_VTABLE persistent;</pre>
+<pre>	void (*process_value)(FOO *foo, int value);</pre>
+<pre>} FOO_VTABLE;</pre>
+<pre>&nbsp;</pre>
+<pre>//foo get_interface implementation</pre>
+<pre>void *foo_get_interface(AWE_OBJECT *obj, const char *pname, const char *pnamespace)</pre>
+<pre>{</pre>
+<pre>	FOO_VTABLE *foo_vtable = (FOO_VTABLE *)awe_get_object_class(obj);</pre>
+<pre>&nbsp;</pre>
+<pre>	//check namespace</pre>
+<pre>	if (strcmp(pnamespace, &quot;AWE&quot;) == 0) {</pre>
+<pre>		//return 'persistent'</pre>
+<pre>		if (strcmp(pname, &quot;Persistent&quot;) == 0) return &amp;foo-&gt;persistent;</pre>
+<pre>&nbsp;</pre>
+<pre>		//return 'foo'</pre>
+<pre>		if (strcmp(pname, &quot;Foo&quot;) == 0) return foo;</pre>
+<pre>	}</pre>
+<pre>&nbsp;</pre>
+<pre>	//call superclass</pre>
+<pre>	return bar_get_interface(obj, pname, pnamespace);</pre>
+<pre>}</pre>
+<pre>&nbsp;</pre>
+<pre>//foo save implementation</pre>
+<pre>void foo_save(AWE_OBJECT *obj, FILE *file)</pre>
+<pre>{</pre>
+<pre>	...</pre>
+<pre>}</pre>
+<pre>&nbsp;</pre>
+<pre>//foo load implementation</pre>
+<pre>void foo_load(AWE_OBJECT *obj, FILE *file)</pre>
+<pre>{</pre>
+<pre>	...</pre>
+<pre>}</pre>
+<pre>&nbsp;</pre>
+<pre>//foo process value implementation</pre>
+<pre>void foo_process_value(AWE_OBJECT *obj, int value)</pre>
+<pre>{</pre>
+<pre>	...</pre>
+<pre>}</pre>
+<pre>&nbsp;</pre>
+<pre>//the FOO vtable</pre>
+<pre>FOO_VTABLE foo_vtable = {</pre>
+<pre>	{</pre>
+<pre>		//object vtable</pre>
+<pre>		{</pre>
+<pre>			foo_get_interface,</pre>
+<pre>			...</pre>
+<pre>		},</pre>
+<pre>&nbsp;</pre>
+<pre>		//bar vtable</pre>
+<pre>		...</pre>
+<pre>	},</pre>
+<pre>	</pre>
+<pre>	//persistent vtable</pre>
+<pre>	{</pre>
+<pre>		foo_save,</pre>
+<pre>		foo_load</pre>
+<pre>	},</pre>
+<pre>&nbsp;</pre>
+<pre>	//foo vtable</pre>
+<pre>	foo_process_value</pre>
+<pre>};</pre>
+<h3>How can I call an interface?</h3>
+<p>You must use the <b>AWE_CALL_METHOD</b> macro as specified above.</p>
+<h3>How do I know what interfaces a class supports?</h3>
+<p>You can query a class for interface support by the <b>awe_get_object_interface</b>
+method, which returns a pointer to the interface by calling the <b>get_interface</b>
+method of the object.</p>
+<p>&nbsp;</p>
+<h1><a name="The class registry">The class registry</a></h1>
+<h3>What is the 'class registry'?</h3>
+<p>The system maintains a collection of registered classes. Classes can be
+registered and unregistered at run-time. Instances can be created from the
+registry based on the class name and namespace.</p>
+<h3>What is the purpose of the class registry?</h3>
+<p>It it used for various purposes:</p>
+<ul>
+  <li>to know which widget classes are loaded; by putting class registration
+    code in a DLL's initialization code, the Visual Designer can know which
+    classes the DLL has.</li>
+  <li>to manage plug-ins; since classes and interfaces can be queried at
+    run-time, the COM framework is ideal for doing plug-in implementations.</li>
+</ul>
+<h3>How can I register and unregister classes?</h3>
+<p>Classes are registered with the <b>awe_register_class</b> function. Classes
+are unregistered with the <b>awe_unregister_class</b> function. A class must be
+unregistered the same amount of times that it is registered; one registration
+must correspond to one unregistration. Classes will actually be unregistered
+when all 'registrations' have been undone.</p>
+<h3>How can I create object instances without an AWE_CLASS variable?</h3>
+<p>The method <b>awe_create_object_by_name</b> creates an instance by class name
+and namespace.</p>
+<p>&nbsp;</p>
+<h1><a name="Naming Rules">Naming Rules</a></h1>
+<h3>How should classes and namespaces must be named?</h3>
+<p>The first letter of a word must be uppercase, the rest lowercase. For
+example, a text box class must be named 'TextBox'.</p>
+<h3>Why COM uses strings? aren't strings error-prone?</h3>
+<p>Strings are indeed error-prone. So, in order to catch errors in compile time,
+all string constants in AWE are defined as preprocessor constants. The format of
+the constants is <b>&lt;namespace&gt;_ID_&lt;name&gt;</b> where 'name' is the
+name of the string constant and 'namespace' is the namespace the constants
+belong into. The AWE namespace has the constant <b>AWE_ID_AWE</b>. We recommend
+that this convention is followed for all classes.</p>
+<p>&nbsp;</p>
