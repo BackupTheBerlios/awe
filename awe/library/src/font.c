@@ -60,13 +60,13 @@ static int _render_char(const FONT *f, int ch, int fg, int bg, BITMAP *bmp, int 
 {
     char s[16];
     usetc(s, ch);
-    usetat(s, -1, '\0');
+    usetat(s, 1, '\0');
     alfont_text_mode(bg);
     if(_font_aa)
         alfont_textout_aa(bmp, f->data, s, x, y, fg);
     else
         alfont_textout(bmp, f->data, s, x, y, fg);
-    return 1;
+    return alfont_text_length(f->data, s);
 }
 
 
