@@ -131,6 +131,10 @@ SOURCE=..\..\..\..\include\mouse.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\include\pushbutton.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\include\rect.h
 # End Source File
 # Begin Source File
@@ -192,6 +196,10 @@ SOURCE=..\..\..\..\src\linkedlist.c
 # Begin Source File
 
 SOURCE=..\..\..\..\src\mouse.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\pushbutton.c
 # End Source File
 # Begin Source File
 

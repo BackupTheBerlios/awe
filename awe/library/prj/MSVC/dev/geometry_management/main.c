@@ -2,6 +2,7 @@
 #include "dataobjects.h"
 #include "event.h"
 #include <string.h>
+#include "pushbutton.h"
 
 
 //ids
@@ -355,7 +356,7 @@ AWE_CLASS test_class = {
 
 int main()
 {
-    AWE_WIDGET *root, *child1, *child11, *child12, *child13;
+    AWE_WIDGET *root, *child1, *child11, *child12, *child13, *button1, *button2;
 
     //install allegro
     allegro_init();
@@ -389,7 +390,7 @@ int main()
         AWE_ID_TEXT, "child1",
         AWE_ID_LAYOUT_TYPE, LAYOUT_WRAP,
         0);
-
+/*
     //create grand children
     child11 = awe_create_widget(&test_class, child1,
         AWE_ID_X, 50, 
@@ -411,6 +412,18 @@ int main()
         AWE_ID_WIDTH, 150,
         AWE_ID_HEIGHT, 140,
         AWE_ID_TEXT, "child13",
+        0);
+*/
+    button1 = awe_create_widget(&awe_push_button_class, child1,
+        AWE_ID_TEXT, "Button 1",
+        AWE_ID_X, 100,
+        AWE_ID_Y, 50,
+        0);
+
+    button2 = awe_create_widget(&awe_push_button_class, child1,
+        AWE_ID_TEXT, "Button 2",
+        AWE_ID_X, 200,
+        AWE_ID_Y, 300,
         0);
 
     //show the root widget
