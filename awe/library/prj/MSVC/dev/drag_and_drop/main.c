@@ -106,7 +106,7 @@ AWE_OBJECT *_test_clone(AWE_OBJECT *obj)
 
 
 //paints the object
-void _test_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *clip)
+void _test_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
 {
     _TEST *test = (_TEST *)wgt;
 
@@ -117,7 +117,7 @@ void _test_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT
 
 
 //button down
-void _test_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev)
+void _test_button_down(AWE_WIDGET *wgt, const AWE_EVENT *ev)
 {
     _TEST *test = (_TEST *)wgt;
 
@@ -167,7 +167,7 @@ void _test_drag_and_drop_clear(AWE_WIDGET *wgt)
 
 
 //drag-n-drop source move
-void _test_drag_and_drop_source_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_OBJECT *data)
+void _test_drag_and_drop_source_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *ev, AWE_OBJECT *data)
 {
     TRACE("_test_drag_and_drop_source_mouse_move\n");
 
@@ -181,7 +181,7 @@ void _test_drag_and_drop_source_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *
 
 
 //drag-n-drop button up
-void _test_drag_and_drop_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_OBJECT *data)
+void _test_drag_and_drop_button_up(AWE_WIDGET *wgt, const AWE_EVENT *ev, AWE_OBJECT *data)
 {
     const char *text;
 
@@ -206,42 +206,42 @@ void _test_drag_and_drop_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_
 
 
 //drag-n-drop mouse enter
-void _test_drag_and_drop_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_OBJECT *data)
+void _test_drag_and_drop_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *ev, AWE_OBJECT *data)
 {
     TRACE("_test_drag_and_drop_mouse_enter\n");
 }
 
 
 //drag-n-drop mouse move
-void _test_drag_and_drop_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_OBJECT *data)
+void _test_drag_and_drop_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *ev, AWE_OBJECT *data)
 {
     TRACE("_test_drag_and_drop_mouse_move\n");
 }
 
 
 //drag-n-drop mouse leave
-void _test_drag_and_drop_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_OBJECT *data)
+void _test_drag_and_drop_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *ev, AWE_OBJECT *data)
 {
     TRACE("_test_drag_and_drop_mouse_leave\n");
 }
 
 
 //drag-n-drop mouse wheel
-void _test_drag_and_drop_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_OBJECT *data)
+void _test_drag_and_drop_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *ev, AWE_OBJECT *data)
 {
     TRACE("_test_drag_and_drop_mouse_wheel\n");
 }
 
 
 //key down
-void _test_drag_and_drop_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_OBJECT *data)
+void _test_drag_and_drop_key_down(AWE_WIDGET *wgt, const AWE_EVENT *ev, AWE_OBJECT *data)
 {
     TRACE("_test_drag_and_drop_key_down\n");
 }
 
 
 //key up
-void _test_drag_and_drop_key_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev, AWE_OBJECT *data)
+void _test_drag_and_drop_key_up(AWE_WIDGET *wgt, const AWE_EVENT *ev, AWE_OBJECT *data)
 {
     TRACE("_test_drag_and_drop_key_up\n");
 }

@@ -95,6 +95,10 @@ SOURCE=..\..\include\com.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\include\control.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\dataobjects.h
 # End Source File
 # Begin Source File
@@ -152,6 +156,10 @@ SOURCE=..\..\include\widget.h
 # Begin Source File
 
 SOURCE=..\..\src\com.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\control.c
 # End Source File
 # Begin Source File
 

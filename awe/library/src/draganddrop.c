@@ -91,49 +91,49 @@ static AWE_WIDGET *_get_drag_and_drop_target(AWE_WIDGET *wgt)
 
 
 //sends the event to the closest drag-and-drop ancestor
-void awe_drag_and_drop_target_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data)
+void awe_drag_and_drop_target_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data)
 {
     _PROPAGATE_EVENT(wgt, event, data, button_up);
 }
 
 
 //sends the event to the closest drag-and-drop ancestor
-void awe_drag_and_drop_target_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data)
+void awe_drag_and_drop_target_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data)
 {
     _PROPAGATE_EVENT(wgt, event, data, mouse_enter);
 }
 
 
 //sends the event to the closest drag-and-drop ancestor
-void awe_drag_and_drop_target_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data)
+void awe_drag_and_drop_target_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data)
 {
     _PROPAGATE_EVENT(wgt, event, data, mouse_move);
 }
 
 
 //sends the event to the closest drag-and-drop ancestor
-void awe_drag_and_drop_target_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data)
+void awe_drag_and_drop_target_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data)
 {
     _PROPAGATE_EVENT(wgt, event, data, mouse_leave);
 }
 
 
 //sends the event to the closest drag-and-drop ancestor
-void awe_drag_and_drop_target_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data)
+void awe_drag_and_drop_target_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data)
 {
     _PROPAGATE_EVENT(wgt, event, data, mouse_wheel);
 }
 
 
 //sends the event to the closest drag-and-drop ancestor
-void awe_drag_and_drop_target_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data)
+void awe_drag_and_drop_target_key_down(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data)
 {
     _PROPAGATE_EVENT(wgt, event, data, key_down);
 }
 
 
 //sends the event to the closest drag-and-drop ancestor
-void awe_drag_and_drop_target_key_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data)
+void awe_drag_and_drop_target_key_up(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data)
 {
     _PROPAGATE_EVENT(wgt, event, data, key_up);
 }

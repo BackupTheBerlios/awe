@@ -176,9 +176,8 @@ static AWE_OBJECT_VTABLE _awe_object_vtable = {
 static void _construct_object(AWE_OBJECT *obj, AWE_CLASS *pclass)
 {
     if (pclass->super) _construct_object(obj, pclass->super);
-    if (!pclass->constructor) return;
     obj->pclass = pclass;
-    pclass->constructor(obj);
+    if (pclass->constructor) pclass->constructor(obj);
 }
 
 

@@ -78,7 +78,7 @@ struct AWE_DRAG_AND_DROP_SOURCE_VTABLE {
         @param event input event
         @param data data object
      */
-    void (*mouse_move)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+    void (*mouse_move)(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 };
 typedef struct AWE_DRAG_AND_DROP_SOURCE_VTABLE AWE_DRAG_AND_DROP_SOURCE_VTABLE;
 
@@ -93,7 +93,7 @@ struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
         @param event input event
         @param data data object
      */
-    void (*button_up)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+    void (*button_up)(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
     /** called when the mouse cursor enters the widget. Optional method;
         the default implementation sends the event to the first ancestor that
@@ -102,7 +102,7 @@ struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
         @param event input event
         @param data data object
      */
-    void (*mouse_enter)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+    void (*mouse_enter)(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
     /** called when the mouse cursor moves over the widget. Optional method;
         the default implementation sends the event to the first ancestor that
@@ -111,7 +111,7 @@ struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
         @param event input event
         @param data data object
      */
-    void (*mouse_move)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+    void (*mouse_move)(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
     /** called when the mouse cursor leaves the widget. Optional method;
         the default implementation sends the event to the first ancestor that
@@ -120,7 +120,7 @@ struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
         @param event input event
         @param data data object
      */
-    void (*mouse_leave)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+    void (*mouse_leave)(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
     /** called when the mouse wheel is rolled over the widget. Optional method;
         the default implementation sends the event to the first ancestor that
@@ -129,7 +129,7 @@ struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
         @param event input event
         @param data data object
      */
-    void (*mouse_wheel)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+    void (*mouse_wheel)(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
     /** called when a key is pressed. Optional method;
         the default implementation sends the event to the first ancestor that
@@ -138,7 +138,7 @@ struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
         @param event input event
         @param data data object
      */
-    void (*key_down)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+    void (*key_down)(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
     /** called when a key is released. Optional method;
         the default implementation sends the event to the first ancestor that
@@ -147,7 +147,7 @@ struct AWE_DRAG_AND_DROP_TARGET_VTABLE {
         @param event input event
         @param data data object
      */
-    void (*key_up)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+    void (*key_up)(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 };
 typedef struct AWE_DRAG_AND_DROP_TARGET_VTABLE AWE_DRAG_AND_DROP_TARGET_VTABLE;
 
@@ -159,7 +159,7 @@ typedef struct AWE_DRAG_AND_DROP_TARGET_VTABLE AWE_DRAG_AND_DROP_TARGET_VTABLE;
     @param event input event
     @param managed data
  */
-void awe_drag_and_drop_target_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+void awe_drag_and_drop_target_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
 
 /** the default implementation of the relevant drag-and-drop target event;
@@ -169,7 +169,7 @@ void awe_drag_and_drop_target_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *eve
     @param event input event
     @param managed data
  */
-void awe_drag_and_drop_target_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+void awe_drag_and_drop_target_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
 
 /** the default implementation of the relevant drag-and-drop target event;
@@ -179,7 +179,7 @@ void awe_drag_and_drop_target_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *e
     @param event input event
     @param managed data
  */
-void awe_drag_and_drop_target_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+void awe_drag_and_drop_target_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
 
 /** the default implementation of the relevant drag-and-drop target event;
@@ -189,7 +189,7 @@ void awe_drag_and_drop_target_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *ev
     @param event input event
     @param managed data
  */
-void awe_drag_and_drop_target_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+void awe_drag_and_drop_target_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
 
 /** the default implementation of the relevant drag-and-drop target event;
@@ -199,7 +199,7 @@ void awe_drag_and_drop_target_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *e
     @param event input event
     @param managed data
  */
-void awe_drag_and_drop_target_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+void awe_drag_and_drop_target_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
 
 /** the default implementation of the relevant drag-and-drop target event;
@@ -209,7 +209,7 @@ void awe_drag_and_drop_target_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *e
     @param event input event
     @param managed data
  */
-void awe_drag_and_drop_target_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+void awe_drag_and_drop_target_key_down(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
 
 /** the default implementation of the relevant drag-and-drop target event;
@@ -219,7 +219,7 @@ void awe_drag_and_drop_target_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *even
     @param event input event
     @param managed data
  */
-void awe_drag_and_drop_target_key_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event, AWE_OBJECT *data);
+void awe_drag_and_drop_target_key_up(AWE_WIDGET *wgt, const AWE_EVENT *event, AWE_OBJECT *data);
 
 
 /** drag-and-drop event procedure

@@ -134,7 +134,7 @@ AWE_OBJECT *_test_clone(AWE_OBJECT *obj)
 
 
 //paints the object
-void _test_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *clip)
+void _test_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
 {
     _TEST *test;
 
@@ -157,7 +157,7 @@ static int _dx, _dy, _move = 0;
 
 
 //move widget until button up
-void _test_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void _test_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     _dx = event->mouse.x;
     _dy = event->mouse.y;
@@ -167,7 +167,7 @@ void _test_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //button up
-void _test_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void _test_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     awe_leave_event_mode();
     _move = 0;
@@ -175,7 +175,7 @@ void _test_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //mouse move
-void _test_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void _test_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     int x, y;
 

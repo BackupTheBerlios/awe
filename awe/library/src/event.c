@@ -358,7 +358,7 @@ int awe_def_event_proc(AWE_EVENT_MODE_ACTION_TYPE action, AWE_EVENT *event, void
     if (!root) return 0;
 
     //do event
-    return _do_event(root, event, 0);
+    return _do_event(root, event, 1);
 }
 
 

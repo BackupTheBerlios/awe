@@ -101,7 +101,7 @@ typedef enum AWE_WIDGET_OUTPUT_TYPE AWE_WIDGET_OUTPUT_TYPE;
 /** type of hook procedure for implementing a DRS.
     @param update_rect the screen-relative rectangle that is being drawn
  */
-typedef void (*AWE_DRS_PROC)(AL_CONST AWE_RECT *update_rect);
+typedef void (*AWE_DRS_PROC)(const AWE_RECT *update_rect);
 
 
 /** Widget struct; it must be the first member of sub-classes. It inherits
@@ -158,42 +158,42 @@ struct AWE_WIDGET_VTABLE {
         @param canvas canvas object used for drawing
         @param dirty_rect the area of the canvas that is to be drawn
      */
-    void (*paint)(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *dirty_rect);
+    void (*paint)(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *dirty_rect);
 
     /** called when a button is pressed over the widget; optional method. The
         default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
-    void (*button_down)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*button_down)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called when a button is released; optional method. The
         default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
-    void (*button_up)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*button_up)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called when the mouse cursor enters a widget; optional method. The
         default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
-    void (*mouse_enter)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*mouse_enter)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called when the mouse cursor moves over a widget; optional method. The
         default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
-    void (*mouse_move)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*mouse_move)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called when the mouse cursor leaves the widget; optional method. The
         default implementation sends the event to its parent.
         @param wgt widget
         @param event event
      */
-    void (*mouse_leave)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*mouse_leave)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called when the mouse wheel is rolled; optional method called when
         the widget has the input focus. The
@@ -201,7 +201,7 @@ struct AWE_WIDGET_VTABLE {
         @param wgt widget
         @param event event
      */
-    void (*mouse_wheel)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*mouse_wheel)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called when a key is pressed; optional method called when
         the widget has the input focus. The
@@ -209,7 +209,7 @@ struct AWE_WIDGET_VTABLE {
         @param wgt widget
         @param event event
      */
-    void (*key_down)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*key_down)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called when a key is released; optional method called when
         the widget has the input focus. The
@@ -217,13 +217,13 @@ struct AWE_WIDGET_VTABLE {
         @param wgt widget
         @param event event
      */
-    void (*key_up)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*key_up)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called on a timer event; optional method
         @param wgt widget
         @param event event
      */
-    void (*timer)(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+    void (*timer)(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
     /** called when there is a request to set the focus to this widget. The
         default implementation asks the current focus widget to let the focus
@@ -312,6 +312,14 @@ struct AWE_WIDGET_VTABLE {
 typedef struct AWE_WIDGET_VTABLE AWE_WIDGET_VTABLE;
 
 
+///the one and only widget properties table
+extern AWE_CLASS_PROPERTY awe_widget_properties[];
+
+
+///the one and only widget vtable
+extern AWE_WIDGET_VTABLE awe_widget_vtable;
+
+
 ///the one and only widget class; base class for all widgets
 extern AWE_CLASS awe_widget_class;
 
@@ -343,7 +351,7 @@ AWE_OBJECT *awe_widget_clone(AWE_OBJECT *wgt);
     @param canvas canvas to draw onto
     @param update_rect rectangle, relative to widget, that is being affected
  */
-void awe_widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *update_rect);
+void awe_widget_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *update_rect);
 
 
 /** the default implementation of the relevant event; it sends the event to
@@ -351,7 +359,7 @@ void awe_widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE
     @param wgt widget to process the event
     @param event the event to process
  */
-void awe_widget_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+void awe_widget_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /** the default implementation of the relevant event; it sends the event to
@@ -359,7 +367,7 @@ void awe_widget_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
     @param wgt widget to process the event
     @param event the event to process
  */
-void awe_widget_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+void awe_widget_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /** the default implementation of the relevant event; it sends the event to
@@ -367,7 +375,7 @@ void awe_widget_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
     @param wgt widget to process the event
     @param event the event to process
  */
-void awe_widget_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+void awe_widget_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /** the default implementation of the relevant event; it sends the event to
@@ -375,7 +383,7 @@ void awe_widget_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
     @param wgt widget to process the event
     @param event the event to process
  */
-void awe_widget_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+void awe_widget_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /** the default implementation of the relevant event; it sends the event to
@@ -383,7 +391,7 @@ void awe_widget_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
     @param wgt widget to process the event
     @param event the event to process
  */
-void awe_widget_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+void awe_widget_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /** the default implementation of the relevant event; it sends the event to
@@ -391,7 +399,7 @@ void awe_widget_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
     @param wgt widget to process the event
     @param event the event to process
  */
-void awe_widget_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+void awe_widget_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /** the default implementation of the relevant event; it sends the event to
@@ -399,7 +407,7 @@ void awe_widget_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
     @param wgt widget to process the event
     @param event the event to process
  */
-void awe_widget_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+void awe_widget_key_down(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /** the default implementation of the relevant event; it sends the event to
@@ -407,7 +415,7 @@ void awe_widget_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
     @param wgt widget to process the event
     @param event the event to process
  */
-void awe_widget_key_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event);
+void awe_widget_key_up(AWE_WIDGET *wgt, const AWE_EVENT *event);
 
 
 /** the default implementation of the get_focus method
@@ -551,7 +559,7 @@ int awe_is_ancestor_widget(AWE_WIDGET *ancestor, AWE_WIDGET *descentant);
     @param wgt widget to get the screen rectangle of
     @return pointer to the widget's screen rectangle
  */
-AL_CONST AWE_RECT *awe_get_widget_rect(AWE_WIDGET *wgt);
+const AWE_RECT *awe_get_widget_rect(AWE_WIDGET *wgt);
 
 
 /** tests if given coordinates are inside the given widget; if the widget

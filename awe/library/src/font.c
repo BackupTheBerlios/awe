@@ -32,14 +32,14 @@ static int _font_aa = 0;
 
 
 //returns the font height
-static int _font_height(AL_CONST FONT *font)
+static int _font_height(const FONT *font)
 { 
     return alfont_text_height(font->data); 
 }
 
 
 //returns the character length
-static int _char_length(AL_CONST FONT *f, int ch)
+static int _char_length(const FONT *f, int ch)
 {
     char s[16];
     usetc(s, ch);
@@ -49,14 +49,14 @@ static int _char_length(AL_CONST FONT *f, int ch)
 
 
 //returns the length of the text
-static int _text_length(AL_CONST FONT *f, AL_CONST char *text)
+static int _text_length(const FONT *f, const char *text)
 {
     return alfont_text_length(f->data, text);
 }
 
 
 //renders a single character
-static int _render_char(AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp, int x, int y)
+static int _render_char(const FONT *f, int ch, int fg, int bg, BITMAP *bmp, int x, int y)
 {
     char s[16];
     usetc(s, ch);
@@ -71,7 +71,7 @@ static int _render_char(AL_CONST FONT *f, int ch, int fg, int bg, BITMAP *bmp, i
 
 
 //renders a line of text
-static void _render(AL_CONST FONT *f, AL_CONST char *text, int fg, int bg, BITMAP *bmp, int x, int y) {
+static void _render(const FONT *f, const char *text, int fg, int bg, BITMAP *bmp, int x, int y) {
     alfont_text_mode(bg);
     if(_font_aa)
         alfont_textout_aa(bmp, f->data, text, x, y, fg);

@@ -29,7 +29,6 @@
 //forward
 static void _gui_update_changes();
 static void _gui_update_full();
-static AWE_WIDGET_VTABLE _widget_vtable;
 
 
 //variables
@@ -469,8 +468,10 @@ static void _paint_tree(AWE_WIDGET *wgt, AWE_RECT *clip)
 //redraws a widget and its children
 static void _redraw_widget(AWE_WIDGET *wgt)
 {
-    AWE_RECT t = wgt->dirty;
     int cl, ct, cr, cb;
+    AWE_RECT t;
+
+    AWE_RECT_INTERSECTION(t, wgt->clip, wgt->dirty);
 
     //acquire bitmap
     acquire_bitmap(_gui_screen);
@@ -564,12 +565,29 @@ static void _update_drawable(AWE_WIDGET *wgt)
 }
 
 
+/* returns the widget to apply the update redraw to; this is neccessary because
+   a child widget is always drawn if the parent is drawn; but if the child's
+   dirty area is not inside the parent's dirty area, then the child will not
+   be redrawn.
+ */
+static INLINE AWE_WIDGET *_get_update_redraw_widget(AWE_WIDGET *wgt)
+{
+    AWE_WIDGET *t;
+
+    for(t = wgt; t; t = t->parent) {
+        if (t->redraw) return t;
+    }
+    return wgt;
+}
+
+
 //updates redraw
 static void _update_redraw(AWE_WIDGET *wgt)
 {
     AWE_WIDGET *child;
 
     if (wgt->update_redraw) {
+        wgt = _get_update_redraw_widget(wgt);
         if (_is_trans(wgt)) _set_redraw_background(wgt, &wgt->clip);
         _set_redraw(wgt, &wgt->clip);
         _set_redraw_foreground(wgt, &wgt->clip);
@@ -798,51 +816,6 @@ static AWE_CLASS_ENUMERATION _output_type_enum[] = {
 };
 
 
-//widget properties
-static AWE_CLASS_PROPERTY _widget_properties[] = {
-    {AWE_ID_X           , "int"                   , sizeof(int)                   , _widget_get_x           , _widget_set_x           , 0},
-    {AWE_ID_Y           , "int"                   , sizeof(int)                   , _widget_get_y           , _widget_set_y           , 0},
-    {AWE_ID_WIDTH       , "int"                   , sizeof(int)                   , _widget_get_width       , _widget_set_width       , 0},
-    {AWE_ID_HEIGHT      , "int"                   , sizeof(int)                   , _widget_get_height      , _widget_set_height      , 0},
-    {AWE_ID_VISIBLE     , "bool"                  , sizeof(int)                   , _widget_get_visible     , _widget_set_visible     , 0},
-    {AWE_ID_ENABLED     , "bool"                  , sizeof(int)                   , _widget_get_enabled     , _widget_set_enabled     , 0},
-    {AWE_ID_OPAQUE      , "bool"                  , sizeof(int)                   , _widget_get_opaque      , _widget_set_opaque      , 0},
-    {AWE_ID_TRANSLUCENCY, "int"                   , sizeof(int)                   , _widget_get_translucency, _widget_set_translucency, 0},
-    {AWE_ID_OUTPUT_TYPE , "AWE_WIDGET_OUTPUT_TYPE", sizeof(AWE_WIDGET_OUTPUT_TYPE), _widget_get_output_type , _widget_set_output_type , _output_type_enum},
-    {0}
-};
-
-
-//widget vtable
-static AWE_WIDGET_VTABLE _widget_vtable = {
-    {
-        awe_widget_get_interface,
-        awe_widget_properties_changed,
-        awe_widget_clone
-    },
-    awe_widget_paint,
-    awe_widget_button_down,
-    awe_widget_button_up,
-    awe_widget_mouse_enter,
-    awe_widget_mouse_move,
-    awe_widget_mouse_leave,
-    awe_widget_mouse_wheel,
-    awe_widget_key_down,
-    awe_widget_key_up,
-    0,
-    awe_widget_get_focus,
-    awe_widget_loose_focus,
-    awe_widget_begin_display,
-    awe_widget_end_display,
-    awe_widget_insert_widget,
-    awe_widget_remove_widget,
-    0,
-    0,
-    0,
-    0
-};
-
-
 //update changes
 static void _gui_update_changes()
 {
@@ -906,15 +879,60 @@ static void _gui_update_full()
  *****************************************************************************/
 
 
+//widget properties
+AWE_CLASS_PROPERTY awe_widget_properties[] = {
+    {AWE_ID_X           , "int"                   , sizeof(int)                   , _widget_get_x           , _widget_set_x           , 0},
+    {AWE_ID_Y           , "int"                   , sizeof(int)                   , _widget_get_y           , _widget_set_y           , 0},
+    {AWE_ID_WIDTH       , "int"                   , sizeof(int)                   , _widget_get_width       , _widget_set_width       , 0},
+    {AWE_ID_HEIGHT      , "int"                   , sizeof(int)                   , _widget_get_height      , _widget_set_height      , 0},
+    {AWE_ID_VISIBLE     , "bool"                  , sizeof(int)                   , _widget_get_visible     , _widget_set_visible     , 0},
+    {AWE_ID_ENABLED     , "bool"                  , sizeof(int)                   , _widget_get_enabled     , _widget_set_enabled     , 0},
+    {AWE_ID_OPAQUE      , "bool"                  , sizeof(int)                   , _widget_get_opaque      , _widget_set_opaque      , 0},
+    {AWE_ID_TRANSLUCENCY, "int"                   , sizeof(int)                   , _widget_get_translucency, _widget_set_translucency, 0},
+    {AWE_ID_OUTPUT_TYPE , "AWE_WIDGET_OUTPUT_TYPE", sizeof(AWE_WIDGET_OUTPUT_TYPE), _widget_get_output_type , _widget_set_output_type , _output_type_enum},
+    {0}
+};
+
+
+//widget vtable
+AWE_WIDGET_VTABLE awe_widget_vtable = {
+    {
+        awe_widget_get_interface,
+        awe_widget_properties_changed,
+        awe_widget_clone
+    },
+    awe_widget_paint,
+    awe_widget_button_down,
+    awe_widget_button_up,
+    awe_widget_mouse_enter,
+    awe_widget_mouse_move,
+    awe_widget_mouse_leave,
+    awe_widget_mouse_wheel,
+    awe_widget_key_down,
+    awe_widget_key_up,
+    0,
+    awe_widget_get_focus,
+    awe_widget_loose_focus,
+    awe_widget_begin_display,
+    awe_widget_end_display,
+    awe_widget_insert_widget,
+    awe_widget_remove_widget,
+    0,
+    0,
+    0,
+    0
+};
+
+
 //the one and only widget class; base class for all widgets
 AWE_CLASS awe_widget_class = {
     AWE_ID_WIDGET,
     AWE_ID_AWE,
     &awe_object_class,
     sizeof(AWE_WIDGET),
-    _widget_properties,
+    awe_widget_properties,
     0,
-    &_widget_vtable.object,
+    &awe_widget_vtable.object,
     _widget_constructor,
     _widget_destructor
 };
@@ -993,7 +1011,7 @@ AWE_OBJECT *awe_widget_clone(AWE_OBJECT *wgt)
 
 
 //paint widget
-void awe_widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_RECT *update_rect)
+void awe_widget_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *update_rect)
 {
     int back_color = makecol(255, 255, 255);
     int fore_color = wgt->enabled_tree ? makecol(0, 0, 0) : makecol(128, 128, 128);
@@ -1011,7 +1029,7 @@ void awe_widget_paint(AWE_WIDGET *wgt, AL_CONST AWE_CANVAS *canvas, AL_CONST AWE
 
 
 //sends the event to its parent
-void awe_widget_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void awe_widget_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     if (!wgt->parent) return;
     AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, button_down, (wgt->parent, event));
@@ -1019,7 +1037,7 @@ void awe_widget_button_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //sends the event to its parent
-void awe_widget_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void awe_widget_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     if (!wgt->parent) return;
     AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, button_up, (wgt->parent, event));
@@ -1027,7 +1045,7 @@ void awe_widget_button_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //sends the event to its parent
-void awe_widget_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void awe_widget_mouse_enter(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     if (!wgt->parent) return;
     AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, mouse_enter, (wgt->parent, event));
@@ -1035,7 +1053,7 @@ void awe_widget_mouse_enter(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //sends the event to its parent
-void awe_widget_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void awe_widget_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     if (!wgt->parent) return;
     AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, mouse_move, (wgt->parent, event));
@@ -1043,7 +1061,7 @@ void awe_widget_mouse_move(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //sends the event to its parent
-void awe_widget_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void awe_widget_mouse_leave(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     if (!wgt->parent) return;
     AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, mouse_leave, (wgt->parent, event));
@@ -1051,7 +1069,7 @@ void awe_widget_mouse_leave(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //sends the event to its parent
-void awe_widget_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void awe_widget_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     if (!wgt->parent) return;
     AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, mouse_wheel, (wgt->parent, event));
@@ -1059,7 +1077,7 @@ void awe_widget_mouse_wheel(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //sends the event to its parent
-void awe_widget_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void awe_widget_key_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     if (!wgt->parent) return;
     AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, key_down, (wgt->parent, event));
@@ -1067,7 +1085,7 @@ void awe_widget_key_down(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
 
 
 //sends the event to its parent
-void awe_widget_key_up(AWE_WIDGET *wgt, AL_CONST AWE_EVENT *event)
+void awe_widget_key_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     if (!wgt->parent) return;
     AWE_CALL_METHOD(wgt->parent, AWE_ID_WIDGET, AWE_ID_AWE, AWE_WIDGET_VTABLE, key_up, (wgt->parent, event));
@@ -1271,7 +1289,7 @@ int awe_is_ancestor_widget(AWE_WIDGET *a, AWE_WIDGET *d)
 
 
 //returns a pointer to the screen rectangle of the widget
-AL_CONST AWE_RECT *awe_get_widget_rect(AWE_WIDGET *wgt)
+const AWE_RECT *awe_get_widget_rect(AWE_WIDGET *wgt)
 {
     return &wgt->pos;
 }

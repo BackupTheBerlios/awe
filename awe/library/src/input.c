@@ -309,7 +309,7 @@ void awe_install_input()
 
 
 //puts an event to the event queue
-void awe_put_event(AL_CONST AWE_EVENT *event)
+void awe_put_event(const AWE_EVENT *event)
 {
     AWE_EVENT *e;
 

@@ -172,7 +172,7 @@ void awe_install_input();
 /** puts an event to the event queue
     @param event event to copy to the internal queue
  */
-void awe_put_event(AL_CONST AWE_EVENT *event);
+void awe_put_event(const AWE_EVENT *event);
 
 
 /** gets an event from the event queue

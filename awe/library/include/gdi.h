@@ -148,7 +148,7 @@ int awe_set_canvas_clip(AWE_CANVAS *canvas, AWE_RECT *clip);
     @param y vertical coordinate
     @param color pixel value
  */
-void awe_draw_pixel(AL_CONST AWE_CANVAS *canvas, int x, int y, int color);
+void awe_draw_pixel(const AWE_CANVAS *canvas, int x, int y, int color);
 
 
 /** draws a horizontal line
@@ -158,7 +158,7 @@ void awe_draw_pixel(AL_CONST AWE_CANVAS *canvas, int x, int y, int color);
     @param x2 right coordinate
     @param color pixel value
  */
-void awe_draw_hline(AL_CONST AWE_CANVAS *canvas, int x1, int y, int x2, int color);
+void awe_draw_hline(const AWE_CANVAS *canvas, int x1, int y, int x2, int color);
 
 
 /** draws a vertical line
@@ -168,7 +168,7 @@ void awe_draw_hline(AL_CONST AWE_CANVAS *canvas, int x1, int y, int x2, int colo
     @param y2 bottom coordinate
     @param color pixel value
  */
-void awe_draw_vline(AL_CONST AWE_CANVAS *canvas, int x, int y1, int y2, int color);
+void awe_draw_vline(const AWE_CANVAS *canvas, int x, int y1, int y2, int color);
 
 
 /** draws a line
@@ -179,7 +179,7 @@ void awe_draw_vline(AL_CONST AWE_CANVAS *canvas, int x, int y1, int y2, int colo
     @param y2 bottom coordinate
     @param color pixel value
  */
-void awe_draw_line(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color);
+void awe_draw_line(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color);
 
 
 /** draws a rectangle
@@ -190,7 +190,7 @@ void awe_draw_line(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, 
     @param y2 bottom coordinate
     @param color pixel value
  */
-void awe_draw_rect(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color);
+void awe_draw_rect(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color);
 
 
 /** draws a rectangle with position and size
@@ -201,7 +201,7 @@ void awe_draw_rect(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, 
     @param h height
     @param color pixel value
  */
-void awe_draw_rect_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int color);
+void awe_draw_rect_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int color);
 
 
 /** draws a circle
@@ -211,7 +211,7 @@ void awe_draw_rect_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, in
     @param radius radius of circle
     @param color pixel value
  */
-void awe_draw_circle(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color);
+void awe_draw_circle(const AWE_CANVAS *canvas, int x, int y, int radius, int color);
 
 
 /** draws an ellipse
@@ -222,7 +222,7 @@ void awe_draw_circle(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int 
     @param ver_radius vertical radius of ellipse
     @param color pixel value
  */
-void awe_draw_ellipse(AL_CONST AWE_CANVAS *canvas, int x, int y, int hor_radius, int ver_radius, int color);
+void awe_draw_ellipse(const AWE_CANVAS *canvas, int x, int y, int hor_radius, int ver_radius, int color);
 
 
 /** draws an arc
@@ -234,7 +234,7 @@ void awe_draw_ellipse(AL_CONST AWE_CANVAS *canvas, int x, int y, int hor_radius,
     @param radius radius of circle
     @param color pixel value
  */
-void awe_draw_arc(AL_CONST AWE_CANVAS *canvas, int x, int y, fixed start_angle, fixed end_angle, int radius, int color);
+void awe_draw_arc(const AWE_CANVAS *canvas, int x, int y, fixed start_angle, fixed end_angle, int radius, int color);
 
 
 /** draws a spline
@@ -242,7 +242,7 @@ void awe_draw_arc(AL_CONST AWE_CANVAS *canvas, int x, int y, fixed start_angle, 
     @param points the spline's control points
     @param color pixel value
  */
-void awe_draw_spline(AL_CONST AWE_CANVAS *canvas, AL_CONST int points[8], int color);
+void awe_draw_spline(const AWE_CANVAS *canvas, const int points[8], int color);
 
 
 /** fills a rectangle
@@ -253,7 +253,7 @@ void awe_draw_spline(AL_CONST AWE_CANVAS *canvas, AL_CONST int points[8], int co
     @param y2 bottom coordinate
     @param color pixel value
  */
-void awe_fill_rect(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color);
+void awe_fill_rect(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color);
 
 
 /** fills a rectangle with position and size
@@ -264,7 +264,7 @@ void awe_fill_rect(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, 
     @param h height
     @param color pixel value
  */
-void awe_fill_rect_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int color);
+void awe_fill_rect_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int color);
 
 
 /** fills a circle
@@ -274,7 +274,7 @@ void awe_fill_rect_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, in
     @param radius radius of circle
     @param color pixel value
  */
-void awe_fill_circle(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color);
+void awe_fill_circle(const AWE_CANVAS *canvas, int x, int y, int radius, int color);
 
 
 /** fills an ellipse
@@ -285,7 +285,7 @@ void awe_fill_circle(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int 
     @param ver_radius vertical radius of ellipse
     @param color pixel value
  */
-void awe_fill_ellipse(AL_CONST AWE_CANVAS *canvas, int x, int y, int hor_radius, int ver_radius, int color);
+void awe_fill_ellipse(const AWE_CANVAS *canvas, int x, int y, int hor_radius, int ver_radius, int color);
 
 
 /** rectangular gradient fill (using 'quad3d')
@@ -299,7 +299,7 @@ void awe_fill_ellipse(AL_CONST AWE_CANVAS *canvas, int x, int y, int hor_radius,
     @param color3 bottom-right color
     @param color4 top-right color
  */
-void awe_fill_gradient(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2, int color3, int color4);
+void awe_fill_gradient(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2, int color3, int color4);
 
 
 /** rectangular gradient fill (using 'quad3d') using position and size
@@ -313,7 +313,7 @@ void awe_fill_gradient(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int 
     @param color3 bottom-right color
     @param color4 top-right color
  */
-void awe_fill_gradient_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int color1, int color2, int color3, int color4);
+void awe_fill_gradient_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int color1, int color2, int color3, int color4);
 
 
 /** horizontal gradient fill (using 'quad3d')
@@ -325,7 +325,7 @@ void awe_fill_gradient_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h
     @param color1 left color
     @param color2 right color
  */
-void awe_fill_gradient_hor(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2);
+void awe_fill_gradient_hor(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2);
 
 
 /** horizontal gradient fill (using 'quad3d') using position and size
@@ -337,7 +337,7 @@ void awe_fill_gradient_hor(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, 
     @param color1 left color
     @param color2 right color
  */
-void awe_fill_gradient_hor_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int color1, int color2);
+void awe_fill_gradient_hor_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int color1, int color2);
 
 
 /** vertical gradient fill (using 'quad3d')
@@ -349,7 +349,7 @@ void awe_fill_gradient_hor_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, i
     @param color1 top color
     @param color2 bottom color
  */
-void awe_fill_gradient_ver(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2);
+void awe_fill_gradient_ver(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2);
 
 
 /** vertical gradient fill (using 'quad3d') using position and size
@@ -361,7 +361,7 @@ void awe_fill_gradient_ver(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, 
     @param color1 top color
     @param color2 bottom color
  */
-void awe_fill_gradient_ver_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int color1, int color2);
+void awe_fill_gradient_ver_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int color1, int color2);
 
 
 /** draws a 3d rectangle
@@ -374,7 +374,7 @@ void awe_fill_gradient_ver_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, i
     @param bottom_right_color bottom right color
     @param width thickness of rectangle in pixels
  */
-void awe_draw_3d_rect(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width);
+void awe_draw_3d_rect(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width);
 
 
 /** draws a 3d rectangle using position and size
@@ -387,7 +387,7 @@ void awe_draw_3d_rect(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y
     @param bottom_right_color bottom right color
     @param width thickness of rectangle in pixels
  */
-void awe_draw_3d_rect_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width);
+void awe_draw_3d_rect_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width);
 
 
 /** draws a 3d circle
@@ -399,7 +399,7 @@ void awe_draw_3d_rect_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h,
     @param bottom_right_color bottom right color
     @param width thickness of circle in pixels
  */
-void awe_draw_3d_circle(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int top_left_color, int bottom_right_color, int width);
+void awe_draw_3d_circle(const AWE_CANVAS *canvas, int x, int y, int radius, int top_left_color, int bottom_right_color, int width);
 
 
 /** draws a 3d 2-pixel frame
@@ -414,7 +414,7 @@ void awe_draw_3d_circle(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, i
     @param color4 outter bottom-right color
     @param type frame type
  */
-void awe_draw_3d_frame(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2, int color3, int color4, AWE_FRAME_TYPE type);
+void awe_draw_3d_frame(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2, int color3, int color4, AWE_FRAME_TYPE type);
 
 
 /** draws a 3d 2-pixel frame using position and size
@@ -429,7 +429,7 @@ void awe_draw_3d_frame(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int 
     @param color4 outter bottom-right color
     @param type frame type
  */
-void awe_draw_3d_frame_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int color1, int color2, int color3, int color4, AWE_FRAME_TYPE type);
+void awe_draw_3d_frame_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int color1, int color2, int color3, int color4, AWE_FRAME_TYPE type);
 
 
 /** draws a rectangle using a line pattern; used for drawing input focus etc
@@ -441,7 +441,7 @@ void awe_draw_3d_frame_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h
     @param color pixel value
     @param pt bitmask of the line: a pixel is drawn for each bit that is 1
  */
-void awe_draw_rect_pattern(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color, unsigned pt);
+void awe_draw_rect_pattern(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color, unsigned pt);
 
 
 /** draws a rectangle using a line pattern and position, size 
@@ -453,7 +453,7 @@ void awe_draw_rect_pattern(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, 
     @param color pixel value
     @param pt bitmask of the line: a pixel is drawn for each bit that is 1
  */
-void awe_draw_rect_pattern_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int color, unsigned pt);
+void awe_draw_rect_pattern_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int color, unsigned pt);
 
 
 /** draws an Allegro string of a specific length
@@ -468,7 +468,7 @@ void awe_draw_rect_pattern_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, i
     @param text_r optional result pointer to the string where the drawing stopped
     @return right text coordinate
  */
-int awe_draw_text_len(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST char *text, int len, int x, int y, int fg_color, int bg_color, AL_CONST char **text_r);
+int awe_draw_text_len(const AWE_CANVAS *canvas, const FONT *font, const char *text, int len, int x, int y, int fg_color, int bg_color, const char **text_r);
 
 
 /** draws an Allegro string until a specific coordinate is met
@@ -483,7 +483,7 @@ int awe_draw_text_len(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST
     @param text_r optional result pointer to the string where the drawing stopped
     @return right text coordinate
  */
-int awe_draw_text_pix(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST char *text, int x2, int x, int y, int fg_color, int bg_color, AL_CONST char **text_r);
+int awe_draw_text_pix(const AWE_CANVAS *canvas, const FONT *font, const char *text, int x2, int x, int y, int fg_color, int bg_color, const char **text_r);
 
 
 /** draws an Allegro string
@@ -497,7 +497,7 @@ int awe_draw_text_pix(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST
     @param text_r optional result pointer to the string where the drawing stopped
     @return right text coordinate
  */
-int awe_draw_text(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST char *text, int x, int y, int fg_color, int bg_color);
+int awe_draw_text(const AWE_CANVAS *canvas, const FONT *font, const char *text, int x, int y, int fg_color, int bg_color);
 
 
 /** draws an Allegro string of a specific length, underlying the first character
@@ -513,7 +513,7 @@ int awe_draw_text(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST cha
     @param text_r optional result pointer to the string where the drawing stopped
     @return right text coordinate
  */
-int awe_draw_gui_text_len(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST char *text, int len, int x, int y, int fg_color, int bg_color, AL_CONST char **text_r);
+int awe_draw_gui_text_len(const AWE_CANVAS *canvas, const FONT *font, const char *text, int len, int x, int y, int fg_color, int bg_color, const char **text_r);
 
 
 /** draws an Allegro string until a specific coordinate is met, underlying the
@@ -529,7 +529,7 @@ int awe_draw_gui_text_len(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_C
     @param text_r optional result pointer to the string where the drawing stopped
     @return right text coordinate
  */
-int awe_draw_gui_text_pix(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST char *text, int x2, int x, int y, int fg_color, int bg_color, AL_CONST char **text_r);
+int awe_draw_gui_text_pix(const AWE_CANVAS *canvas, const FONT *font, const char *text, int x2, int x, int y, int fg_color, int bg_color, const char **text_r);
 
 
 /** draws an Allegro string, underlying the first character after the first
@@ -544,7 +544,7 @@ int awe_draw_gui_text_pix(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_C
     @param text_r optional result pointer to the string where the drawing stopped
     @return right text coordinate
  */
-int awe_draw_gui_text(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST char *text, int x, int y, int fg_color, int bg_color);
+int awe_draw_gui_text(const AWE_CANVAS *canvas, const FONT *font, const char *text, int x, int y, int fg_color, int bg_color);
 
 
 /** blits a bitmap onto a canvas
@@ -557,7 +557,7 @@ int awe_draw_gui_text(AL_CONST AWE_CANVAS *canvas, AL_CONST FONT *font, AL_CONST
     @param width width of area to blit
     @param height height of area to blit
  */
-void awe_blit_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
+void awe_blit_bitmap(BITMAP *src, const AWE_CANVAS *canvas, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
 
 
 /** masked blitting of a bitmap onto a canvas
@@ -570,7 +570,7 @@ void awe_blit_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, int sr
     @param width width of area to blit
     @param height height of area to blit
  */
-void awe_blit_masked_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
+void awe_blit_masked_bitmap(BITMAP *src, const AWE_CANVAS *canvas, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
 
 
 /** scaled blitting of a bitmap onto a canvas
@@ -585,7 +585,7 @@ void awe_blit_masked_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x,
     @param dst_width width of area of destination bitmap to blit
     @param dst_height height of area of destination bitmap to blit
  */
-void awe_blit_stretch_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, int src_y, int src_width, int src_height, int dst_x, int dst_y, int dst_width, int dst_height);
+void awe_blit_stretch_bitmap(BITMAP *src, const AWE_CANVAS *canvas, int src_x, int src_y, int src_width, int src_height, int dst_x, int dst_y, int dst_width, int dst_height);
 
 
 /** scaled masked blitting of a bitmap onto a canvas
@@ -600,7 +600,7 @@ void awe_blit_stretch_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x
     @param dst_width width of area of destination bitmap to blit
     @param dst_height height of area of destination bitmap to blit
  */
-void awe_blit_masked_stretch_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, int src_y, int src_width, int src_height, int dst_x, int dst_y, int dst_width, int dst_height);
+void awe_blit_masked_stretch_bitmap(BITMAP *src, const AWE_CANVAS *canvas, int src_x, int src_y, int src_width, int src_height, int dst_x, int dst_y, int dst_width, int dst_height);
 
 
 /** draws a bitmap's non-masked pixels with a specific color
@@ -614,7 +614,7 @@ void awe_blit_masked_stretch_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, in
     @param height height of area to blit
     @param color pixel value
  */
-void awe_blit_mono_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, int src_y, int dst_x, int dst_y, int width, int height, int color);
+void awe_blit_mono_bitmap(BITMAP *src, const AWE_CANVAS *canvas, int src_x, int src_y, int dst_x, int dst_y, int width, int height, int color);
 
 
 /** draws a bitmap's non-masked pixels with a specific color; bottom-right
@@ -630,7 +630,7 @@ void awe_blit_mono_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, i
     @param top_left_color top left color
     @param bottom_right_color bottom right color
  */
-void awe_blit_3d_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, int src_y, int dst_x, int dst_y, int width, int height, int top_left_color, int bottom_right_color);
+void awe_blit_3d_bitmap(BITMAP *src, const AWE_CANVAS *canvas, int src_x, int src_y, int dst_x, int dst_y, int width, int height, int top_left_color, int bottom_right_color);
 
 
 /** draws a left arrow
@@ -640,7 +640,7 @@ void awe_blit_3d_bitmap(BITMAP *src, AL_CONST AWE_CANVAS *canvas, int src_x, int
     @param radius radius of shape
     @param color pixel value
  */
-void awe_draw_left_arrow_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color);
+void awe_draw_left_arrow_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color);
 
 
 /** draws a right arrow
@@ -650,7 +650,7 @@ void awe_draw_left_arrow_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int rad
     @param radius radius of shape
     @param color pixel value
  */
-void awe_draw_right_arrow_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color);
+void awe_draw_right_arrow_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color);
 
 
 /** draws an up arrow
@@ -660,7 +660,7 @@ void awe_draw_right_arrow_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int ra
     @param radius radius of shape
     @param color pixel value
  */
-void awe_draw_up_arrow_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color);
+void awe_draw_up_arrow_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color);
 
 
 /** draws a down arrow
@@ -670,7 +670,7 @@ void awe_draw_up_arrow_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radiu
     @param radius radius of shape
     @param color pixel value
  */
-void awe_draw_down_arrow_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color);
+void awe_draw_down_arrow_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color);
 
 
 /** draws a tick (a check mark)
@@ -681,7 +681,7 @@ void awe_draw_down_arrow_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int rad
     @param color pixel value
     @param width thickness of icon in pixels
  */
-void awe_draw_tick_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
+void awe_draw_tick_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
 
 
 /** draws a close icon (an 'x')
@@ -692,7 +692,7 @@ void awe_draw_tick_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, i
     @param color pixel value
     @param width thickness of icon in pixels
  */
-void awe_draw_close_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
+void awe_draw_close_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
 
 
 /** draws a minimize icon
@@ -703,7 +703,7 @@ void awe_draw_close_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, 
     @param color pixel value
     @param width thickness of icon in pixels
  */
-void awe_draw_minimize_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
+void awe_draw_minimize_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
 
 
 /** draws a maximize icon
@@ -714,7 +714,7 @@ void awe_draw_minimize_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radiu
     @param color pixel value
     @param width thickness of icon in pixels
  */
-void awe_draw_maximize_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
+void awe_draw_maximize_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
 
 
 /** draws a restore icon
@@ -725,7 +725,7 @@ void awe_draw_maximize_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radiu
     @param color pixel value
     @param width thickness of icon in pixels
  */
-void awe_draw_restore_icon(AL_CONST AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
+void awe_draw_restore_icon(const AWE_CANVAS *canvas, int x, int y, int radius, int color, int width);
 
 
 /** creates a texture used for drawing skinned surfaces
@@ -757,7 +757,7 @@ void awe_destroy_texture(AWE_TEXTURE *texture);
     @param x2 right coordinate
     @param y2 bottom coordinate
  */
-void awe_draw_texture(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
+void awe_draw_texture(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
 
 
 /** draws a texture on a canvas using position and size
@@ -768,7 +768,7 @@ void awe_draw_texture(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, in
     @param w width
     @param h height
  */
-void awe_draw_texture_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h);
+void awe_draw_texture_s(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x, int y, int w, int h);
 
 
 /** draws a horizontal strip filled with a texture
@@ -779,7 +779,7 @@ void awe_draw_texture_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, 
     @param x2 right coordinate
     @param y2 bottom coordinate
  */
-void awe_draw_texture_hor(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
+void awe_draw_texture_hor(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
 
 
 /** draws a horizontal strip filled with a texture using position and size
@@ -790,7 +790,7 @@ void awe_draw_texture_hor(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex
     @param w width
     @param h height
  */
-void awe_draw_texture_hor_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h);
+void awe_draw_texture_hor_s(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x, int y, int w, int h);
 
 
 /** draws a vertical strip filled with a texture
@@ -801,7 +801,7 @@ void awe_draw_texture_hor_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *t
     @param x2 right coordinate
     @param y2 bottom coordinate
  */
-void awe_draw_texture_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
+void awe_draw_texture_ver(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
 
 
 /** draws a vertical strip filled with a texture using position and size
@@ -812,7 +812,7 @@ void awe_draw_texture_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex
     @param w width
     @param h height
  */
-void awe_draw_texture_ver_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h);
+void awe_draw_texture_ver_s(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x, int y, int w, int h);
 
 
 /** draws a horizontal and vertical strip filled with a texture
@@ -823,7 +823,7 @@ void awe_draw_texture_ver_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *t
     @param x2 right coordinate
     @param y2 bottom coordinate
  */
-void awe_draw_texture_hor_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
+void awe_draw_texture_hor_ver(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x1, int y1, int x2, int y2);
 
 
 /** draws a horizontal and vertical strip filled with a texture using position and size
@@ -834,7 +834,7 @@ void awe_draw_texture_hor_ver(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE 
     @param w width
     @param h height
  */
-void awe_draw_texture_hor_ver_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h);
+void awe_draw_texture_hor_ver_s(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x, int y, int w, int h);
 
 
 /** draws a texture based on type
@@ -847,7 +847,7 @@ void awe_draw_texture_hor_ver_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTUR
     @param h_type horizontal texture type
     @param v_type vertical texture type
  */
-void awe_draw_texture_type(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x1, int y1, int x2, int y2, AWE_TEXTURE_TYPE h_type, AWE_TEXTURE_TYPE v_type);
+void awe_draw_texture_type(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x1, int y1, int x2, int y2, AWE_TEXTURE_TYPE h_type, AWE_TEXTURE_TYPE v_type);
 
 
 /** draws a texture based on type using position and size
@@ -860,7 +860,7 @@ void awe_draw_texture_type(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *te
     @param h_type horizontal texture type
     @param v_type vertical texture type
  */
-void awe_draw_texture_type_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *tex, int x, int y, int w, int h, AWE_TEXTURE_TYPE h_type, AWE_TEXTURE_TYPE v_type);
+void awe_draw_texture_type_s(const AWE_CANVAS *canvas, const AWE_TEXTURE *tex, int x, int y, int w, int h, AWE_TEXTURE_TYPE h_type, AWE_TEXTURE_TYPE v_type);
 
 
 /** draws a shadow 
@@ -873,7 +873,7 @@ void awe_draw_texture_type_s(AL_CONST AWE_CANVAS *canvas, AL_CONST AWE_TEXTURE *
     @param end_trans end translucency (0 to 255)
     @param hor if true, the direction is horizontal, else vertical
  */
-void awe_draw_shadow(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int start_trans, int end_trans, int hor);
+void awe_draw_shadow(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int start_trans, int end_trans, int hor);
 
 
 /** draws a shadow using position and size
@@ -886,7 +886,7 @@ void awe_draw_shadow(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2
     @param end_trans end translucency (0 to 255)
     @param hor if true, the direction is horizontal, else vertical
  */
-void awe_draw_shadow_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int start_trans, int end_trans, int hor);
+void awe_draw_shadow_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int start_trans, int end_trans, int hor);
 
 
 /** draws a shadow inside the bottom-right edge of given rectangle
@@ -899,7 +899,7 @@ void awe_draw_shadow_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, 
     @param end_trans end translucency (0 to 255)
     @param width width of shadow
  */
-void awe_draw_bottom_right_shadow(AL_CONST AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int start_trans, int end_trans, int width);
+void awe_draw_bottom_right_shadow(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int start_trans, int end_trans, int width);
 
 
 /** draws a shadow inside the bottom-right edge of given rectangle,
@@ -913,7 +913,7 @@ void awe_draw_bottom_right_shadow(AL_CONST AWE_CANVAS *canvas, int x1, int y1, i
     @param end_trans end translucency (0 to 255)
     @param width width of shadow
  */
-void awe_draw_bottom_right_shadow_s(AL_CONST AWE_CANVAS *canvas, int x, int y, int w, int h, int start_trans, int end_trans, int width);
+void awe_draw_bottom_right_shadow_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int start_trans, int end_trans, int width);
 
 
 /*@}*/
