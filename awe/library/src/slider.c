@@ -409,8 +409,10 @@ AWE_OBJECT *awe_slider_clone(AWE_OBJECT *wgt)
 void awe_slider_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
 {
     AWE_SLIDER *sldr = (AWE_SLIDER *)wgt;
-    int pos = (((sldr->orientation ? wgt->height : wgt->width) - sldr->handle_width) * sldr->pos) / sldr->max_val;
-    int state;
+    int sldrpos = sldr->inverted ? sldr->max_val - sldr->pos : sldr->pos;
+    int pos = (((sldr->orientation ? wgt->height : wgt->width) - sldr->handle_width) * sldrpos) / sldr->max_val;
+    int state;    
+
     if(!awe_is_enabled_widget_tree(wgt))
         state = AWE_SLIDER_TEXTURE_DISABLED;
     else if(sldr->pressed)
@@ -503,7 +505,9 @@ void awe_slider_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     AWE_SLIDER *sldr = (AWE_SLIDER *)wgt;
     int mx, my;
-    int pos = (((sldr->orientation ? wgt->height : wgt->width) - sldr->handle_width) * sldr->pos) / sldr->max_val;
+    int sldrpos = sldr->inverted ? sldr->max_val - sldr->pos : sldr->pos;
+    int pos = (((sldr->orientation ? wgt->height : wgt->width) - sldr->handle_width) * sldrpos) / sldr->max_val;
+    //int pos = (((sldr->orientation ? wgt->height : wgt->width) - sldr->handle_width) * sldr->pos) / sldr->max_val;
     
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
@@ -564,15 +568,17 @@ void awe_slider_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event)
     int pos;
     int mp;
     int newpos;
+    int sldrpos = sldr->inverted ? sldr->max_val - sldr->pos : sldr->pos;
     int irange = sldr->orientation ? wgt->height : wgt->width;
     fixed slratio = itofix(irange - sldr->handle_width) / (sldr->max_val);
-    fixed slpos = slratio * sldr->pos;
+    fixed slpos = slratio * sldrpos;
     awe_map_point(NULL, wgt, mouse_x, mouse_y, &mx, &my);
     if(sldr->pressed){
         mp = sldr->orientation ? mouse_y - (wgt->y + (sldr->handle_width >> 1)) : mouse_x - (wgt->x + (sldr->handle_width >> 1));
         mp = MID(0, mp, irange - sldr->handle_width);
         slpos = itofix(mp);
         newpos = fixtoi(fixdiv(slpos, slratio));
+        if(sldr->inverted) newpos = sldr->max_val - newpos;
         if(sldr->step > 0){
             float steprange = sldr->max_val / (float)sldr->step;
             newpos = (int)((newpos + (steprange / 2)) / steprange) * steprange;
@@ -584,7 +590,7 @@ void awe_slider_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event)
             awe_set_widget_dirty(wgt);
         }
     }
-    pos = (((sldr->orientation ? wgt->height : wgt->width) - sldr->handle_width) * sldr->pos) / sldr->max_val;
+    pos = (((sldr->orientation ? wgt->height : wgt->width) - sldr->handle_width) * sldrpos) / sldr->max_val;
     if(sldr->orientation){
         if(my >= pos && my < pos + sldr->handle_width && sldr->highlighted == 0){
             sldr->highlighted = 1;
