@@ -18,7 +18,7 @@
 #include "awe/togglebutton.h"
 #include "awe/checkbox.h"
 #include "awe/radio.h"
-
+#include "awe/slider.h"
 
 #ifdef __cplusplus
    extern "C" {

@@ -20,7 +20,7 @@ int main()
     AWE_CURSOR *hand;
     AWE_CANVAS canvas;
     AWE_TEXTURE *texture1, *texture2, *texture3, *texture4, *texture5;
-    AWE_WIDGET *root, *button, *checkbox, *radio1, *radio2;
+    AWE_WIDGET *root, *button, *checkbox, *radio1, *radio2, *slider1, *slider2;
     RGB *rgb;
     int test_int, flag;
     FONT *font1, *font2;
@@ -147,6 +147,19 @@ int main()
         AWE_ID_WIDTH, 160,
         AWE_ID_TEXT, "Radio2",
         AWE_ID_GROUP, 1,
+        0);
+    slider1 = awe_create_widget(&awe_slider_class, root,
+        AWE_ID_X, 300,
+        AWE_ID_Y, 160,
+        AWE_ID_HEIGHT, 16,
+        AWE_ID_WIDTH, 160,
+        0);
+    slider2 = awe_create_widget(&awe_slider_class, root,
+        AWE_ID_X, 300,
+        AWE_ID_Y, 190,
+        AWE_ID_WIDTH, 16,
+        AWE_ID_HEIGHT, 100,
+        AWE_ID_ORIENTATION, AWE_SLIDER_VERTICAL,
         0);
             
     awe_set_root_widget(root);
