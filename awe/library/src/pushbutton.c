@@ -5,15 +5,19 @@
     INTERNALS
  *****************************************************************************/
 
-RGB _face_color_normal = { 212, 208, 200, 0 };
-RGB _face_color_highlighted = { 228, 224, 216, 0 };
-RGB _font_color_normal = { 0, 0, 0, 0 };
-RGB _font_color_disabled = { 128, 128, 128, 0 };
-RGB _font_shadow_normal = { 255, 0, 255, 0 };		//Magenta will not show
-RGB _font_shadow_disabled = { 255, 255, 255, 0 };
-RGB _edge_color_top_left = { 241, 239, 226, 0 };
+
+#define AWE_ID_PUSH_BUTTON_ARG0	"PushButtonArg0"
+
+
+RGB _face_color_normal       = { 212, 208, 200, 0 };
+RGB _face_color_highlighted  = { 228, 224, 216, 0 };
+RGB _font_color_normal       = { 0  , 0  , 0  , 0 };
+RGB _font_color_disabled     = { 128, 128, 128, 0 };
+RGB _shadow_color_normal     = { 255, 0  , 255, 0 };		//Magenta will not show
+RGB _shadow_color_disabled   = { 255, 255, 255, 0 };
+RGB _edge_color_top_left     = { 241, 239, 226, 0 };
 RGB _edge_color_bottom_right = { 128, 128, 128, 0 };
-int _margin[4] = { 8, 8, 8, 8, };
+int _margin[4]               = { 8  , 8  , 8  , 8 };
 
 
 static char *_push_button_texture[AWE_PUSH_BUTTON_NUM_TEXTURES] = {
@@ -56,11 +60,11 @@ static void _push_button_constructor(AWE_OBJECT *obj)
         }
         if(i == AWE_PUSH_BUTTON_TEXTURE_DISABLED){
             memcpy(&tmp->texture[i].font_col, &_font_color_disabled, sizeof(RGB));
-            memcpy(&tmp->texture[i].font_sdw, &_font_shadow_disabled, sizeof(RGB));
+            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_disabled, sizeof(RGB));
         }
         else{
             memcpy(&tmp->texture[i].font_col, &_font_color_normal, sizeof(RGB));
-            memcpy(&tmp->texture[i].font_sdw, &_font_shadow_normal, sizeof(RGB));
+            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_normal, sizeof(RGB));
         }
         tmp->texture[i].texture = NULL;       
     }
@@ -893,6 +897,22 @@ static void _push_button_set_font_shadow_focused(AWE_OBJECT *obj, void *data)
 }
 
 
+//gets the data
+static void _push_button_get_data(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    *(void **)data = tmp->data;
+}
+
+
+//sets the data
+static void _push_button_set_data(AWE_OBJECT *obj, void *data)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    tmp->data = *(void **)data;
+}
+
+
 //push_button properties
 static AWE_CLASS_PROPERTY _push_button_properties[] = {
     { AWE_ID_TEXT, "const char *", sizeof(const char *), _push_button_get_text, _push_button_set_text, 0 },
@@ -903,6 +923,7 @@ static AWE_CLASS_PROPERTY _push_button_properties[] = {
     { AWE_ID_MARGIN_LEFT, "int", sizeof(int), _push_button_get_margin_left, _push_button_set_margin_left, 0 },
     { AWE_ID_MARGIN_RIGHT, "int", sizeof(int), _push_button_get_margin_right, _push_button_set_margin_right, 0 },
     { AWE_ID_MARGIN_BOTTOM, "int", sizeof(int), _push_button_get_margin_bottom, _push_button_set_margin_bottom, 0 },
+    { AWE_ID_DATA, "void *", sizeof(void *), _push_button_get_data, _push_button_set_data, 0 },
     { AWE_ID_FACE_COLOR_TOP_LEFT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_top_left_enabled, _push_button_set_face_color_top_left_enabled, 0 },
     { AWE_ID_FACE_COLOR_TOP_RIGHT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_top_right_enabled, _push_button_set_face_color_top_right_enabled, 0 },
     { AWE_ID_FACE_COLOR_BOTTOM_LEFT_ENABLED, "RGB", sizeof(RGB), _push_button_get_face_color_bottom_left_enabled, _push_button_set_face_color_bottom_left_enabled, 0 },
@@ -942,16 +963,25 @@ static AWE_CLASS_PROPERTY _push_button_properties[] = {
     { AWE_ID_SHADOW_COLOR_DISABLED, "RGB", sizeof(RGB), _push_button_get_font_shadow_disabled, _push_button_set_font_shadow_disabled, 0 },
     { AWE_ID_SHADOW_COLOR_PRESSED, "RGB", sizeof(RGB), _push_button_get_font_shadow_pressed, _push_button_set_font_shadow_pressed, 0 },
     { AWE_ID_SHADOW_COLOR_HIGHLIGHTED, "RGB", sizeof(RGB), _push_button_get_font_shadow_highlighted, _push_button_set_font_shadow_highlighted, 0 },
-    { AWE_ID_SHADOW_COLOR_FOCUSED, "RGB", sizeof(RGB), _push_button_get_font_shadow_focused, _push_button_set_font_shadow_focused, 0 },
+    { AWE_ID_SHADOW_COLOR_FOCUSED, "RGB", sizeof(RGB), _push_button_get_font_shadow_focused, _push_button_set_font_shadow_focused, 0 }, 
+
+    // Add texture and anim
+
+    { 0 }
+};
+
+
+AWE_CLASS_EVENT_ARGUMENT _push_button_arg0[] = {
+    { AWE_ID_PUSH_BUTTON_ARG0, "void *" },
     { 0 }
 };
 
 
 static AWE_CLASS_EVENT _push_button_events[] = {
-    { AWE_ID_PUSH_BUTTON_ACTIVATED, 0 },
-    { AWE_ID_PUSH_BUTTON_RELEASED,  0 },
-    { AWE_ID_PUSH_BUTTON_HELD_DOWN, 0 },
-    { AWE_ID_PUSH_BUTTON_PRESSED,   0 },
+    { AWE_ID_PUSH_BUTTON_ACTIVATED, _push_button_arg0 },
+    { AWE_ID_PUSH_BUTTON_RELEASED,  _push_button_arg0 },
+    { AWE_ID_PUSH_BUTTON_HELD_DOWN, _push_button_arg0 },
+    { AWE_ID_PUSH_BUTTON_PRESSED,   _push_button_arg0 },
     { 0 }
 };
 
@@ -1042,17 +1072,74 @@ void *awe_push_button_get_interface(AWE_OBJECT *obj, const char *name, const cha
 AWE_OBJECT *awe_push_button_clone(AWE_OBJECT *wgt)
 {
     return awe_create_object(&awe_push_button_class, 
-        AWE_ID_X           , ((AWE_WIDGET *)wgt)->x           ,
-        AWE_ID_Y           , ((AWE_WIDGET *)wgt)->y           ,
-        AWE_ID_WIDTH       , ((AWE_WIDGET *)wgt)->width       ,
-        AWE_ID_HEIGHT      , ((AWE_WIDGET *)wgt)->height      ,
-        AWE_ID_VISIBLE     , ((AWE_WIDGET *)wgt)->visible     ,
-        AWE_ID_ENABLED     , ((AWE_WIDGET *)wgt)->enabled     ,
-        AWE_ID_OPAQUE      , ((AWE_WIDGET *)wgt)->opaque      , 
-        AWE_ID_TRANSLUCENCY, ((AWE_WIDGET *)wgt)->translucency,
-        AWE_ID_OUTPUT_TYPE , ((AWE_WIDGET *)wgt)->output_type ,
-        AWE_ID_TEXT        , ((AWE_PUSH_BUTTON *)wgt)->text   ,
-        AWE_ID_FONT        , ((AWE_PUSH_BUTTON *)wgt)->font   ,
+        AWE_ID_X                                  , ((AWE_WIDGET *)wgt)->x                                                                                            ,
+        AWE_ID_Y                                  , ((AWE_WIDGET *)wgt)->y                                                                                            ,
+        AWE_ID_WIDTH                              , ((AWE_WIDGET *)wgt)->width                                                                                        ,
+        AWE_ID_HEIGHT                             , ((AWE_WIDGET *)wgt)->height                                                                                       ,
+        AWE_ID_VISIBLE                            , ((AWE_WIDGET *)wgt)->visible                                                                                      ,
+        AWE_ID_ENABLED                            , ((AWE_WIDGET *)wgt)->enabled                                                                                      ,
+        AWE_ID_OPAQUE                             , ((AWE_WIDGET *)wgt)->opaque                                                                                       , 
+        AWE_ID_TRANSLUCENCY                       , ((AWE_WIDGET *)wgt)->translucency                                                                                 ,
+        AWE_ID_OUTPUT_TYPE                        , ((AWE_WIDGET *)wgt)->output_type                                                                                  ,
+        AWE_ID_TEXT                               , ((AWE_PUSH_BUTTON *)wgt)->text                                                                                    ,
+        AWE_ID_FONT                               , ((AWE_PUSH_BUTTON *)wgt)->font                                                                                    ,
+        AWE_ID_ICON                               , ((AWE_PUSH_BUTTON *)wgt)->icon                                                                                    ,
+        AWE_ID_ICON_DIR                           , ((AWE_PUSH_BUTTON *)wgt)->icon_dir                                                                                ,
+        AWE_ID_MARGIN_TOP                         , ((AWE_PUSH_BUTTON *)wgt)->margin.top                                                                              ,
+        AWE_ID_MARGIN_LEFT                        , ((AWE_PUSH_BUTTON *)wgt)->margin.left                                                                             ,
+        AWE_ID_MARGIN_RIGHT                       , ((AWE_PUSH_BUTTON *)wgt)->margin.right                                                                            ,
+        AWE_ID_MARGIN_BOTTOM                      , ((AWE_PUSH_BUTTON *)wgt)->margin.bottom                                                                           ,
+        AWE_ID_DATA                               , ((AWE_PUSH_BUTTON *)wgt)->data                                                                                    ,                                                                           
+        AWE_ID_FONT_COLOR_ENABLED                 , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_col                                       ,
+        AWE_ID_FONT_COLOR_DISABLED                , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_col                                      ,
+        AWE_ID_FONT_COLOR_PRESSED                 , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_col                                       ,
+        AWE_ID_FONT_COLOR_HIGHLIGHTED             , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_col                                   ,
+        AWE_ID_FONT_COLOR_FOCUSED                 , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_col                                       ,
+        AWE_ID_SHADOW_COLOR_ENABLED               , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].font_sdw                                       ,
+        AWE_ID_SHADOW_COLOR_DISABLED              , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].font_sdw                                      ,
+        AWE_ID_SHADOW_COLOR_PRESSED               , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].font_sdw                                       ,
+        AWE_ID_SHADOW_COLOR_HIGHLIGHTED           , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].font_sdw                                   ,
+        AWE_ID_SHADOW_COLOR_FOCUSED               , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].font_sdw                                       ,
+        AWE_ID_FACE_COLOR_TOP_LEFT_ENABLED        , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT]        ,
+        AWE_ID_FACE_COLOR_TOP_LEFT_DISABLED       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT]       ,
+        AWE_ID_FACE_COLOR_TOP_LEFT_PRESSED        , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT]        ,
+        AWE_ID_FACE_COLOR_TOP_LEFT_HIGHLIGHTED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT]    ,
+        AWE_ID_FACE_COLOR_TOP_LEFT_FOCUSED        , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_LEFT]        ,
+        AWE_ID_FACE_COLOR_TOP_RIGHT_ENABLED       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT]       ,
+        AWE_ID_FACE_COLOR_TOP_RIGHT_DISABLED      , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT]      ,
+        AWE_ID_FACE_COLOR_TOP_RIGHT_PRESSED       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT]       ,
+        AWE_ID_FACE_COLOR_TOP_RIGHT_HIGHLIGHTED   , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT]   ,
+        AWE_ID_FACE_COLOR_TOP_RIGHT_FOCUSED       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_TOP_RIGHT]       ,
+        AWE_ID_FACE_COLOR_BOTTOM_LEFT_ENABLED     , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT]     ,
+        AWE_ID_FACE_COLOR_BOTTOM_LEFT_DISABLED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT]    ,
+        AWE_ID_FACE_COLOR_BOTTOM_LEFT_PRESSED     , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT]     ,
+        AWE_ID_FACE_COLOR_BOTTOM_LEFT_HIGHLIGHTED , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT] ,
+        AWE_ID_FACE_COLOR_BOTTOM_LEFT_FOCUSED     , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_LEFT]     ,
+        AWE_ID_FACE_COLOR_BOTTOM_RIGHT_ENABLED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT]    ,
+        AWE_ID_FACE_COLOR_BOTTOM_RIGHT_DISABLED   , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT]   ,
+        AWE_ID_FACE_COLOR_BOTTOM_RIGHT_PRESSED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT]    ,
+        AWE_ID_FACE_COLOR_BOTTOM_RIGHT_HIGHLIGHTED, ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT],
+        AWE_ID_FACE_COLOR_BOTTOM_RIGHT_FOCUSED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].face_col[AWE_PUSH_BUTTON_FACE_BOTTOM_RIGHT]    ,
+        AWE_ID_EDGE_COLOR_TOP_LEFT_ENABLED        , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]        ,
+        AWE_ID_EDGE_COLOR_TOP_LEFT_DISABLED       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]       ,
+        AWE_ID_EDGE_COLOR_TOP_LEFT_PRESSED        , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]        ,
+        AWE_ID_EDGE_COLOR_TOP_LEFT_HIGHLIGHTED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]    ,
+        AWE_ID_EDGE_COLOR_TOP_LEFT_FOCUSED        , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_TOP_LEFT]        ,
+        AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_ENABLED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]    ,
+        AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_DISABLED   , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]   ,
+        AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_PRESSED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]    ,
+        AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_HIGHLIGHTED, ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT],
+        AWE_ID_EDGE_COLOR_BOTTOM_RIGHT_FOCUSED    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].edge_col[AWE_PUSH_BUTTON_EDGE_BOTTOM_RIGHT]    ,
+        AWE_ID_TEXTURE_ENABLED                    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].texture                                        ,
+        AWE_ID_TEXTURE_DISABLED                   , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].texture                                       ,
+        AWE_ID_TEXTURE_PRESSED                    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].texture                                        ,
+        AWE_ID_TEXTURE_HIGHLIGHTED                , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].texture                                    ,
+        AWE_ID_TEXTURE_FOCUSED                    , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].texture                                        ,
+        AWE_ID_ANIM_ENABLED                       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_ENABLED].anim                                           ,
+        AWE_ID_ANIM_DISABLED                      , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_DISABLED].anim                                          ,
+        AWE_ID_ANIM_PRESSED                       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_PRESSED].anim                                           ,
+        AWE_ID_ANIM_HIGHLIGHTED                   , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED].anim                                       ,
+        AWE_ID_ANIM_FOCUSED                       , ((AWE_PUSH_BUTTON *)wgt)->texture[AWE_PUSH_BUTTON_TEXTURE_FOCUSED].anim                                           ,
         0);
 }
 
@@ -1110,7 +1197,7 @@ void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event)
     if (!awe_set_focus_widget(wgt)) return;
     awe_enter_event_mode(awe_grab_event_proc, wgt);
     btn->pressed ^= 1;
-    awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_PRESSED);
+    awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_PRESSED, btn->data);
     awe_add_widget_timer(wgt, 0, 100);
     awe_set_widget_dirty(wgt);
 }
@@ -1122,10 +1209,10 @@ void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
     awe_leave_event_mode();
     btn->pressed ^= 1;
     if(awe_widget_has_mouse(wgt)){
-        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_ACTIVATED);
+        awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_ACTIVATED, btn->data);
     }
     else{
-        awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_RELEASED);
+        awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_RELEASED, btn->data);
     }
     awe_remove_widget_timer(wgt, 0);
     awe_set_widget_dirty(wgt);
@@ -1159,7 +1246,7 @@ int awe_push_button_key_press(AWE_WIDGET *wgt, const AWE_EVENT *event)
 
 void awe_push_button_timer(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
-    awe_do_widget_event0(wgt, AWE_ID_PUSH_BUTTON_HELD_DOWN);
+    awe_do_widget_event1(wgt, AWE_ID_PUSH_BUTTON_HELD_DOWN, ((AWE_PUSH_BUTTON *)wgt)->data);
 }
 
 
