@@ -259,7 +259,7 @@ BUTTON_VTABLE button_vtable = {
         awe_widget_key_up,
         0,
         awe_widget_get_focus,
-        awe_widget_loose_focus,
+        awe_widget_lose_focus,
         awe_widget_begin_display,
         awe_widget_end_display,
         awe_widget_insert_widget,

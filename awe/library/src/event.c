@@ -164,6 +164,8 @@ static int _do_event(AWE_WIDGET *root, AWE_EVENT *event, int force)
                 curr = prev = root;
             }
             if (prev != curr) {
+                if (prev) prev->has_mouse = 0;
+                if (curr) curr->has_mouse = 1;
                 _DO_MOUSE_EVENT(prev, mouse_leave, event);
                 _DO_MOUSE_EVENT(curr, mouse_enter, event);
             }
@@ -394,9 +396,17 @@ int awe_grab_event_proc(AWE_EVENT_MODE_ACTION_TYPE action, AWE_EVENT *event, voi
         case AWE_EVENT_MOUSE_MOVE:
             p = _widget_includes_point(wgt, _last_x, _last_y);
             c = _widget_includes_point(wgt, event->mouse.x, event->mouse.y);
-            if (p == c) _DO_MOUSE_EVENT(wgt, mouse_move, event)
-            else if (c) _DO_MOUSE_EVENT(wgt, mouse_enter, event)
-            else _DO_MOUSE_EVENT(wgt, mouse_leave, event);
+            if (p == c) {
+                _DO_MOUSE_EVENT(wgt, mouse_move, event)
+            }
+            else if (c) {
+                if (wgt) wgt->has_mouse = 1;
+                _DO_MOUSE_EVENT(wgt, mouse_enter, event)
+            }
+            else {
+                if (wgt) wgt->has_mouse = 0;
+                _DO_MOUSE_EVENT(wgt, mouse_leave, event);
+            }
             _last_x = event->mouse.x;
             _last_y = event->mouse.y;
             return 1;

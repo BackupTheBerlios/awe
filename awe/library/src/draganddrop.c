@@ -183,6 +183,8 @@ int awe_drag_and_drop_event_proc(AWE_EVENT_MODE_ACTION_TYPE action, AWE_EVENT *e
             wgt = _widget_from_point(root, event->mouse.x, event->mouse.y);
             if (wgt) wgt = _get_drag_and_drop_target(wgt);
             if (prev != wgt) {
+                if (prev) prev->has_mouse = 0;
+                if (wgt) wgt->has_mouse = 1;
                 _DO_MOUSE_EVENT_TARGET(prev, mouse_leave, event, data);
                 _DO_MOUSE_EVENT_TARGET(wgt, mouse_enter, event, data);
             }

@@ -91,6 +91,10 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\include\button.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\include\com.h
 # End Source File
 # Begin Source File
@@ -153,6 +157,10 @@ SOURCE=..\..\include\widget.h
 # Begin Group "src"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\src\button.c
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\src\com.c

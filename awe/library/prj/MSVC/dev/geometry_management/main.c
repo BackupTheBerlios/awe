@@ -319,7 +319,7 @@ _TEST_VTABLE _test_vtable = {
         0,
         0,
         awe_widget_get_focus,
-        awe_widget_loose_focus,
+        awe_widget_lose_focus,
         awe_geometry_manager_begin_display,
         awe_widget_end_display,
         awe_geometry_manager_insert_widget,

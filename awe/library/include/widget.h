@@ -144,6 +144,7 @@ struct AWE_WIDGET {
     unsigned redraw:1;
     unsigned redraw_children:1;
     unsigned repaint:1;
+    unsigned has_mouse:1;
 };
 typedef struct AWE_WIDGET AWE_WIDGET;
 
@@ -236,10 +237,10 @@ struct AWE_WIDGET_VTABLE {
 
     /** called when the focus is requested from another widget. The default
         implementation removes the focus from this widget.
-        @param wgt widget the widget to loose the focus
+        @param wgt widget the widget to lose the focus
         @return non-zero if focus changed successfully, false otherwise.
      */
-    int (*loose_focus)(AWE_WIDGET *wgt);
+    int (*lose_focus)(AWE_WIDGET *wgt);
 
     /** called when the widget is about to be displayed for the first time.
         The default implementation calls the relevant method of children widgets.
@@ -425,11 +426,11 @@ void awe_widget_key_up(AWE_WIDGET *wgt, const AWE_EVENT *event);
 int awe_widget_get_focus(AWE_WIDGET *wgt);
 
 
-/** the default implementation of the loose_focus method
+/** the default implementation of the lose_focus method
     @param wgt widget that is called
-    @return non-zero if widget looses the focus
+    @return non-zero if widget loses the focus
  */
-int awe_widget_loose_focus(AWE_WIDGET *wgt);
+int awe_widget_lose_focus(AWE_WIDGET *wgt);
 
 
 /** the default implementation of the begin_display method; calls the
@@ -560,6 +561,13 @@ int awe_is_ancestor_widget(AWE_WIDGET *ancestor, AWE_WIDGET *descentant);
     @return pointer to the widget's screen rectangle
  */
 const AWE_RECT *awe_get_widget_rect(AWE_WIDGET *wgt);
+
+
+/** checks if the widget has currently the mouse
+    @param wgt widget to check if it has the mouse or not
+    @return non-zero if the widget has the mouse, zero otherwise
+ */
+int awe_widget_has_mouse(AWE_WIDGET *wgt);
 
 
 /** tests if given coordinates are inside the given widget; if the widget

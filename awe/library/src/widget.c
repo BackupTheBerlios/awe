@@ -192,6 +192,7 @@ static void _clean_up_widget_helper(AWE_WIDGET *wgt)
     wgt->redraw = 0;
     wgt->redraw_children = 0;
     wgt->repaint = 0;
+    wgt->has_mouse = 0;
     for(child = _FIRST(wgt); child; child = _NEXT(child)) {
         _clean_up_widget_helper(child);
     }
@@ -912,7 +913,7 @@ AWE_WIDGET_VTABLE awe_widget_vtable = {
     awe_widget_key_up,
     0,
     awe_widget_get_focus,
-    awe_widget_loose_focus,
+    awe_widget_lose_focus,
     awe_widget_begin_display,
     awe_widget_end_display,
     awe_widget_insert_widget,
@@ -1100,7 +1101,7 @@ int awe_widget_get_focus(AWE_WIDGET *wgt)
     if (!wgt->on_screen || !wgt->enabled_tree) return 0;
     if (wgt == _focus_widget) return 1;
     if (_focus_widget) {
-        _DO_R(_focus_widget, loose_focus, (_focus_widget), r, 1);
+        _DO_R(_focus_widget, lose_focus, (_focus_widget), r, 1);
         if (!r) return 0;
     }
     _focus_widget = wgt;
@@ -1109,8 +1110,8 @@ int awe_widget_get_focus(AWE_WIDGET *wgt)
 }
 
 
-//loose focus
-int awe_widget_loose_focus(AWE_WIDGET *wgt)
+//lose focus
+int awe_widget_lose_focus(AWE_WIDGET *wgt)
 {
     if (wgt != _focus_widget) return 0;
     _focus_widget = 0;
@@ -1292,6 +1293,13 @@ int awe_is_ancestor_widget(AWE_WIDGET *a, AWE_WIDGET *d)
 const AWE_RECT *awe_get_widget_rect(AWE_WIDGET *wgt)
 {
     return &wgt->pos;
+}
+
+
+//checks if the widget has currently the mouse
+int awe_widget_has_mouse(AWE_WIDGET *wgt)
+{
+    return wgt->has_mouse;
 }
 
 
