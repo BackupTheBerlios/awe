@@ -397,6 +397,110 @@ void awe_draw_3d_rect(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, 
 void awe_draw_3d_rect_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width);
 
 
+/** draws a 3d down slider
+    @param canvas destination canvas
+    @param x1 left coordinate
+    @param y1 top coordinate
+    @param x2 right coordinate
+    @param y2 bottom coordinate
+    @param top_left_color top left color
+    @param bottom_right_color bottom right color
+    @param width thickness of rectangle in pixels
+ */
+void awe_draw_3d_slider_down(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width);
+
+
+/** draws a 3d down slider using position and size
+    @param canvas destination canvas
+    @param x left coordinate
+    @param y top coordinate
+    @param w width
+    @param h height
+    @param top_left_color top left color
+    @param bottom_right_color bottom right color
+    @param width thickness of rectangle in pixels
+ */
+void awe_draw_3d_slider_down_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width);
+
+
+/** draws a 3d up slider
+    @param canvas destination canvas
+    @param x1 left coordinate
+    @param y1 top coordinate
+    @param x2 right coordinate
+    @param y2 bottom coordinate
+    @param top_left_color top left color
+    @param bottom_right_color bottom right color
+    @param width thickness of rectangle in pixels
+ */
+void awe_draw_3d_slider_up(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width);
+
+
+/** draws a 3d up slider using position and size
+    @param canvas destination canvas
+    @param x left coordinate
+    @param y top coordinate
+    @param w width
+    @param h height
+    @param top_left_color top left color
+    @param bottom_right_color bottom right color
+    @param width thickness of rectangle in pixels
+ */
+void awe_draw_3d_slider_up_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width);
+
+
+/** draws a 3d left slider
+    @param canvas destination canvas
+    @param x1 left coordinate
+    @param y1 top coordinate
+    @param x2 right coordinate
+    @param y2 bottom coordinate
+    @param top_left_color top left color
+    @param bottom_right_color bottom right color
+    @param width thickness of rectangle in pixels
+ */
+void awe_draw_3d_slider_left(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width);
+
+
+/** draws a 3d left slider using position and size
+    @param canvas destination canvas
+    @param x left coordinate
+    @param y top coordinate
+    @param w width
+    @param h height
+    @param top_left_color top left color
+    @param bottom_right_color bottom right color
+    @param width thickness of rectangle in pixels
+ */
+void awe_draw_3d_slider_left_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width);
+
+
+/** draws a 3d right slider
+    @param canvas destination canvas
+    @param x1 left coordinate
+    @param y1 top coordinate
+    @param x2 right coordinate
+    @param y2 bottom coordinate
+    @param top_left_color top left color
+    @param bottom_right_color bottom right color
+    @param width thickness of rectangle in pixels
+ */
+void awe_draw_3d_slider_right(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width);
+
+
+/** draws a 3d right slider using position and size
+    @param canvas destination canvas
+    @param x left coordinate
+    @param y top coordinate
+    @param w width
+    @param h height
+    @param top_left_color top left color
+    @param bottom_right_color bottom right color
+    @param width thickness of rectangle in pixels
+ */
+void awe_draw_3d_slider_right_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width);
+
+
 /** draws a 3d circle
     @param canvas destination canvas
     @param x horizontal center

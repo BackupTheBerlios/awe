@@ -313,6 +313,110 @@ void awe_draw_3d_rect_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, in
 }
 
 
+//draws a 3d slider handle
+void awe_draw_3d_slider_down(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width)
+{
+    BITMAP *bmp = canvas->bitmap;
+    int i;
+    x1 += AWE_CANVAS_BASE_X(canvas);
+    y1 += AWE_CANVAS_BASE_Y(canvas);
+    x2 += AWE_CANVAS_BASE_X(canvas);
+    y2 += AWE_CANVAS_BASE_Y(canvas);
+    for(i = 0; i < width; ++i) {
+        vline(bmp, x1 + i, y1 + i, y2 - 5, top_left_color);
+        hline(bmp, x1 + i, y1 + i, x2 - i, top_left_color);
+        vline(bmp, x2 - i, y1 + i, y2 - 5, bottom_right_color);
+        line(bmp, x1 + i, y2 - 5, x1 + ((x2 - x1) / 2), y2 - i, top_left_color);
+        line(bmp, x2 - i, y2 - 5, x1 + ((x2 - x1) / 2), y2 - i, bottom_right_color);
+    }
+}
+
+
+//draws a 3d slider handle with position and size
+void awe_draw_3d_slider_down_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width)
+{
+    awe_draw_3d_slider_down(canvas, x, y, x + w - 1, y + h - 1, top_left_color, bottom_right_color, width);
+}
+
+
+//draws a 3d slider handle
+void awe_draw_3d_slider_up(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width)
+{
+    BITMAP *bmp = canvas->bitmap;
+    int i;
+    x1 += AWE_CANVAS_BASE_X(canvas);
+    y1 += AWE_CANVAS_BASE_Y(canvas);
+    x2 += AWE_CANVAS_BASE_X(canvas);
+    y2 += AWE_CANVAS_BASE_Y(canvas);
+    for(i = 0; i < width; ++i) {
+        vline(bmp, x1 + i, y1 + 5, y2 - i, top_left_color);
+        hline(bmp, x1 + i, y2 - i, x2 - i, bottom_right_color);
+        vline(bmp, x2 - i, y1 + 5, y2 - i, bottom_right_color);
+        line(bmp, x1 + i, y1 + 5, x1 + ((x2 - x1) / 2), y1 + i, top_left_color);
+        line(bmp, x2 - i, y1 + 5, x1 + ((x2 - x1) / 2), y1 + i, bottom_right_color);
+    }
+}
+
+
+//draws a 3d slider handle with position and size
+void awe_draw_3d_slider_up_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width)
+{
+    awe_draw_3d_slider_up(canvas, x, y, x + w - 1, y + h - 1, top_left_color, bottom_right_color, width);
+}
+
+
+//draws a 3d slider handle
+void awe_draw_3d_slider_left(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width)
+{
+    BITMAP *bmp = canvas->bitmap;
+    int i;
+    x1 += AWE_CANVAS_BASE_X(canvas);
+    y1 += AWE_CANVAS_BASE_Y(canvas);
+    x2 += AWE_CANVAS_BASE_X(canvas);
+    y2 += AWE_CANVAS_BASE_Y(canvas);
+    for(i = 0; i < width; ++i) {
+        hline(bmp, x1 + 5, y1 + i, x2 - i, top_left_color);
+        vline(bmp, x2 - i, y1 + i, y2 - i, bottom_right_color);
+        hline(bmp, x1 + 5, y2 - i, x2 - i, bottom_right_color);
+        line(bmp, x1 + 5, y1 + i, x1 + i, y1 + ((y2 - y1) / 2), top_left_color);
+        line(bmp, x1 + 5, y2 - i, x1 + i, y1 + ((y2 - y1) / 2), bottom_right_color);
+    }
+}
+
+
+//draws a 3d slider handle with position and size
+void awe_draw_3d_slider_left_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width)
+{
+    awe_draw_3d_slider_left(canvas, x, y, x + w - 1, y + h - 1, top_left_color, bottom_right_color, width);
+}
+
+
+//draws a 3d slider handle
+void awe_draw_3d_slider_right(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int top_left_color, int bottom_right_color, int width)
+{
+    BITMAP *bmp = canvas->bitmap;
+    int i;
+    x1 += AWE_CANVAS_BASE_X(canvas);
+    y1 += AWE_CANVAS_BASE_Y(canvas);
+    x2 += AWE_CANVAS_BASE_X(canvas);
+    y2 += AWE_CANVAS_BASE_Y(canvas);
+    for(i = 0; i < width; ++i) {
+        vline(bmp, x1 + i, y1 + i, y2 - i, top_left_color);
+        hline(bmp, x1 + i, y1 + i, x2 - 5, top_left_color);
+        hline(bmp, x1 + i, y2 - i, x2 - 5, bottom_right_color);
+        line(bmp, x2 - 5, y1 + i, x2 - i, y1 + ((y2 - y1) / 2), top_left_color);
+        line(bmp, x2 - 5, y2 - i, x2 - i, y1 + ((y2 - y1) / 2), bottom_right_color);
+    }
+}
+
+
+//draws a 3d slider handle with position and size
+void awe_draw_3d_slider_right_s(const AWE_CANVAS *canvas, int x, int y, int w, int h, int top_left_color, int bottom_right_color, int width)
+{
+    awe_draw_3d_slider_right(canvas, x, y, x + w - 1, y + h - 1, top_left_color, bottom_right_color, width);
+}
+
+
 //draws a 3d circle
 void awe_draw_3d_circle(const AWE_CANVAS *canvas, int x, int y, int radius, int top_left_color, int bottom_right_color, int width)
 {

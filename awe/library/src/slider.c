@@ -14,8 +14,22 @@ static RGB _bar_color_top           = { 128, 128, 128, 0 };
 static RGB _bar_color_bottom        = { 241, 239, 226, 0 };
 
 
-#define DEFAULT_HANDLE_WIDTH        8
+#define DEFAULT_HANDLE_WIDTH        9
 #define DEFAULT_SLIDER_MAX          100
+
+
+//slider moved argument
+static AWE_CLASS_EVENT_ARGUMENT _pos[] = {
+    { AWE_ID_POSITION, "int" },
+    { 0 }
+};
+
+
+//slider events
+static AWE_CLASS_EVENT _slider_events[] = {
+    { AWE_ID_SLIDER_MOVED, _pos },
+    { 0 }
+};
 
 
 //constructor
@@ -120,6 +134,20 @@ static void _slider_set_type(AWE_OBJECT *obj, void *data)
 }
 
 
+//gets the slider step
+static void _slider_get_step(AWE_OBJECT *obj, void *data)
+{
+    *(int *)data = ((AWE_SLIDER *)obj)->step;
+}
+
+
+//sets the slider step
+static void _slider_set_step(AWE_OBJECT *obj, void *data)
+{
+    ((AWE_SLIDER *)obj)->step = *(int *)data;
+}
+
+
 //slider properties
 static AWE_CLASS_PROPERTY _slider_properties[] = {
     { AWE_ID_ORIENTATION, "AWE_SLIDER_ORIENTATION", sizeof(AWE_SLIDER_ORIENTATION), _slider_get_orientation, _slider_set_orientation, 0 },
@@ -127,6 +155,7 @@ static AWE_CLASS_PROPERTY _slider_properties[] = {
     { AWE_ID_MAX, "int", sizeof(int), _slider_get_max, _slider_set_max, 0 },
     { AWE_ID_HANDLE_WIDTH, "int", sizeof(int), _slider_get_width, _slider_set_width, 0 },
     { AWE_ID_HANDLE_TYPE,  "AWE_SLIDER_HANDLE_TYPE", sizeof(AWE_SLIDER_HANDLE_TYPE), _slider_get_type, _slider_set_type, 0 },
+    { AWE_ID_STEP,  "int", sizeof(int), _slider_get_step, _slider_set_step, 0 },
     { 0 }
 };
 
@@ -189,7 +218,7 @@ AWE_CLASS awe_slider_class = {
     &awe_widget_class,
     sizeof(AWE_SLIDER),
     _slider_properties,
-    0,
+    _slider_events,
     &awe_slider_vtable.widget.object,
     _slider_constructor,
     _slider_destructor
@@ -217,7 +246,12 @@ void *awe_slider_get_interface(AWE_OBJECT *obj, const char *name, const char *pn
 AWE_OBJECT *awe_slider_clone(AWE_OBJECT *wgt)
 {
     return awe_create_object(&awe_slider_class,
-
+        AWE_ID_POSITION, ((AWE_SLIDER *)wgt)->pos,
+        AWE_ID_MAX, ((AWE_SLIDER *)wgt)->max_val,
+        AWE_ID_ORIENTATION, ((AWE_SLIDER *)wgt)->orientation,
+        AWE_ID_HANDLE_WIDTH, ((AWE_SLIDER *)wgt)->handle_width,
+        AWE_ID_HANDLE_TYPE, ((AWE_SLIDER *)wgt)->handle_type,
+        AWE_ID_STEP, ((AWE_SLIDER *)wgt)->step,
         0);
 }
 
@@ -256,18 +290,48 @@ void awe_slider_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip)
     if(sldr->orientation){
         awe_fill_rect_s(canvas, 2, pos + 2, wgt->width - 4, sldr->handle_width - 4, 
             AWE_MAKE_COLOR(sldr->face_col[state]));
-        awe_draw_3d_rect_s(canvas, 0, pos, wgt->width, sldr->handle_width, 
-            AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_TOP_LEFT]),
-            AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_BOTTOM_RIGHT]), 
-            2);
+        switch(sldr->handle_type){
+            case AWE_SLIDER_HANDLE_LEFT:
+                awe_draw_3d_slider_left_s(canvas, 0, pos, wgt->width, sldr->handle_width, 
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_TOP_LEFT]),
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_BOTTOM_RIGHT]), 
+                    2);
+            break;
+            case AWE_SLIDER_HANDLE_RIGHT:
+                awe_draw_3d_slider_right_s(canvas, 0, pos, wgt->width, sldr->handle_width, 
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_TOP_LEFT]),
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_BOTTOM_RIGHT]), 
+                    2);
+            break;
+            default:
+                awe_draw_3d_rect_s(canvas, 0, pos, wgt->width, sldr->handle_width, 
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_TOP_LEFT]),
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_BOTTOM_RIGHT]), 
+                    2);
+        }       
     }
     else{
         awe_fill_rect_s(canvas, pos + 2, 2, sldr->handle_width - 4, wgt->height - 4, 
             AWE_MAKE_COLOR(sldr->face_col[state]));
-        awe_draw_3d_rect_s(canvas, pos, 0, sldr->handle_width, wgt->height, 
-            AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_TOP_LEFT]),
-            AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_BOTTOM_RIGHT]), 
-            2);
+        switch(sldr->handle_type){
+            case AWE_SLIDER_HANDLE_UP:
+                awe_draw_3d_slider_up_s(canvas, pos, 0, sldr->handle_width, wgt->height, 
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_TOP_LEFT]),
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_BOTTOM_RIGHT]), 
+                    2);
+            break;
+            case AWE_SLIDER_HANDLE_DOWN:
+                awe_draw_3d_slider_down_s(canvas, pos, 0, sldr->handle_width, wgt->height, 
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_TOP_LEFT]),
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_BOTTOM_RIGHT]), 
+                    2);
+            break;
+            default:
+                awe_draw_3d_rect_s(canvas, pos, 0, sldr->handle_width, wgt->height, 
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_TOP_LEFT]),
+                    AWE_MAKE_COLOR(sldr->edge_col[state][AWE_SLIDER_EDGE_BOTTOM_RIGHT]), 
+                    2);
+        }
     }
 }
 
@@ -298,7 +362,10 @@ void awe_slider_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event)
 {
     awe_leave_event_mode();
     ((AWE_SLIDER *)wgt)->pressed = 0;
-    ((AWE_SLIDER *)wgt)->lostmouse = 0;
+    if(((AWE_SLIDER *)wgt)->lostmouse){
+        ((AWE_SLIDER *)wgt)->lostmouse = 0;
+        ((AWE_SLIDER *)wgt)->highlighted = 0;
+    }
     awe_set_widget_dirty(wgt);
 }
 
@@ -350,6 +417,7 @@ void awe_slider_mouse_move(AWE_WIDGET *wgt, const AWE_EVENT *event)
         }
         if(newpos != sldr->pos){
             sldr->pos = newpos;
+            awe_do_widget_event1(wgt, AWE_ID_SLIDER_MOVED, newpos);
             awe_set_widget_dirty(wgt);
         }
     }
@@ -390,6 +458,7 @@ void awe_slider_mouse_wheel(AWE_WIDGET *wgt, const AWE_EVENT *event){
         newpos = MID(0, sldr->pos - ((event->mouse.z - sldr->oz) * MAX(sldr->max_val >> 5, 1)), sldr->max_val);
     if(newpos != sldr->pos){
         sldr->pos = newpos;
+        awe_do_widget_event1(wgt, AWE_ID_SLIDER_MOVED, newpos);
         awe_set_widget_dirty(wgt);
     }
     sldr->oz = event->mouse.z;

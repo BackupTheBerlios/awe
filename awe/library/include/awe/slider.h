@@ -44,6 +44,14 @@
 #define AWE_ID_HANDLE_TYPE    "HandleType"
 
 
+///step property
+#define AWE_ID_STEP           "Step"
+
+
+///moved event name
+#define AWE_ID_SLIDER_MOVED   "SliderMoved"
+
+
 ///slider orientation
 enum AWE_SLIDER_ORIENTATION {
     ///horiztonal slider
@@ -74,11 +82,11 @@ typedef enum AWE_SLIDER_TEXTURE AWE_SLIDER_TEXTURE;
 
 
 enum AWE_SLIDER_HANDLE_TYPE {
-    NAS_SLIDER_HANDLE_NORMAL = 0,
-    NAS_SLIDER_HANDLE_LEFT   = 1,
-    NAS_SLIDER_HANDLE_RIGHT  = 2,
-    NAS_SLIDER_HANDLE_UP     = 1,
-    NAS_SLIDER_HANDLE_DOWN   = 2,
+    AWE_SLIDER_HANDLE_NORMAL = 0,
+    AWE_SLIDER_HANDLE_LEFT   = 1,
+    AWE_SLIDER_HANDLE_RIGHT  = 2,
+    AWE_SLIDER_HANDLE_UP     = 1,
+    AWE_SLIDER_HANDLE_DOWN   = 2,
 };
 typedef enum AWE_SLIDER_HANDLE_TYPE AWE_SLIDER_HANDLE_TYPE;
 
