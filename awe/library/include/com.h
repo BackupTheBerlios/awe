@@ -91,6 +91,7 @@ struct AWE_OBJECT {
     struct AWE_CLASS *pclass;
     AWE_DL_LIST signals;
     AWE_DL_LIST slots;
+    unsigned setting_properties:1;
 };
 typedef struct AWE_OBJECT AWE_OBJECT;
 

@@ -515,6 +515,8 @@ int awe_set_object_properties_va(AWE_OBJECT *obj, va_list params)
     int count = 0;
     char value[256];
 
+    obj->setting_properties = 1;
+
     while (1) {
         //get property name
         prop_name = va_arg(params, const char *);
@@ -533,6 +535,8 @@ int awe_set_object_properties_va(AWE_OBJECT *obj, va_list params)
         prop->set(obj, value);
         count++;
     }
+
+    obj->setting_properties = 0;
 
     //notify the object if properties have changed
     if (count && obj->pclass->vtable->properties_changed)

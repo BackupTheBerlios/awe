@@ -1771,7 +1771,10 @@ int awe_override_widget_geometry(AWE_WIDGET *wgt, int x, int y, int width, int h
     wgt->y = y;
     wgt->width = width;
     wgt->height = height;
-    if (wgt->on_screen) _set_update_geometry(wgt);
+    if (wgt->on_screen) {
+        if (wgt->object.setting_properties) wgt->geometry_changed = 1;
+        else _set_update_geometry(wgt);
+    }
     return 1;
 }
 
