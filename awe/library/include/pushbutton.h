@@ -189,8 +189,20 @@ extern AWE_PUSH_BUTTON_VTABLE awe_push_button_vtable;
 extern AWE_CLASS awe_push_button_class;
 
 
+//push button properties
+extern AWE_CLASS_PROPERTY awe_push_button_properties[];
+
+
+void awe_push_button_constructor(AWE_OBJECT *obj);
+void awe_push_button_destructor(AWE_OBJECT *obj);
+
+
 void *awe_push_button_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace);
+
+
 AWE_OBJECT *awe_push_button_clone(AWE_OBJECT *wgt);
+
+
 void awe_push_button_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip);
 void awe_push_button_down(AWE_WIDGET *wgt, const AWE_EVENT *event);
 void awe_push_button_up(AWE_WIDGET *wgt, const AWE_EVENT *event);

@@ -60,6 +60,12 @@ extern AWE_LABEL_VTABLE AWE_LABEL_vtable;
 extern AWE_CLASS awe_label_class;
 
 
+//label properties
+extern AWE_CLASS_PROPERTY awe_label_properties[];
+
+
+void awe_label_constructor(AWE_OBJECT *obj);
+void awe_label_destructor(AWE_OBJECT *obj);
 void *awe_label_get_interface(AWE_OBJECT *obj, const char *name, const char *pnamespace);
 AWE_OBJECT *awe_label_clone(AWE_OBJECT *wgt);
 void awe_label_paint(AWE_WIDGET *wgt, AWE_CANVAS *canvas, const AWE_RECT *clip);

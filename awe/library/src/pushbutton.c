@@ -6,77 +6,42 @@
  *****************************************************************************/
 
 
-#define AWE_ID_PUSH_BUTTON_ARG0	"PushButtonArg0"
+static RGB _face_color_normal       = { 212, 208, 200, 0 };
+static RGB _face_color_highlighted  = { 228, 224, 216, 0 };
+static RGB _font_color_normal       = { 0  , 0  , 0  , 0 };
+static RGB _font_color_disabled     = { 128, 128, 128, 0 };
+static RGB _shadow_color_normal     = { 255, 0  , 255, 0 };		//Magenta will not show
+static RGB _shadow_color_disabled   = { 255, 255, 255, 0 };
+static RGB _edge_color_top_left     = { 241, 239, 226, 0 };
+static RGB _edge_color_bottom_right = { 128, 128, 128, 0 };
+static int _margin[4]               = { 8  , 8  , 8  , 8 };
 
 
-RGB _face_color_normal       = { 212, 208, 200, 0 };
-RGB _face_color_highlighted  = { 228, 224, 216, 0 };
-RGB _font_color_normal       = { 0  , 0  , 0  , 0 };
-RGB _font_color_disabled     = { 128, 128, 128, 0 };
-RGB _shadow_color_normal     = { 255, 0  , 255, 0 };		//Magenta will not show
-RGB _shadow_color_disabled   = { 255, 255, 255, 0 };
-RGB _edge_color_top_left     = { 241, 239, 226, 0 };
-RGB _edge_color_bottom_right = { 128, 128, 128, 0 };
-int _margin[4]               = { 8  , 8  , 8  , 8 };
-
-
-static char *_push_button_texture[AWE_PUSH_BUTTON_NUM_TEXTURES] = {
+//used in loading skins /* Not implemented */
+/*static char *_push_button_texture[AWE_PUSH_BUTTON_NUM_TEXTURES] = {
     "Enabled",
     "Pressed",
     "Disabled",
     "Highlighted",
     "Focused"
+};*/
+
+
+//event arguments
+static AWE_CLASS_EVENT_ARGUMENT _push_button_arg0[] = {
+    { "PushButtonArg0", "void *" },
+    { 0 }
 };
 
 
-//constructor
-static void _push_button_constructor(AWE_OBJECT *obj)
-{
-    int i, j;
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    tmp->text = ustrdup(empty_string);
-    tmp->font = font;
-    memcpy(&tmp->margin, &_margin, sizeof(_margin));
-    for(i = 0; i < AWE_PUSH_BUTTON_NUM_TEXTURES; i++){
-        for(j = 0; j < AWE_PUSH_BUTTON_NUM_FACES; j++){
-            if(i == AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED)
-                memcpy(&tmp->texture[i].face_col[j], &_face_color_highlighted, sizeof(RGB));
-            else
-                memcpy(&tmp->texture[i].face_col[j], &_face_color_normal, sizeof(RGB));
-        }
-        for(j = 0; j < AWE_PUSH_BUTTON_NUM_EDGES; j++){
-            if(i == AWE_PUSH_BUTTON_TEXTURE_PRESSED){
-                if(j == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
-                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_bottom_right, sizeof(RGB));
-                else
-                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_top_left, sizeof(RGB));
-            }
-	    else{
-                if(j == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
-                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_top_left, sizeof(RGB));
-                else
-                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_bottom_right, sizeof(RGB));
-            }
-        }
-        if(i == AWE_PUSH_BUTTON_TEXTURE_DISABLED){
-            memcpy(&tmp->texture[i].font_col, &_font_color_disabled, sizeof(RGB));
-            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_disabled, sizeof(RGB));
-        }
-        else{
-            memcpy(&tmp->texture[i].font_col, &_font_color_normal, sizeof(RGB));
-            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_normal, sizeof(RGB));
-        }
-        tmp->texture[i].texture = NULL;       
-    }
-}
-
-
-//destructor
-static void _push_button_destructor(AWE_OBJECT *obj)
-{
-    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
-    free(tmp->text);
-}
+//push button events
+static AWE_CLASS_EVENT _push_button_events[] = {
+    { AWE_ID_PUSH_BUTTON_ACTIVATED, _push_button_arg0 },
+    { AWE_ID_PUSH_BUTTON_RELEASED,  _push_button_arg0 },
+    { AWE_ID_PUSH_BUTTON_HELD_DOWN, _push_button_arg0 },
+    { AWE_ID_PUSH_BUTTON_PRESSED,   _push_button_arg0 },
+    { 0 }
+};
 
 
 //gets the text
@@ -913,8 +878,63 @@ static void _push_button_set_data(AWE_OBJECT *obj, void *data)
 }
 
 
-//push_button properties
-static AWE_CLASS_PROPERTY _push_button_properties[] = {
+/*****************************************************************************
+    PUBLIC
+ *****************************************************************************/
+
+
+//constructor
+void awe_push_button_constructor(AWE_OBJECT *obj)
+{
+    int i, j;
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    tmp->text = ustrdup(empty_string);
+    tmp->font = font;
+    memcpy(&tmp->margin, &_margin, sizeof(_margin));
+    for(i = 0; i < AWE_PUSH_BUTTON_NUM_TEXTURES; i++){
+        for(j = 0; j < AWE_PUSH_BUTTON_NUM_FACES; j++){
+            if(i == AWE_PUSH_BUTTON_TEXTURE_HIGHLIGHTED)
+                memcpy(&tmp->texture[i].face_col[j], &_face_color_highlighted, sizeof(RGB));
+            else
+                memcpy(&tmp->texture[i].face_col[j], &_face_color_normal, sizeof(RGB));
+        }
+        for(j = 0; j < AWE_PUSH_BUTTON_NUM_EDGES; j++){
+            if(i == AWE_PUSH_BUTTON_TEXTURE_PRESSED){
+                if(j == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
+                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_bottom_right, sizeof(RGB));
+                else
+                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_top_left, sizeof(RGB));
+            }
+	    else{
+                if(j == AWE_PUSH_BUTTON_EDGE_TOP_LEFT)
+                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_top_left, sizeof(RGB));
+                else
+                    memcpy(&tmp->texture[i].edge_col[j], &_edge_color_bottom_right, sizeof(RGB));
+            }
+        }
+        if(i == AWE_PUSH_BUTTON_TEXTURE_DISABLED){
+            memcpy(&tmp->texture[i].font_col, &_font_color_disabled, sizeof(RGB));
+            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_disabled, sizeof(RGB));
+        }
+        else{
+            memcpy(&tmp->texture[i].font_col, &_font_color_normal, sizeof(RGB));
+            memcpy(&tmp->texture[i].font_sdw, &_shadow_color_normal, sizeof(RGB));
+        }
+        tmp->texture[i].texture = NULL;       
+    }
+}
+
+
+//destructor
+void awe_push_button_destructor(AWE_OBJECT *obj)
+{
+    AWE_PUSH_BUTTON *tmp = (AWE_PUSH_BUTTON *)obj;
+    free(tmp->text);
+}
+
+
+//awe push_button properties
+AWE_CLASS_PROPERTY awe_push_button_properties[] = {
     { AWE_ID_TEXT, "const char *", sizeof(const char *), _push_button_get_text, _push_button_set_text, 0 },
     { AWE_ID_FONT, "FONT *", sizeof(FONT *), _push_button_get_font, _push_button_set_font, 0 },
     { AWE_ID_ICON, "BITMAP *", sizeof(BITMAP *), _push_button_get_icon, _push_button_set_icon, 0 },
@@ -971,26 +991,6 @@ static AWE_CLASS_PROPERTY _push_button_properties[] = {
 };
 
 
-AWE_CLASS_EVENT_ARGUMENT _push_button_arg0[] = {
-    { AWE_ID_PUSH_BUTTON_ARG0, "void *" },
-    { 0 }
-};
-
-
-static AWE_CLASS_EVENT _push_button_events[] = {
-    { AWE_ID_PUSH_BUTTON_ACTIVATED, _push_button_arg0 },
-    { AWE_ID_PUSH_BUTTON_RELEASED,  _push_button_arg0 },
-    { AWE_ID_PUSH_BUTTON_HELD_DOWN, _push_button_arg0 },
-    { AWE_ID_PUSH_BUTTON_PRESSED,   _push_button_arg0 },
-    { 0 }
-};
-
-
-/*****************************************************************************
-    PUBLIC
- *****************************************************************************/
-
-
 //push_button vtable
 AWE_PUSH_BUTTON_VTABLE awe_push_button_vtable = {
     //widget
@@ -1043,11 +1043,11 @@ AWE_CLASS awe_push_button_class = {
     AWE_ID_AWE,
     &awe_widget_class,
     sizeof(AWE_PUSH_BUTTON),
-    _push_button_properties,
+    awe_push_button_properties,
     _push_button_events,
     &awe_push_button_vtable.widget.object,
-    _push_button_constructor,
-    _push_button_destructor
+    awe_push_button_constructor,
+    awe_push_button_destructor
 };
 
 
