@@ -138,6 +138,7 @@ int main()
         AWE_ID_WIDTH, 160,
         AWE_ID_TEXT, "Radio1",
         AWE_ID_GROUP, 1,
+        AWE_ID_TOGGLE, TRUE,
         0);
             
     radio2 = awe_create_widget(&awe_radio_class, root,
@@ -160,6 +161,8 @@ int main()
         AWE_ID_WIDTH, 16,
         AWE_ID_HEIGHT, 100,
         AWE_ID_ORIENTATION, AWE_SLIDER_VERTICAL,
+        AWE_ID_HANDLE_TYPE, AWE_SLIDER_HANDLE_RIGHT,
+        AWE_ID_STEP, 10,
         0);
             
     awe_set_root_widget(root);
