@@ -102,6 +102,12 @@ struct AWE_TEXTURE {
 typedef struct AWE_TEXTURE AWE_TEXTURE;
 
 
+/** converts an RGB structure to an integer color value
+    @param rgb rgb structure containing the triplet color values to convert
+ */
+int rgb_to_color(RGB *rgb);
+
+
 /** prepares a canvas for drawing; the point of origin is set to 0, 0
     @param canvas canvas to set up
     @param bmp destination bitmap

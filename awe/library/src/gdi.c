@@ -87,6 +87,12 @@ static INLINE void _stretch(BITMAP *dst, BITMAP *src, int x, int y, int w, int h
  *****************************************************************************/
 
 
+//converts an rgb structure into an integer color value
+int rgb_to_color(RGB *rgb){
+   return makecol(rgb->r, rgb->g, rgb->b);
+}
+
+
 //prepares a canvas for drawing
 void awe_set_canvas(AWE_CANVAS *canvas, BITMAP *bmp, AWE_RECT *area)
 {
@@ -247,10 +253,10 @@ void awe_fill_ellipse(const AWE_CANVAS *canvas, int x, int y, int hor_radius, in
 //fills a gradient
 void awe_fill_gradient(const AWE_CANVAS *canvas, int x1, int y1, int x2, int y2, int color1, int color2, int color3, int color4)
 {
-    x1 = itofix(x1);
-    y1 = itofix(y1);
-    x2 = itofix(x2 + 1);
-    y2 = itofix(y2 + 1); {
+    x1 = itofix(x1 + AWE_CANVAS_BASE_X(canvas));
+    y1 = itofix(y1 + AWE_CANVAS_BASE_Y(canvas));
+    x2 = itofix(x2 + AWE_CANVAS_BASE_X(canvas) + 1);
+    y2 = itofix(y2 + AWE_CANVAS_BASE_Y(canvas) + 1); {
     V3D v1 = {x1, y1, 0, 0, 0, color1};
     V3D v2 = {x1, y2, 0, 0, 0, color2};
     V3D v3 = {x2, y2, 0, 0, 0, color3};
